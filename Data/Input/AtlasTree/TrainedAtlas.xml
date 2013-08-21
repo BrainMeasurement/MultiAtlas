@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE MABMISAtlas>
+<MABMISAtlas>
+<AtlasDirectory></AtlasDirectory>
+<NumberOfAtlases>12</NumberOfAtlases>
+<NumberOfSimulatedAtlases>8</NumberOfSimulatedAtlases>
+<AtlasFileList>
+<Atlas ID="0" FileName="TrainedAtlas\AA_cbq_000.hdr"/>
+<Atlas ID="1" FileName="TrainedAtlas\AB_cbq_000.hdr"/>
+<Atlas ID="2" FileName="TrainedAtlas\AC_cbq_000.hdr"/>
+<Atlas ID="3" FileName="TrainedAtlas\AD_cbq_000.hdr"/>
+<Atlas ID="4" FileName="TrainedAtlas\simulated_cbq_000.hdr"/>
+<Atlas ID="5" FileName="TrainedAtlas\simulated_cbq_001.hdr"/>
+<Atlas ID="6" FileName="TrainedAtlas\simulated_cbq_002.hdr"/>
+<Atlas ID="7" FileName="TrainedAtlas\simulated_cbq_003.hdr"/>
+<Atlas ID="8" FileName="TrainedAtlas\simulated_cbq_004.hdr"/>
+<Atlas ID="9" FileName="TrainedAtlas\simulated_cbq_005.hdr"/>
+<Atlas ID="10" FileName="TrainedAtlas\simulated_cbq_006.hdr"/>
+<Atlas ID="11" FileName="TrainedAtlas\simulated_cbq_007.hdr"/>
+</AtlasFileList>
+<AtlasTree>
+<TreeSize>12</TreeSize>
+<TreeHeight>4</TreeHeight>
+<TreeRoot>3</TreeRoot>
+<Tree>
+<Node ID="0" ParentID="9"/>
+<Node ID="1" ParentID="6"/>
+<Node ID="2" ParentID="7"/>
+<Node ID="3" ParentID="-1"/>
+<Node ID="4" ParentID="3"/>
+<Node ID="5" ParentID="4"/>
+<Node ID="6" ParentID="4"/>
+<Node ID="7" ParentID="6"/>
+<Node ID="8" ParentID="7"/>
+<Node ID="9" ParentID="4"/>
+<Node ID="10" ParentID="9"/>
+<Node ID="11" ParentID="10"/>
+</Tree>
+</AtlasTree>
+</MABMISAtlas>

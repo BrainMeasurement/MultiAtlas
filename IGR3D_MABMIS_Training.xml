@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    Developer Tools
+  </category>
+  <title>
+     Multi-Atlas Based Group Segmentation -- Training
+  </title>
+  <description>
+	Refer to: "Iterative multi-atlas-based multi-image segmentation with tree-based registration", NeuroImage, 59(1):422–430, 2012. 
+  </description>
+  <version></version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Minjeong Kim, Dinggang Shen, Xiaofeng Liu</contributor>
+<acknowledgements>
+  This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. This work is also supported by Grant R01 EB006733 from the National Institute of Biomedical Imaging and Bioengineering , National Institutes of Health, through the University of North Carolina, Chapel Hill.
+</acknowledgements>
+
+  <parameters>
+	<label> Registration Parameters </label>
+	<description>Parameters used for registration</description>
+	
+	<integer-vector>
+      <name>iterations</name>
+      <flag>i</flag>
+      <longflag>iterations</longflag>
+      <description>Comma separated list of iterations, for low resolution, middle resolution, and high resolution. </description>
+      <label>Iterations</label>
+      <default>5,3,2</default>
+	</integer-vector>
+	
+	<double>
+	  <name>SmoothingKernelSize</name>
+      <flag>s</flag>
+      <longflag>sigma</longflag>
+      <description>The standard deviation for smoothing deformation field</description>
+      <label>Smoothing Kernel Size</label>
+      <default>1.5</default>
+    </double>
+  </parameters>
+
+ <parameters>
+    <label>Parameters for Atlas Training</label>
+    <description>Parameters for Training</description>
+
+	<file fileExtensions=".xml">
+     <name>TrainingDataXML</name>
+     <description>xml file listing filenames for training datasets </description>
+     <label>Input atlases (xml)</label>
+     <channel>input</channel>
+	 <index>0</index>
+     <default></default>
+   </file>
+   
+   <file fileExtensions=".xml">
+     <name>TrainingOutputFile</name>
+     <description>xml file containing the trained atlases</description>
+     <label>Training results (xml)</label>
+     <channel>output</channel>
+	 <index>1</index>
+     <default></default>
+   </file>
+
+ </parameters>
+
+
+
+</executable>

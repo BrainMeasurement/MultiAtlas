@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE MABMISImageData>
+<MABMISImageData>
+<DataPath></DataPath>
+<NumberOfImageData>4</NumberOfImageData>
+<ImageDataSets>
+<Dataset ImageFile="AA_cbq_000.hdr" SegmentationFile="AA_seg_000.hdr"/>
+<Dataset ImageFile="AB_cbq_000.hdr" SegmentationFile="AB_seg_000.hdr"/>
+<Dataset ImageFile="AC_cbq_000.hdr" SegmentationFile="AC_seg_000.hdr"/>
+<Dataset ImageFile="AD_cbq_000.hdr" SegmentationFile="AD_seg_000.hdr"/>
+</ImageDataSets>
+
+</MABMISImageData>
