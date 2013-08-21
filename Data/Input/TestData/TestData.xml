@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE MABMISImageData>
+<MABMISImageData>
+<DataPath></DataPath>
+<NumberOfImageData>4</NumberOfImageData>
+<ImageDataSets>
+<Dataset ImageFile="UA_cbq_000.hdr"/>
+<Dataset ImageFile="UB_cbq_000.hdr"/>
+<Dataset ImageFile="VA_cbq_000.hdr"/>
+<Dataset ImageFile="VB_cbq_000.hdr"/>
+</ImageDataSets>
+
+</MABMISImageData>
