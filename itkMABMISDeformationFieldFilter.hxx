@@ -1,5 +1,5 @@
-#ifndef __itkMABMISDeformationFieldFilter_txx
-#define __itkMABMISDeformationFieldFilter_txx
+#ifndef __itkMABMISDeformationFieldFilter_hxx
+#define __itkMABMISDeformationFieldFilter_hxx
 
 #include "itkMABMISDeformationFieldFilter.h"
 

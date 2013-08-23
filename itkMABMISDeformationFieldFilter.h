@@ -139,6 +139,6 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#include "itkMABMISDeformationFieldFilter.txx"
+#include "itkMABMISDeformationFieldFilter.hxx"
 
 #endif

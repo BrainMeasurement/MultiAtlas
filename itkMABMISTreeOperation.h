@@ -122,5 +122,5 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#include "itkMABMISTreeOperation.txx"
+#include "itkMABMISTreeOperation.hxx"
 #endif

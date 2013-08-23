@@ -1,5 +1,5 @@
-#ifndef __itkMABMISImageRegistrationFilter_txx
-#define __itkMABMISImageRegistrationFilter_txx
+#ifndef __itkMABMISImageRegistrationFilter_hxx
+#define __itkMABMISImageRegistrationFilter_hxx
 
 #include "itkMABMISImageRegistrationFilter.h"
 

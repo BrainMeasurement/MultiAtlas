@@ -104,6 +104,6 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#include "itkMABMISSimulateData.txx"
+#include "itkMABMISSimulateData.hxx"
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __itkMABMISBasicOperationFilter_txx
-#define __itkMABMISBasicOperationFilter_txx
+#ifndef __itkMABMISBasicOperationFilter_hxx
+#define __itkMABMISBasicOperationFilter_hxx
 
 #include "itkMABMISBasicOperationFilter.h"
 

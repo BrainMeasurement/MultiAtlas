@@ -116,6 +116,6 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#include "itkMABMISImageRegistrationFilter.txx"
+#include "itkMABMISImageRegistrationFilter.hxx"
 
 #endif

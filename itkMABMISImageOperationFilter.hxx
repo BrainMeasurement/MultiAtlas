@@ -1,5 +1,5 @@
-#ifndef __itkMABMISImageOperationFilter_txx
-#define __itkMABMISImageOperationFilter_txx
+#ifndef __itkMABMISImageOperationFilter_hxx
+#define __itkMABMISImageOperationFilter_hxx
 
 #include "itkMABMISImageOperationFilter.h"
 

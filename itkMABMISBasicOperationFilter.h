@@ -53,5 +53,5 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#include "itkMABMISBasicOperationFilter.txx"
+#include "itkMABMISBasicOperationFilter.hxx"
 #endif

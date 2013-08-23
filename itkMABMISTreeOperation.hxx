@@ -1,5 +1,5 @@
-#ifndef __itkMABMISTreeOperation_txx
-#define __itkMABMISTreeOperation_txx
+#ifndef __itkMABMISTreeOperation_hxx
+#define __itkMABMISTreeOperation_hxx
 
 #include "itkMABMISTreeOperation.h"
 

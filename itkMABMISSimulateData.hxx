@@ -1,5 +1,5 @@
-#ifndef __itkMABMISSimulateData_txx
-#define __itkMABMISSimulateData_txx
+#ifndef __itkMABMISSimulateData_hxx
+#define __itkMABMISSimulateData_hxx
 
 #include "itkMABMISSimulateData.h"
 
