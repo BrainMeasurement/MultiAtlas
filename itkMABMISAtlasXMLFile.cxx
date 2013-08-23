@@ -5,9 +5,16 @@
 #include "itkMABMISAtlasXMLFile.h"
 
 #define RAISE_EXCEPTION(s)                                     \
-                  { ExceptionObject exception(__FILE__, __LINE__); \
-                  exception.SetDescription(s);                     \
-                  throw exception; }
+    { \
+    ExceptionObject \
+    exception( \
+      __FILE__, \
+      __LINE__); \
+    exception. \
+    SetDescription( \
+      s);                     \
+    throw exception; \
+    }
 
 namespace itk
 {

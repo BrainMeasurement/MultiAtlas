@@ -307,7 +307,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
       // intermediateFileNamesFile << intermediateTemplateFileName << std::endl;
       } // end for numOfAllCombinations
-       // intermediateFileNamesFile.close();
+        // intermediateFileNamesFile.close();
     delete[] coeff;
 
     // do selection

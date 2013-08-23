@@ -137,7 +137,7 @@ typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType,
                                    DeformationFieldType>                                      WarpVectorFilterType;
 typedef itk::InverseDeformationFieldImageFilter<DeformationFieldType,
                                                 DeformationFieldType>
-                                                                                              InverseDeformationFieldImageFilterType;
+  InverseDeformationFieldImageFilterType;
 typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType> AddImageFilterType;
 
 // global bool variables to adjust the  procedure

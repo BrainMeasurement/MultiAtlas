@@ -150,7 +150,7 @@ typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType,
                                    DeformationFieldType>                                      WarpVectorFilterType;
 typedef itk::InverseDeformationFieldImageFilter<DeformationFieldType,
                                                 DeformationFieldType>
-                                                                                              InverseDeformationFieldImageFilterType;
+  InverseDeformationFieldImageFilterType;
 typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType> AddImageFilterType;
 
 // global bool variables to adjust the  procedure
@@ -359,6 +359,25 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
                                              totalNumAtlases,              // #atlases, including original ones and
                                                                            // simulated ones
                                              totalNumFiles,                // total #image files, =
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
+                                                                           //
                                                                            // imageData->m_NumberImageData+totalNumAtlases
                                              images_cur,                   // file indices for images to be segmented
                                              atlas_cur,                    // file indices for atlas images
@@ -693,7 +712,26 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
   // introduce the iterators of each image
   // InternalImageIteratorType sampleImgIt(curSampleImgPtr,
   // curSampleImgPtr->GetLargestPossibleRegion());//GetRequestedRegion());
-  InternalImageIteratorType sampleSegIt(outSampleSegPtr, outSampleSegPtr->GetLargestPossibleRegion() ); // GetRequestedRegion());
+  InternalImageIteratorType sampleSegIt(outSampleSegPtr, outSampleSegPtr->GetLargestPossibleRegion() ); //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        //
+                                                                                                        // GetRequestedRegion());
 
   InternalImageType::SizeType sampleImSize = outSampleSegPtr->GetBufferedRegion().GetSize();
 
@@ -718,7 +756,26 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
     // warpedImgPtrs[i]->GetLargestPossibleRegion());//GetRequestedRegion() );
     // warpedImgIts[i] = it1;
 
-    InternalImageIteratorType it2( warpedSegPtrs[i], warpedSegPtrs[i]->GetLargestPossibleRegion() ); // GetRequestedRegion()
+    InternalImageIteratorType it2( warpedSegPtrs[i], warpedSegPtrs[i]->GetLargestPossibleRegion() ); //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     //
+                                                                                                     // GetRequestedRegion()
                                                                                                      // );
     warpedSegIts[i] = it2;
 
@@ -1083,7 +1140,45 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
     if( curnode < atlas_image_size )
       {
       testImageFile = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]);    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
                                                                                                                     // atlas
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
+                                                                                                                    //
                                                                                                                     // image
       }
     else
@@ -1349,7 +1444,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     std::cout << "Done!" << std::endl;
     } // end of reverse each deformation field (from the root)
-     // std::cout << "done." << std::endl;
+      // std::cout << "done." << std::endl;
 }
 
 void PairwiseRegistrationOnTreeViaRoot(int root,
