@@ -6,7 +6,7 @@
 
 #include "itkXMLFile.h"
 #include <string>
-#include <vector>;
+#include <vector>
 
 namespace itk
 {
@@ -15,63 +15,63 @@ class MABMISImageData
 {
 public:
 	std::string m_DataDirectory;
-	std::string m_OutputDirectory; 
+	std::string m_OutputDirectory;
 	int m_NumberImageData;
 	std::vector<std::string> m_ImageFileNames;
-	std::vector<std::string> m_SegmentationFileNames; 
+	std::vector<std::string> m_SegmentationFileNames;
 
 	MABMISImageData(){
 		m_DataDirectory = "";
-		m_OutputDirectory = ""; 
+		m_OutputDirectory = "";
 		m_NumberImageData = 0;
 		m_ImageFileNames.resize(0);
-		m_SegmentationFileNames.resize(0); 
+		m_SegmentationFileNames.resize(0);
 
 
-		
+
 	};
 	~MABMISImageData(){};
-}; 
+};
 
 class MABMISAtlas
 {
-public: 
-	std::string m_AtlasDirectory; 
+public:
+	std::string m_AtlasDirectory;
 
 	int m_NumberAllAtlases;
-	int m_NumberSimulatedAtlases; 
-	std::vector<std::string> m_AtlasFilenames; 
-	std::vector<std::string> m_AtlasSegmentationFilenames; 
-	
-	std::vector<bool> m_IsSimulatedImage; 
+	int m_NumberSimulatedAtlases;
+	std::vector<std::string> m_AtlasFilenames;
+	std::vector<std::string> m_AtlasSegmentationFilenames;
+
+	std::vector<bool> m_IsSimulatedImage;
 
 	std::vector<int> m_RealImageIDs;
-	std::vector<int> m_SimulatedImageIDs; 
-	
+	std::vector<int> m_SimulatedImageIDs;
+
 	std::vector<int> m_Tree;
 	int m_TreeSize;
 	int m_TreeRoot;
-	int m_TreeHeight; 
-	
-	
-	
+	int m_TreeHeight;
+
+
+
 	MABMISAtlas(){
 		m_NumberAllAtlases = 0;
-		m_NumberSimulatedAtlases = 0; 
+		m_NumberSimulatedAtlases = 0;
 		m_AtlasFilenames.resize(0);
-		
+
 		m_Tree.resize(0);
-		m_TreeSize = 0; 
+		m_TreeSize = 0;
 		m_TreeRoot = -1;
-		m_TreeHeight =0; 
-		
+		m_TreeHeight =0;
 
 
-		
+
+
 	};
-	~MABMISAtlas(){}; 
-	
-}; 
+	~MABMISAtlas(){};
+
+};
 
 class ITK_EXPORT MABMISImageDataXMLFileReader:
   public XMLReader<MABMISImageData>
@@ -94,18 +94,18 @@ public:
 
 
 protected:
-	MABMISImageDataXMLFileReader() 
+	MABMISImageDataXMLFileReader()
 	{
-		m_OutputObject = new itk::MABMISImageData; 
-		m_ImageCount = 0; 
-		m_ImageData = 0; 
-	}; 
-	virtual ~MABMISImageDataXMLFileReader() {}; 
+		m_OutputObject = new itk::MABMISImageData;
+		m_ImageCount = 0;
+		m_ImageData = 0;
+	};
+	virtual ~MABMISImageDataXMLFileReader() {};
 
 	virtual void StartElement(const char *name, const char **atts);
 
 	virtual void EndElement(const char *name);
-	
+
 	virtual void CharacterDataHandler(const char *inData, int inLength);
 
 private:
@@ -117,11 +117,11 @@ private:
 	MABMISImageData*  m_ImageData;
 	std::string                       m_CurCharacterData;
 
-	int m_ImageCount; 
+	int m_ImageCount;
 
 
 
-}; 
+};
 
 
 class ITK_EXPORT MABMISAtlasXMLFileReader:
@@ -148,11 +148,11 @@ public:
 protected:
   MABMISAtlasXMLFileReader()
   {
-	  m_OutputObject = new itk::MABMISAtlas; 
-	  m_Atlas = 0; 
-  }; 
+	  m_OutputObject = new itk::MABMISAtlas;
+	  m_Atlas = 0;
+  };
   virtual ~MABMISAtlasXMLFileReader() {};
-  
+
 
   virtual void StartElement(const char *name, const char **atts);
 
@@ -160,7 +160,7 @@ protected:
 
   virtual void CharacterDataHandler(const char *inData, int inLength);
 
-  
+
 
 private:
   MABMISAtlasXMLFileReader(const Self &);				//purposely not
@@ -183,13 +183,13 @@ public:
   typedef XMLWriterBase< MABMISAtlas > 	Superclass;
   typedef MABMISAtlasXMLFileWriter   	Self;
   typedef SmartPointer< Self >       	Pointer;
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(MABMISAtlasXMLFileWriter,	XMLWriterBase< MABMISAtlas > );
-  
+
   /** Test whether a file is writable. */
   virtual int CanWriteFile(const char *name);
 
@@ -206,8 +206,8 @@ private:
                                           // implemented
 
 };
-  
-  
+
+
 
 }
 
