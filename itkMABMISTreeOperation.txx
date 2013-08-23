@@ -215,13 +215,14 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   /////////////////////////////////////////////
   // rebuild the distance matrix based on connectivity on MST
   vnl_matrix<double> curDistanceTemp(nnode, nnode);
+  const double       big_number = sqrt(DBL_MAX);
   for( int i = 0; i < nnode; i++ )
     {
     for( int j = 0; j < nnode; j++ )
       {
       if( i != j )
         {
-        curDistanceTemp.put(i, j, DBL_MAX);
+        curDistanceTemp.put(i, j, big_number);
         }
       else
         {
@@ -373,7 +374,8 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   /////////////////////////////////////////////
   // rebuild the distance matrix based on connectivity on MST
 
-  double* * curDistanceTemp = new double *[nnode];
+  double* *    curDistanceTemp = new double *[nnode];
+  const double big_number = sqrt(DBL_MAX);
   for( int i = 0; i < nnode; i++ )
     {
     curDistanceTemp[i] = new double[nnode];
@@ -381,7 +383,7 @@ MABMISTreeOperation<TInputImage, TOutputImage>
       {
       if( i != j )
         {
-        curDistanceTemp[i][j] = DBL_MAX;
+        curDistanceTemp[i][j] = big_number;
         }
       else
         {
