@@ -6,7 +6,7 @@
 
 #include "itkXMLFile.h"
 #include <string>
-#include <vector>;
+#include <vector>
 
 namespace itk
 {
