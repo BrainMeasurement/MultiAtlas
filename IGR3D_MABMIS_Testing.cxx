@@ -87,6 +87,18 @@
 #define  FILESEP '/'
 #endif
 
+#include <algorithm>
+static std::string ReplacePathSepForUnix( const std::string & input )
+{
+// HACK:  Only converts to unix, need to test if windows and convert other way
+  std::string output = input;
+  std::replace(output.begin(), output.end(), '\\', FILESEP);
+  std::replace(output.begin(), output.end(), '/', FILESEP);
+
+  // std::cout << "XXXXXXXXXXXXXXXXXXX " << input << " ---> " << output << std::cout;
+  return output;
+}
+
 using namespace std;
 
 typedef double CoordinateRepType;
@@ -300,7 +312,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
     {
     if( i < totalNumAtlases )
       {
-      allfilenames[i] = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i];
+      allfilenames[i] = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
       }
     else
       {
@@ -590,17 +602,17 @@ int main( int argc, char *argv[] )
   size_t sep = AtlaseTreeXML.find_last_of(FILESEP);
   if( sep != std::string::npos )
     {
-    atlasTree->m_AtlasDirectory = AtlaseTreeXML.substr(0, sep + 1) + atlasTree->m_AtlasDirectory;
+    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(AtlaseTreeXML.substr(0, sep + 1) + atlasTree->m_AtlasDirectory);
     }
 
   if( atlasTree->m_AtlasDirectory.size() == 0 )
     {
-    atlasTree->m_AtlasDirectory = ".";
+    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(".");
     }
 
   if( !(atlasTree->m_AtlasDirectory[atlasTree->m_AtlasDirectory.size() - 1] == FILESEP) )
     {
-    atlasTree->m_AtlasDirectory = atlasTree->m_AtlasDirectory + FILESEP;
+    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + FILESEP );
     }
 
   // Will look into getting rid of these global variables later ---Xiaofeng
@@ -983,7 +995,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
   int atlas_simulated_size = atlasTree->m_NumberSimulatedAtlases;
   int atlas_total_size = atlasTree->m_NumberAllAtlases;
 
-  std::string atlasFullName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0];
+  std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
   size_t      sep = atlasFullName.find_last_of(FILESEP);
   // start to register each image to the root node step by step
   for( int ii = 1; ii < itree_size; ii++ ) // starting from 1, since index[0] showing the root
@@ -1066,11 +1078,13 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       continue; // goto next one
       }
 
-    std::string rootImageFile = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root];
+    std::string rootImageFile = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root]);
     std::string testImageFile;
     if( curnode < atlas_image_size )
       {
-      testImageFile = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode];   // atlas image
+      testImageFile = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]);    //
+                                                                                                                    // atlas
+                                                                                                                    // image
       }
     else
       {
@@ -1220,7 +1234,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
   rootImageTag = root_str;
   std::string fixedImageTag;
 
-  std::string atlasFullName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0];
+  std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0] );
   size_t      sep = atlasFullName.find_last_of(FILESEP);
   for( int i = 0; i < atlas_image_size + test_image_size; i++ )
     {
@@ -1237,8 +1251,10 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     // string originalImgImageFileName = sub_ids[root] + "_cbq_000.hdr";
     // string originalSegImageFileName = sub_ids[root] + "_seg_000.hdr";
-    std::string rootImageFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root];
-    std::string rootSegmentFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasSegmentationFilenames[root];
+    std::string rootImageFileName = ReplacePathSepForUnix(
+        atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root] );
+    std::string rootSegmentFileName = ReplacePathSepForUnix(
+        atlasTree->m_AtlasDirectory + atlasTree->m_AtlasSegmentationFilenames[root] );
 
     std::string fixedImageFileName;
     std::string deformedImageFileName;
@@ -1251,7 +1267,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     if( i < atlas_image_size )
       {
-      fixedImageFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i];
+      fixedImageFileName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
       sprintf(i_str, "%03d", i);
       fixedImageTag = i_str;
 
@@ -1351,7 +1367,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
   int atlas_total_size = atlasTree->m_NumberAllAtlases;
   int test_image_size = imageData->m_NumberImageData;
 
-  std::string atlasFullName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0];
+  std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
   size_t      sep = atlasFullName.find_last_of(FILESEP);
 
   // do for all real images, including both atlases and test images
@@ -1378,7 +1394,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
     std::string movingImageTag;
     if( all_index < atlas_image_size )
       {
-      movingImageFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[all_index];
+      movingImageFileName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[all_index]);
       movingSegmentFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasSegmentationFilenames[all_index];
       movingImageTag = std::string(a_str);
       }
