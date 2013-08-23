@@ -7,7 +7,7 @@
      Multi-Atlas Based Group Segmentation -- Training
   </title>
   <description>
-	Refer to: "Iterative multi-atlas-based multi-image segmentation with tree-based registration", NeuroImage, 59(1):422–430, 2012. 
+	Refer to: "Iterative multi-atlas-based multi-image segmentation with tree-based registration", NeuroImage, 59(1):422–430, 2012.
   </description>
   <version></version>
   <documentation-url></documentation-url>
@@ -20,7 +20,7 @@
   <parameters>
 	<label> Registration Parameters </label>
 	<description>Parameters used for registration</description>
-	
+
 	<integer-vector>
       <name>iterations</name>
       <flag>i</flag>
@@ -29,7 +29,7 @@
       <label>Iterations</label>
       <default>15,10,5</default>
 	</integer-vector>
-	
+
 	<double>
 	  <name>SmoothingKernelSize</name>
       <flag>s</flag>
@@ -49,16 +49,16 @@
      <description>xml file listing filenames for training datasets </description>
      <label>Input atlases (xml)</label>
      <channel>input</channel>
-	 <index>0</index>
+	 <longflag>trainingXML</longflag>
      <default></default>
    </file>
-   
+
    <file fileExtensions=".xml">
      <name>TrainingOutputFile</name>
      <description>xml file containing the trained atlases</description>
      <label>Training results (xml)</label>
      <channel>output</channel>
-	 <index>1</index>
+	 <longflag>atlasTreeXML</longflag>
      <default></default>
    </file>
 

@@ -20,7 +20,7 @@
   <parameters>
 	<label> Registration Parameters </label>
 	<description>Parameters used for registration</description>
-	
+
 	<integer-vector>
       <name>iterations</name>
       <flag>i</flag>
@@ -29,7 +29,7 @@
       <label>Iterations</label>
       <default>15,10,5</default>
 	</integer-vector>
-	
+
 	<double>
 	  <name>SmoothingKernelSize</name>
       <flag>s</flag>
@@ -39,7 +39,7 @@
       <default>1.5</default>
     </double>
   </parameters>
-  
+
 
   <parameters>
     <label>Parameters for group segmentation</label>
@@ -50,7 +50,7 @@
      <description>xml file of the multi-atlases after training </description>
      <label>Tree-structured Atlases</label>
      <channel>input</channel>
-	 <index>0</index>
+     <longflag>atlasTreeXML</longflag>
      <default></default>
    </file>
 
@@ -59,17 +59,17 @@
       <description>xml file that contains a list of images to be segmented </description>
       <label>Image List</label>
 	  <channel>input</channel>
-	  <index>1</index>
+	  <longflag>imageListXML</longflag>
       <default></default>
     </file>
   </parameters>
-  
+
   <parameters>
 	<label> Output </label>
 	<description>Parameters for output</description>
 
 	<directory>
-      <name>OutputFolder</name>      
+      <name>OutputFolder</name>
       <flag>o</flag>
       <longflag>outputfolder</longflag>
       <description>Output path to save the segmenetation results</description>
@@ -77,7 +77,7 @@
 	  <default></default>
     </directory>
 </parameters>
-  
+
 
 
 
