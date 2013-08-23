@@ -34,11 +34,11 @@ MABMISImageDataXMLFileReader::StartElement( const char *name, const char **atts 
 {
 	if ( itksys::SystemTools::Strucmp(name, "MABMISImageData") == 0 )
 	{
-		m_ImageData = new itk::MABMISImageData; 		
+		m_ImageData = new itk::MABMISImageData;
     }
 	else if ( itksys::SystemTools::Strucmp(name, "DataPath") == 0 )
     {
-		
+
 	}
 	else if ( itksys::SystemTools::Strucmp(name, "NumberOfImageData") == 0 )
 	{
@@ -46,44 +46,44 @@ MABMISImageDataXMLFileReader::StartElement( const char *name, const char **atts 
 	}
 	else if ( itksys::SystemTools::Strucmp(name, "Dataset") == 0 )
 	{
-		int i=0; 
+		int i=0;
 		std::string imageName("");
-		std::string segImageName(""); 
+		std::string segImageName("");
 		while (atts[i])
 		{
 			std::string key(atts[i++]);
 			std::string value (atts[i++]);
 			if (itksys::SystemTools::Strucmp(key.c_str(), "ImageFile") == 0)
-				imageName = value; 
+				imageName = value;
 			else if (itksys::SystemTools::Strucmp(key.c_str(), "SegmentationFile") == 0)
-				segImageName = value; 
+				segImageName = value;
 		}
 		if (this->m_ImageCount < m_ImageData->m_NumberImageData)
 		{
-			m_ImageData->m_ImageFileNames[this->m_ImageCount] = imageName; 
+			m_ImageData->m_ImageFileNames[this->m_ImageCount] = imageName;
 			m_ImageData->m_SegmentationFileNames[this->m_ImageCount] = segImageName;
-			
-			this->m_ImageCount++; 
+
+			this->m_ImageCount++;
 		}
 
-		
+
 	}
-	
-	return; 
+
+	return;
 }
 
 
 void
 MABMISImageDataXMLFileReader::EndElement(const char *name)
-{ 
+{
 	if ( itksys::SystemTools::Strucmp(name, "MABMISImageData") == 0 )
     {
-		delete m_OutputObject; 
+		delete m_OutputObject;
 		m_OutputObject = &(*(this->m_ImageData ));
 
     } else {
 		if (m_ImageData ==0)
-			RAISE_EXCEPTION("The xml format is not right. Please check it!"); 
+			RAISE_EXCEPTION("The xml format is not right. Please check it!");
 	}
 	if ( itksys::SystemTools::Strucmp(name, "DataPath") == 0 )
 	{
@@ -92,13 +92,23 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
 	if ( itksys::SystemTools::Strucmp(name, "NumberOfImageData") == 0 )
     {
 		int numData = atoi(this->m_CurCharacterData.c_str());
-		this->m_ImageData->m_NumberImageData = numData; 
+		this->m_ImageData->m_NumberImageData = numData;
 		this->m_ImageData->m_ImageFileNames.resize(numData);
-		this->m_ImageData->m_SegmentationFileNames.resize(numData); 
-		this->m_ImageCount = 0; 
+		this->m_ImageData->m_SegmentationFileNames.resize(numData);
+		this->m_ImageCount = 0;
     }
 }
 
+static std::string StripLastNewline(const std::string input)
+{
+  std::string output=input;
+  size_t last_element = input.size() -1;
+  if( input[last_element] == '\n' )
+  {
+     output = input.substr(0,last_element);
+  }
+  return output;
+}
 
 void
 MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
@@ -108,6 +118,7 @@ MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLen
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
+  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
 }
 
 
@@ -116,7 +127,7 @@ MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLen
 // class MABMISAtlasXMLFileReader  ----------------------------
 ///------------------------------------------------------------
 
-	
+
 int
 MABMISAtlasXMLFileReader::CanReadFile(const char *name)
 {
@@ -129,22 +140,22 @@ MABMISAtlasXMLFileReader::CanReadFile(const char *name)
   return 1;
 }
 
-void 
+void
 MABMISAtlasXMLFileReader::GenerateOutputInformation()
 {
 	this->parse();
 
 	// validate the results are right.
 	int numRealImages = this->m_OutputObject->m_NumberAllAtlases - this->m_OutputObject->m_NumberSimulatedAtlases;
-	int numSimImages = this->m_OutputObject->m_NumberSimulatedAtlases; 
+	int numSimImages = this->m_OutputObject->m_NumberSimulatedAtlases;
 	this->m_OutputObject->m_SimulatedImageIDs.resize(numSimImages);
 	this->m_OutputObject->m_RealImageIDs.resize(numRealImages);
-	
+
 	int countRealImages=0, countSimImages=0;
 	for (int n=0; n<this->m_OutputObject->m_IsSimulatedImage.size(); n++)
 	{
 		if (this->m_OutputObject->m_IsSimulatedImage[n])
-		{	
+		{
 			if (countSimImages>=numSimImages) // means info in xml file is inconsistent
 				continue;					  // need do something: later
 			this->m_OutputObject->m_SimulatedImageIDs[countSimImages] = n;
@@ -164,7 +175,7 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char **atts )
 {
 	if ( itksys::SystemTools::Strucmp(name, "MABMISATLAS") == 0 )
 	{
-		m_Atlas = new itk::MABMISAtlas; 		
+		m_Atlas = new itk::MABMISAtlas;
     }
 	else if ( itksys::SystemTools::Strucmp(name, "ATLASFILELIST") == 0 )
     {
@@ -174,37 +185,37 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char **atts )
 	}
 	else if ( itksys::SystemTools::Strucmp(name, "ATLAS") == 0 )
 	{
-		int i=0; 
-		int id; 
-		std::string fname=""; 
-		std::string segFName=""; 
-		bool isSimulated=false; 
+		int i=0;
+		int id;
+		std::string fname="";
+		std::string segFName="";
+		bool isSimulated=false;
 
 		while (atts[i])
 		{
 			std::string key(atts[i++]);
 			std::string value (atts[i++]);
-			
+
 			if (itksys::SystemTools::Strucmp(key.c_str(), "ID") == 0)
-				id = atoi(value.c_str()); 
+				id = atoi(value.c_str());
 			else if (itksys::SystemTools::Strucmp(key.c_str(), "FILENAME") == 0)
-				fname = value; 
+				fname = value;
 			else if (itksys::SystemTools::Strucmp(key.c_str(), "SEGMENTATIONFILENAME") == 0)
-				segFName = value; 
+				segFName = value;
 			else if (itksys::SystemTools::Strucmp(key.c_str(), "SIMULATED") == 0)
 			{
-				if (itksys::SystemTools::Strucmp(value.c_str(), "TRUE") || 
+				if (itksys::SystemTools::Strucmp(value.c_str(), "TRUE") ||
 					itksys::SystemTools::Strucmp(value.c_str(), "1") ||
 					itksys::SystemTools::Strucmp(value.c_str(), "T") )
 					isSimulated = true;
 				else
-					isSimulated = false; 
+					isSimulated = false;
 			}
 		}
 		m_Atlas->m_AtlasFilenames[id] = fname;
-		m_Atlas->m_AtlasSegmentationFilenames[id] = segFName; 
-		m_Atlas->m_IsSimulatedImage[id] = isSimulated; 
-		
+		m_Atlas->m_AtlasSegmentationFilenames[id] = segFName;
+		m_Atlas->m_IsSimulatedImage[id] = isSimulated;
+
 	}
 	else if ( itksys::SystemTools::Strucmp(name, "ATLASFILELIST") == 0 )
     {
@@ -218,17 +229,17 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char **atts )
 	}
 	else if ( itksys::SystemTools::Strucmp(name, "Node") == 0 )
     {
-		int i=0; 
-		int id, parentID; 
-		; 
+		int i=0;
+		int id, parentID;
+		;
 		while (atts[i])
 		{
 			std::string key(atts[i++]);
 			std::string value (atts[i++]);
 			if (itksys::SystemTools::Strucmp(key.c_str(), "ID") == 0)
-				id = atoi(value.c_str()); 
+				id = atoi(value.c_str());
 			else if (itksys::SystemTools::Strucmp(key.c_str(), "ParentID") == 0)
-				parentID = atoi(value.c_str()); 
+				parentID = atoi(value.c_str());
 		}
 		m_Atlas->m_Tree[id] = parentID;
 	}
@@ -237,44 +248,44 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char **atts )
 void
 MABMISAtlasXMLFileReader::EndElement(const char *name)
 {
-  
+
 	if ( itksys::SystemTools::Strucmp(name, "MABMISAtlas") == 0 )
     {
-		delete m_OutputObject; 
+		delete m_OutputObject;
 		m_OutputObject = &(*(this->m_Atlas ));
 
 	} else {
 		if (m_Atlas ==0)
-			RAISE_EXCEPTION("The xml format is not right"); 
+			RAISE_EXCEPTION("The xml format is not right");
 	}
 	if ( itksys::SystemTools::Strucmp(name, "AtlasDirectory") == 0 )
 	{
-		this->m_Atlas->m_AtlasDirectory = this->m_CurCharacterData; 
+		this->m_Atlas->m_AtlasDirectory = this->m_CurCharacterData;
 	}
 	if ( itksys::SystemTools::Strucmp(name, "NumberOfAtlases") == 0 )
     {
 		int numAtlas = atoi(this->m_CurCharacterData.c_str());
-		this->m_Atlas->m_NumberAllAtlases = numAtlas; 
+		this->m_Atlas->m_NumberAllAtlases = numAtlas;
     }
 	if ( itksys::SystemTools::Strucmp(name, "NumberOfSimulatedAtlases") == 0 )
     {
 		int numSimAtlas = atoi(this->m_CurCharacterData.c_str());
-		this->m_Atlas->m_NumberSimulatedAtlases = numSimAtlas; 
+		this->m_Atlas->m_NumberSimulatedAtlases = numSimAtlas;
     }
 	if ( itksys::SystemTools::Strucmp(name, "TreeSize") == 0 )
     {
 		int treeSize = atoi(this->m_CurCharacterData.c_str());
-		this->m_Atlas->m_TreeSize = treeSize; 
+		this->m_Atlas->m_TreeSize = treeSize;
     }
 	//if ( itksys::SystemTools::Strucmp(name, "TreeHeight") == 0 )
     //{
 	//	int treeHeight = atoi(this->m_CurCharacterData.c_str());
-	//	this->m_Atlas->m_TreeHeight = treeHeight; 
+	//	this->m_Atlas->m_TreeHeight = treeHeight;
     //}
 	//if ( itksys::SystemTools::Strucmp(name, "TreeRootID") == 0 )
     //{
 	//	int root = atoi(this->m_CurCharacterData.c_str());
-	//	this->m_Atlas->m_TreeRoot = root; 
+	//	this->m_Atlas->m_TreeRoot = root;
     //}
 
 }
@@ -287,6 +298,7 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
+  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
 }
 
 
@@ -329,7 +341,7 @@ MABMISAtlasXMLFileWriter::WriteFile()
 	output << std::endl;
 	WriteStartElement("!DOCTYPE MABMISAtlas", output);
 	output << std::endl;
-  
+
 	// Write out metadata
 
 	WriteStartElement("MABMISAtlas", output);
@@ -337,86 +349,86 @@ MABMISAtlasXMLFileWriter::WriteFile()
 
 	// Path to atlas files
 	// leave as blank for now
-	WriteStartElement("AtlasDirectory", output); 
-	output << this->m_InputObject->m_AtlasDirectory; 
-	WriteEndElement("AtlasDirectory", output); 
+	WriteStartElement("AtlasDirectory", output);
+	output << this->m_InputObject->m_AtlasDirectory;
+	WriteEndElement("AtlasDirectory", output);
 	output << std::endl;
 
 	// number of atlas
-	WriteStartElement("NumberOfAtlases", output); 
+	WriteStartElement("NumberOfAtlases", output);
 	output<< this->m_InputObject->m_NumberAllAtlases;
-	WriteEndElement("NumberOfAtlases", output); 
+	WriteEndElement("NumberOfAtlases", output);
 	output << std::endl;
 	// number of atlas
-	WriteStartElement("NumberOfSimulatedAtlases", output); 
+	WriteStartElement("NumberOfSimulatedAtlases", output);
 	output<< this->m_InputObject->m_NumberSimulatedAtlases;
-	WriteEndElement("NumberOfSimulatedAtlases", output); 
+	WriteEndElement("NumberOfSimulatedAtlases", output);
 	output << std::endl;
 
 
 	// atlas file list
-	WriteStartElement("AtlasFileList", output); 
+	WriteStartElement("AtlasFileList", output);
 	output<< std::endl;
 	for (int n=0; n<this->m_InputObject->m_AtlasFilenames.size(); n++)
 	{
-		output << "<Atlas "; 
+		output << "<Atlas ";
 		output << "ID=\"" << n << "\"";
 		output << " FileName=\"" <<this->m_InputObject->m_AtlasFilenames[n] << "\"";
 		if (!this->m_InputObject->m_IsSimulatedImage[n])
 		{
 			output << " SegmentationFileName=\"";
-			output <<this->m_InputObject->m_AtlasSegmentationFilenames[n] << "\""; 
+			output <<this->m_InputObject->m_AtlasSegmentationFilenames[n] << "\"";
 			output << " Simulated=\"false\"";
 		} else {
 			output << " Simulated=\"true\"";
 		}
-		
+
 		output << "/>" << std::endl;
 	}
 
-	WriteEndElement("AtlasFileList", output); 
+	WriteEndElement("AtlasFileList", output);
 	output<< std::endl;
 
 	// tree
 	WriteStartElement("AtlasTree", output);
 	output<< std::endl;
 	// tree size
-	WriteStartElement("TreeSize", output); 
-	output << this->m_InputObject->m_Tree.size(); 
-	WriteEndElement("TreeSize", output); 	
+	WriteStartElement("TreeSize", output);
+	output << this->m_InputObject->m_Tree.size();
+	WriteEndElement("TreeSize", output);
 	output<< std::endl;
 	// tree height
-	//WriteStartElement("TreeHeight", output); 
-	//output << this->m_InputObject->m_TreeHeight; 
-	//WriteEndElement("TreeHeight", output); 
+	//WriteStartElement("TreeHeight", output);
+	//output << this->m_InputObject->m_TreeHeight;
+	//WriteEndElement("TreeHeight", output);
 	//output<< std::endl;
 
 	// tree root ID
-	//WriteStartElement("TreeRootID", output); 
-	//output << this->m_InputObject->m_TreeRoot; 
-	//WriteEndElement("TreeRootID", output); 
+	//WriteStartElement("TreeRootID", output);
+	//output << this->m_InputObject->m_TreeRoot;
+	//WriteEndElement("TreeRootID", output);
 	//output<< std::endl;
 	// write the tree
-	WriteStartElement("Tree", output); 
+	WriteStartElement("Tree", output);
 	output<< std::endl;
 	for (int i=0; i<this->m_InputObject->m_Tree.size(); i++)
 	{
-		output << "<Node "; 
+		output << "<Node ";
 		output << "ID=\"" << i << "\"";
 		output << " ParentID=\"" <<this->m_InputObject->m_Tree[i] << "\"";
 		output << "/>" << std::endl;
 	}
-	WriteEndElement("Tree", output); 
+	WriteEndElement("Tree", output);
 	output<< std::endl;
 
-	WriteEndElement("AtlasTree", output); 
+	WriteEndElement("AtlasTree", output);
 	output<< std::endl;
 
 	WriteEndElement("MABMISAtlas", output);
 	output << std::endl;
 	output.close();
-  
-	return 0; 
+
+	return 0;
 }
 
 }

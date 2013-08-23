@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE MABMISImageData>
 <MABMISImageData>
+<!-- DataPath is empty for using path relative to the location of this xml file -->
 <DataPath></DataPath>
 <NumberOfImageData>4</NumberOfImageData>
 <ImageDataSets>
