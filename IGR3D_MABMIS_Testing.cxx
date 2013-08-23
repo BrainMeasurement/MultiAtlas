@@ -1596,7 +1596,7 @@ int MultiAtlasBasedSegmentation(int root,
         else
           {
           sprintf(i_str, "%03d", i - atlas_image_size);
-          movingImageTag = std::string("testimage") + i_str;
+          movingImageTag = std::string("testImage") + i_str;
           }
 
         // assign names
