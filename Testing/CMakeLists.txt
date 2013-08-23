@@ -42,6 +42,6 @@ ExternalData_add_test(${Testing_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNC
             ${TEMP}/UA_cbq_000_seg.img
   ModuleEntryPoint
    -i 5,3,2 -s 1.5 -o ${TEMP}
-   ${INPUT}/TrainingData/TrainingData.xml ${TEMP}/TrainedAtlas.xml
+   ${INPUT}/AtlasTree/TrainedAtlas.xml ${INPUT}/TestData/TestData.xml
   )
 set_property(TEST ${testname} PROPERTY LABELS ${Testing_CLP})

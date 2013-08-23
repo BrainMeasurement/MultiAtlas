@@ -100,6 +100,18 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
     }
 }
 
+static std::string StripLastNewline(const std::string input)
+{
+  std::string output = input;
+  size_t      last_element = input.size() - 1;
+
+  if( input[last_element] == '\n' )
+    {
+    output = input.substr(0, last_element);
+    }
+  return output;
+}
+
 void
 MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 {
@@ -108,6 +120,7 @@ MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLen
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
+  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
 }
 
 ///------------------------------------------------------------
@@ -307,6 +320,7 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
+  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
 }
 
 ///------------------------------------------------------------
