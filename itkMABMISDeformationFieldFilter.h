@@ -8,7 +8,6 @@
 #include <itkImageFileWriter.h>
 #include <itkImageRegionIterator.h>
 
-// #include <itkOrientedImage.h>
 #include "itkImage.h"
 #include "itkWarpImageFilter.h"
 #include "itkAddImageFilter.h"
@@ -140,8 +139,6 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMABMISDeformationFieldFilter.txx"
-#endif
 
 #endif

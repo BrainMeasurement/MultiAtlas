@@ -9,7 +9,6 @@
 #include "itkImageRegionIterator.h"
 #include "itkCastImageFilter.h"
 
-// #include <itkOrientedImage.h>
 #include "itkImage.h"
 
 #define ImageDimension 3
@@ -113,8 +112,6 @@ protected:
 } // namespace itk
 } // namespace Statistics
 
-#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMABMISImageOperationFilter.txx"
-#endif
 
 #endif
