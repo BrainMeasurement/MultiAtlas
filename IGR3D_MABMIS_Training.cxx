@@ -290,7 +290,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       fromImagefile  = trainingData->m_DataDirectory + trainingData->m_ImageFileNames[i];
       }
     itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str() );
-    // if file extension is '.hdr', also copy the 'img file'
+    // if file extension is '.nii.gz', also copy the 'img file'
     if( itksys::SystemTools::Strucmp(fromImagefile.substr(fromImagefile.size() - 3, 3).c_str(), "hdr") == 0 )
       {
       std::string fromfileImg = fromImagefile.substr(0, fromImagefile.size() - 3) + "img";
@@ -300,7 +300,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
 
     std::string fromSegfile = trainingData->m_DataDirectory + trainingData->m_SegmentationFileNames[i];
     itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str() );
-    // if file extension is '.hdr', also copy the 'img file'
+    // if file extension is '.nii.gz', also copy the 'img file'
     if( itksys::SystemTools::Strucmp(fromSegfile.substr(fromSegfile.size() - 3, 3).c_str(), "hdr") == 0 )
       {
       std::string fromfileImg = fromSegfile.substr(0, fromSegfile.size() - 3) + "img";
@@ -362,7 +362,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       sprintf(i_str, "%03d", i);
       sprintf(root_str, "%03d", root);
       std::string subdeformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str)
-        + "deform_000_sub.mha";
+        + "deform_000_sub.nii.gz";
       subdeformationFieldFileName = outputFolder + subdeformationFieldFileName;
       basicoperator->RemoveFile(subdeformationFieldFileName);
       }
@@ -595,9 +595,9 @@ int main( int argc, char *argv[] )
   std::string segmentfilename;
 
   for (int i = 0; i< filenumber; i++) {
-    imagefilename = sub_ids[i] + "_cbq_" + "000" + ".hdr";
+    imagefilename = sub_ids[i] + "_cbq_" + "000" + ".nii.gz";
     imgfilenames.push_back(imagefilename);
-    segmentfilename = sub_ids[i] + "_seg_" + "000" + ".hdr";
+    segmentfilename = sub_ids[i] + "_seg_" + "000" + ".nii.gz";
     segfilenames.push_back(segmentfilename);
   }
 
@@ -691,8 +691,8 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     char i_str[10], root_str[10];
     sprintf(i_str, "%03d", i);
     sprintf(root_str, "%03d", root);
-    std::string deformedImageFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_cbq_reg.hdr";
-    string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.mha";
+    std::string deformedImageFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_cbq_reg.nii.gz";
+    string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
 
     deformedImageFileName  = outputFolder + deformedImageFileName;
     deformationFieldFileName = outputFolder + deformationFieldFileName;
@@ -729,12 +729,12 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
 
     dfoperator->InverseDeformationField3D(deformationField, inversedDeformationField);
 
-    std::string invDeformedImageFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_cbq_reg.hdr";
-    string      invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_deform_000.mha";
+    std::string invDeformedImageFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_cbq_reg.nii.gz";
+    string      invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_deform_000.nii.gz";
     invDeformedImageFileName = outputFolder + invDeformedImageFileName;
     invDeformationFileName = outputFolder + invDeformationFileName;
 
-    std::string invDeformedSegmentFileName = std::string(root_str) + "_to_" + std::string(i_str) + "seg_000.hdr";
+    std::string invDeformedSegmentFileName = std::string(root_str) + "_to_" + std::string(i_str) + "seg_000.nii.gz";
     invDeformedSegmentFileName = outputFolder + invDeformedSegmentFileName;
 
     dfoperator->WriteDeformationField(invDeformationFileName, inversedDeformationField);
@@ -795,7 +795,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
     sprintf(i_str, "%03d", i);
     sprintf(root_str, "%03d", root);
 
-    std::string deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.mha";
+    std::string deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
     deformationFieldFileName = outputFolder + deformationFieldFileName;
     allDeformationFieldFileNames.push_back(deformationFieldFileName);
     }
@@ -829,8 +829,8 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     string index_string;
     basicoperator->myitoa( i, index_string, 3 );
 
-    string simulateDeformationFieldFileName = "simulated_deform_" + index_string + ".mha";
-    string simulateTemplateFileName = "simulated_cbq_" + index_string + ".hdr";
+    string simulateDeformationFieldFileName = "simulated_deform_" + index_string + ".nii.gz";
+    string simulateTemplateFileName = "simulated_cbq_" + index_string + ".nii.gz";
     simulateDeformationFieldFileName = outputFolder + simulateDeformationFieldFileName;
     simulateTemplateFileName = outputFolder + simulateTemplateFileName;
 

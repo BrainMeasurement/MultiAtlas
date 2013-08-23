@@ -114,7 +114,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
     tempstring.erase(tempstring.end() - 4, tempstring.end() );
     resampledDeformationFieldFileName.append(tempstring);
-    resampledDeformationFieldFileName.append("_sub.mha");
+    resampledDeformationFieldFileName.append("_sub.nii.gz");
 
     if( doResampleDeformationField )
       {
@@ -136,7 +136,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
       tempstring.erase(tempstring.end() - 4, tempstring.end() );
       resampledDeformationFieldFileName.append(tempstring);
-      resampledDeformationFieldFileName.append("_sub.mha");
+      resampledDeformationFieldFileName.append("_sub.nii.gz");
 
       float* df_arr = new float[size_dfn];
       LoadIntoArray(resampledDeformationFieldFileName, df_arr);
@@ -238,18 +238,18 @@ MABMISSimulateData<TInputImage, TOutputImage>
         }
 
       string index_string;    basicoperator->myitoa( i, index_string, 3 );
-      string intermediateSubDeformationFieldFileName = "inter_deform_sub_000.mha";
+      string intermediateSubDeformationFieldFileName = "inter_deform_sub_000.nii.gz";
       intermediateSubDeformationFieldFileName.erase(
         intermediateSubDeformationFieldFileName.end() - 7, intermediateSubDeformationFieldFileName.end() );
       intermediateSubDeformationFieldFileName.append(index_string);
-      intermediateSubDeformationFieldFileName.append(".mha");
+      intermediateSubDeformationFieldFileName.append(".nii.gz");
       intermediateSubDeformationFieldFileName = tempFolder + FILESEP + intermediateSubDeformationFieldFileName;
 
-      string intermediateDeformationFieldFileName = "inter_deform_000.mha";
+      string intermediateDeformationFieldFileName = "inter_deform_000.nii.gz";
       intermediateDeformationFieldFileName.erase(
         intermediateDeformationFieldFileName.end() - 7, intermediateDeformationFieldFileName.end() );
       intermediateDeformationFieldFileName.append(index_string);
-      intermediateDeformationFieldFileName.append(".mha");
+      intermediateDeformationFieldFileName.append(".nii.gz");
       intermediateDeformationFieldFileName = tempFolder + FILESEP + intermediateDeformationFieldFileName;
 
       SaveFromArray(intermediateSubDeformationFieldFileName, df_intermediate_sub.data_block(), size_xn, size_yn,
@@ -266,19 +266,19 @@ MABMISSimulateData<TInputImage, TOutputImage>
                                                intermediateDeformationFieldFileName, sampleRate);
         }
 
-      std::string intermediateTemplateFileName = "inter_template_000.hdr";
+      std::string intermediateTemplateFileName = "inter_template_000.nii.gz";
       intermediateTemplateFileName.erase(intermediateTemplateFileName.end() - 7, intermediateTemplateFileName.end() );
       intermediateTemplateFileName.append(index_string);
-      intermediateTemplateFileName.append(".hdr");
+      intermediateTemplateFileName.append(".nii.gz");
       intermediateTemplateFileName = tempFolder + FILESEP + intermediateTemplateFileName;
 
       // reverse deformation field
-      std::string intermediateReversedDeformationFieldFileName = "inter_deform_reverse_000.mha";
+      std::string intermediateReversedDeformationFieldFileName = "inter_deform_reverse_000.nii.gz";
       intermediateReversedDeformationFieldFileName.erase(
         intermediateReversedDeformationFieldFileName.end() - 7,
         intermediateReversedDeformationFieldFileName.end() );
       intermediateReversedDeformationFieldFileName.append(index_string);
-      intermediateReversedDeformationFieldFileName.append(".mha");
+      intermediateReversedDeformationFieldFileName.append(".nii.gz");
       intermediateReversedDeformationFieldFileName = tempFolder + FILESEP
         + intermediateReversedDeformationFieldFileName;
 
@@ -329,10 +329,10 @@ MABMISSimulateData<TInputImage, TOutputImage>
         for( int j = 0; j < numAllCombinations; j++ )
           {
           std::string index_string;     basicoperator->myitoa( j, index_string, 3 );
-          std::string curInterTempFileName = "inter_template_000.hdr";
+          std::string curInterTempFileName = "inter_template_000.nii.gz";
           curInterTempFileName.erase(curInterTempFileName.end() - 7, curInterTempFileName.end() );
           curInterTempFileName.append(index_string);
-          curInterTempFileName.append(".hdr");
+          curInterTempFileName.append(".nii.gz");
           curInterTempFileName = tempFolder + FILESEP + curInterTempFileName;
 
           dist[i][j] = imgoperator->calculateDistanceMSD(allImgFileName[i], curInterTempFileName);
@@ -366,14 +366,14 @@ MABMISSimulateData<TInputImage, TOutputImage>
         int index_inter = index[i + (numAllCombinations - m_SimulateSize)];
 
         std::string index_string2;      basicoperator->myitoa( index_inter, index_string2, 3 );
-        std::string curInterTempFileName = "inter_deform_000.mha";
+        std::string curInterTempFileName = "inter_deform_000.nii.gz";
         curInterTempFileName.erase(curInterTempFileName.end() - 7, curInterTempFileName.end() );
         curInterTempFileName.append(index_string2);
-        curInterTempFileName.append(".mha");
+        curInterTempFileName.append(".nii.gz");
         curInterTempFileName = tempFolder + FILESEP + curInterTempFileName;
 
         std::string index_string3;    basicoperator->myitoa( i, index_string3, 3 );
-        std::string outDFName = "simulated_deform_" + index_string3 + ".mha";
+        std::string outDFName = "simulated_deform_" + index_string3 + ".nii.gz";
         outDFName = outputFolder + FILESEP + outDFName;
 
         itksys::SystemTools::CopyFileAlways(curInterTempFileName.c_str(), outDFName.c_str() );
@@ -392,20 +392,17 @@ MABMISSimulateData<TInputImage, TOutputImage>
       {
       std::string index_string;     basicoperator->myitoa( i, index_string, 3 );
 
-      string curInterTempFileName = "inter_template_" + index_string + ".hdr";
-      string curInterTempImgFileName = "inter_template_" + index_string + ".img";
-      string curInterTempDeformFileName = "inter_deform_" + index_string + ".mha";
-      string curInterTempRevFileName = "inter_deform_reverse_" + index_string + ".mha";
-      string curInterTempSubFileName = "inter_deform_sub_" + index_string + ".mha";
+      string curInterTempFileName = "inter_template_" + index_string + ".nii.gz";
+      string curInterTempDeformFileName = "inter_deform_" + index_string + ".nii.gz";
+      string curInterTempRevFileName = "inter_deform_reverse_" + index_string + ".nii.gz";
+      string curInterTempSubFileName = "inter_deform_sub_" + index_string + ".nii.gz";
 
       curInterTempFileName = tempFolder + FILESEP + curInterTempFileName;
-      curInterTempImgFileName = tempFolder + FILESEP + curInterTempImgFileName;
       curInterTempDeformFileName = tempFolder + FILESEP + curInterTempDeformFileName;
       curInterTempRevFileName = tempFolder + FILESEP + curInterTempRevFileName;
       curInterTempSubFileName = tempFolder + FILESEP + curInterTempSubFileName;
       // for debugging
       basicoperator->RemoveFile(curInterTempFileName);
-      basicoperator->RemoveFile(curInterTempImgFileName);
       basicoperator->RemoveFile(curInterTempDeformFileName);
       basicoperator->RemoveFile(curInterTempRevFileName);
       basicoperator->RemoveFile(curInterTempSubFileName);

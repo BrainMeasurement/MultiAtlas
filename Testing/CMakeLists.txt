@@ -43,8 +43,8 @@ set_target_properties(${Testing_CLP}Test PROPERTIES LABELS ${Testing_CLP})
 configure_file(${INPUT}/AtlasTree/TrainedAtlas.xml ${TEMP}/TrainedAtlas.xml)
 set(testname ${Testing_CLP}Test)
 ExternalData_add_test(${Testing_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${Testing_CLP}Test>
-  --compareRadiusTolerance 3 --compare DATA{${BASELINE}/UA_cbq_000_seg.img}
-            ${TEMP}/UA_cbq_000_seg.img
+  --compareRadiusTolerance 3 --compare DATA{${BASELINE}/UA_cbq_000_seg.nii.gz}
+            ${TEMP}/UA_cbq_000_seg.nii.gz
   ModuleEntryPoint
    -i 5,3,2 -s 1.5 -o ${TEMP}
    --atlasTreeXML ${TEMP}/TrainedAtlas.xml --imageListXML ${INPUT}/TestData/TestData.xml

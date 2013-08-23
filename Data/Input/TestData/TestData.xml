@@ -4,10 +4,10 @@
 <DataPath></DataPath>
 <NumberOfImageData>4</NumberOfImageData>
 <ImageDataSets>
-<Dataset ImageFile="UA_cbq_000.hdr"/>
-<Dataset ImageFile="UB_cbq_000.hdr"/>
-<Dataset ImageFile="VA_cbq_000.hdr"/>
-<Dataset ImageFile="VB_cbq_000.hdr"/>
+<Dataset ImageFile="UA_cbq_000.nii.gz"/>
+<Dataset ImageFile="UB_cbq_000.nii.gz"/>
+<Dataset ImageFile="VA_cbq_000.nii.gz"/>
+<Dataset ImageFile="VB_cbq_000.nii.gz"/>
 </ImageDataSets>
 
 </MABMISImageData>

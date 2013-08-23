@@ -5,10 +5,10 @@
 <DataPath></DataPath>
 <NumberOfImageData>4</NumberOfImageData>
 <ImageDataSets>
-<Dataset ImageFile="AA_cbq_000.hdr" SegmentationFile="AA_seg_000.hdr"/>
-<Dataset ImageFile="AB_cbq_000.hdr" SegmentationFile="AB_seg_000.hdr"/>
-<Dataset ImageFile="AC_cbq_000.hdr" SegmentationFile="AC_seg_000.hdr"/>
-<Dataset ImageFile="AD_cbq_000.hdr" SegmentationFile="AD_seg_000.hdr"/>
+<Dataset ImageFile="AA_cbq_000.nii.gz" SegmentationFile="AA_seg_000.nii.gz"/>
+<Dataset ImageFile="AB_cbq_000.nii.gz" SegmentationFile="AB_seg_000.nii.gz"/>
+<Dataset ImageFile="AC_cbq_000.nii.gz" SegmentationFile="AC_seg_000.nii.gz"/>
+<Dataset ImageFile="AD_cbq_000.nii.gz" SegmentationFile="AD_seg_000.nii.gz"/>
 </ImageDataSets>
 
 </MABMISImageData>
