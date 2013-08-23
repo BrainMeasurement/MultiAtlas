@@ -22,16 +22,13 @@ set(testname ${Training_CLP}Test)
 ExternalData_add_test(${Training_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${Training_CLP}Test>
   ModuleEntryPoint
    -i 5,3,2 -s 1.5
-   ${TEMP}/TrainingData.xml ${TEMP}/TrainedAtlas.xml
+   --trainingXML ${TEMP}/TrainingData.xml --atlasTreeXML ${TEMP}/TrainedAtlas.xml
   )
 set_property(TEST ${testname} PROPERTY LABELS ${Training_CLP})
 
 set(testname compareTraingingXMLs)
 ExternalData_add_test(${Training_CLP}Data NAME ${testname} COMMAND diff ${INPUT}/AtlasTree/TrainedAtlas.xml ${TEMP}/TrainedAtlas.xml)
 set_property(TEST compareTraingingXMLs APPEND PROPERTY DEPENDS ${Training_CLP}Test)
-
-message(STATUS "RESULT SHOULD BE diff ${INPUT}/AtlasTree/TrainedAtlas.xml ${TEMP}/TrainedAtlas.xml")
-
 
 #-----------------------------------------------------------------------------
 # Testing module
@@ -49,6 +46,6 @@ ExternalData_add_test(${Testing_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNC
             ${TEMP}/UA_cbq_000_seg.img
   ModuleEntryPoint
    -i 5,3,2 -s 1.5 -o ${TEMP}
-   ${INPUT}/AtlasTree/TrainedAtlas.xml ${INPUT}/TestData/TestData.xml
+   --atlasTreeXML ${INPUT}/AtlasTree/TrainedAtlas.xml --imageListXML ${INPUT}/TestData/TestData.xml
   )
 set_property(TEST ${testname} PROPERTY LABELS ${Testing_CLP})
