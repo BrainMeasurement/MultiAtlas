@@ -83,6 +83,42 @@ static std::string ReplacePathSepForUnix( const std::string & input )
   return output;
 }
 
+static std::string
+GetExtension(const std::string & filename)
+{
+  std::string fileExt( itksys::SystemTools::GetFilenameLastExtension(filename) );
+  //If the last extension is .gz, then need to pull off 2 extensions.
+  //.gz is the only valid compression extension.
+  if ( fileExt == std::string(".gz") )
+    {
+    fileExt = itksys::SystemTools::GetFilenameLastExtension( 
+              itksys::SystemTools::GetFilenameWithoutLastExtension(filename) );
+    fileExt += ".gz";
+    }
+  return ( fileExt );
+}
+
+static std::string
+GetRootName(const std::string & filename)
+{
+  const std::string fileExt = GetExtension(filename);
+
+  // Create a base filename
+  // i.e Image.hdr --> Image
+  if ( fileExt.length() > 0                    //Ensure that an extension was
+                                               // found
+       && filename.length() > fileExt.length() //Ensure that the filename does
+                                               // not contain only the extension
+       )
+    {
+    const std::string::size_type it = filename.find_last_of(fileExt);
+    const std::string            baseName( filename, 0, it - ( fileExt.length() - 1 ) );
+    return ( baseName );
+    }
+  //Default to return same as input when the extension is nothing (Analyze)
+  return ( filename );
+}
+
 using namespace std;
 
 typedef double CoordinateRepType;
@@ -472,24 +508,24 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   // remove segmentation results in iterations.
   for( int n = 0; n < imageData->m_NumberImageData; ++n )
     {
-    std::string imageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[n];
-    size_t      sep = imageFileName.find_last_of(".");
+    const std::string imageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[n];
+    const std::string baseFileName = GetRootName(imageFileName);
     char        i_str[10];
     bool        copied = false;
     for( int i = numIter - 1; i >= 0; i-- )
       {
       sprintf(i_str, "%03d", i);
-      std::string segHdr = imageFileName.substr(0, sep) + "_seg_" + i_str + ".nii.gz";
+      const std::string segHdr = baseFileName + "_seg_" + i_str + ".nii.gz";
       if( itksys::SystemTools::FileExists(segHdr.c_str(), true) )
         {
         if( !copied )
           {
-          std::string segHdr_save = imageFileName.substr(0, sep) + "_seg.nii.gz";
+          std::string segHdr_save = baseFileName + "_seg.nii.gz";
 
-          const size_t sep = segHdr_save.find_last_of(FILESEP);
-          if( sep != std::string::npos )
+          const size_t dir_sep = segHdr_save.find_last_of(FILESEP);
+          if( dir_sep != std::string::npos )
             {
-            segHdr_save = imageData->m_OutputDirectory + segHdr_save.substr(sep + 1, std::string::npos);
+            segHdr_save = imageData->m_OutputDirectory + segHdr_save.substr(dir_sep + 1, std::string::npos);
             }
           else
             {
@@ -538,10 +574,10 @@ int main( int argc, char *argv[] )
   // if the data path is empty, use the path of the xml file instead
   if( inputImageData->m_DataDirectory.size() <= 1 )
     {
-    const size_t sep = ImageListXML.find_last_of(FILESEP);
-    if( sep != std::string::npos )
+    const size_t dir_sep = ImageListXML.find_last_of(FILESEP);
+    if( dir_sep != std::string::npos )
       {
-      inputImageData->m_DataDirectory = ImageListXML.substr(0, sep);
+      inputImageData->m_DataDirectory = ImageListXML.substr(0, dir_sep);
       }
     else
       {
@@ -586,10 +622,10 @@ int main( int argc, char *argv[] )
   itk::MABMISAtlas * atlasTree = treeAtlasXMLReader->GetOutputObject();
 
   // set the atlas path as the same path as the xml file.
-  const size_t sep = AtlaseTreeXML.find_last_of(FILESEP);
-  if( sep != std::string::npos )
+  const size_t dir_sep = AtlaseTreeXML.find_last_of(FILESEP);
+  if( dir_sep != std::string::npos )
     {
-    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(AtlaseTreeXML.substr(0, sep + 1) + atlasTree->m_AtlasDirectory);
+    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(AtlaseTreeXML.substr(0, dir_sep + 1) + atlasTree->m_AtlasDirectory);
     }
 
   if( atlasTree->m_AtlasDirectory.size() == 0 )
@@ -1021,7 +1057,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
   int atlas_total_size = atlasTree->m_NumberAllAtlases;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
-  const size_t      sep = atlasFullName.find_last_of(FILESEP);
+  const size_t dir_sep = atlasFullName.find_last_of(FILESEP);
   // start to register each image to the root node step by step
   for( int ii = 1; ii < itree_size; ++ii ) // starting from 1, since index[0] showing the root
     {
@@ -1293,8 +1329,8 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
   std::string fixedImageTag;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0] );
-  const size_t      sep = atlasFullName.find_last_of(FILESEP);
-  for( int i = 0; i < atlas_image_size + test_image_size; ++i )
+  const size_t dir_sep = atlasFullName.find_last_of(FILESEP);
+  for( int i = 0; i < atlas_image_size + test_image_size; i++ )
     {
     if( isDebug )
       {
@@ -1426,7 +1462,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
   int test_image_size = imageData->m_NumberImageData;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
-  const size_t      sep = atlasFullName.find_last_of(FILESEP);
+  const size_t dir_sep = atlasFullName.find_last_of(FILESEP);
 
   // do for all real images, including both atlases and test images
   for( int all_index = 0; all_index < atlas_image_size + test_image_size; all_index++ )
@@ -1460,9 +1496,9 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       {
       movingImageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[all_index - atlas_image_size];
       movingSegmentFileName = movingImageFileName;
-      size_t sep = movingSegmentFileName.find_last_of(".");
+      const std::string movingSegmentBaseFileName = GetRootName(movingSegmentFileName);
 
-      movingSegmentFileName = movingSegmentFileName.substr(0, sep) + "_seg_000.nii.gz";
+      movingSegmentFileName = movingSegmentBaseFileName + "_seg_000.nii.gz";
       sprintf(a_str, "%03d", all_index - atlas_image_size);
       movingImageTag = std::string("testImage") + a_str;
       }
@@ -1621,8 +1657,8 @@ int MultiAtlasBasedSegmentation(int root,
       string index_string;
       basicoperator->myitoa( iter, index_string, 3 );
       std::string testSementFileName = testImageFileName;
-      size_t      sep = testSementFileName.find_last_of(".");
-      testSementFileName = testSementFileName.substr(0, sep) + "_seg_" + index_string + ".nii.gz";
+      const std::string testSegmentBaseFileName = GetRootName(testSementFileName);
+      testSementFileName = testSegmentBaseFileName + "_seg_" + index_string + ".nii.gz";
 
       // string   outSampleSegName = sub_ids[sample_index] + "_seg_" + index_string + ".nii.gz";
 
@@ -1674,10 +1710,10 @@ int MultiAtlasBasedSegmentation(int root,
         else
           {
           atlasSegName = imageData->m_DataDirectory + imageData->m_ImageFileNames[i - atlas_image_size];
-          size_t sep = atlasSegName.find_last_of(".");
+          const std::string atlasSegBaseName = GetRootName( atlasSegName );
 
           basicoperator->myitoa( iter - 1, index_string, 3 );
-          atlasSegName = atlasSegName.substr(0, sep) + "_seg_" + index_string + ".nii.gz";
+          atlasSegName = atlasSegBaseName + "_seg_" + index_string + ".nii.gz";
           }
 
         allWarpedAtlasImgNames.push_back(warpedImageFileName);
