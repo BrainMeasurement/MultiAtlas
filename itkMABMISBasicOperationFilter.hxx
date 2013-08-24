@@ -66,8 +66,8 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
   while( swapped )
     {
     swapped = false;
-    j++;
-    for( int i = 0; i < n - j; i++ )
+    ++j;
+    for( int i = 0; i < n - j; ++i )
       {
       if( arr[i] > arr[i + 1] )
         {
@@ -116,9 +116,9 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
   std::ofstream outfile;
 
   outfile.open(martixFileName.c_str() );
-  for( int i = 0; i < iSize; i++ )
+  for( int i = 0; i < iSize; ++i )
     {
-    for( int j = 0; j < jSize; j++ )
+    for( int j = 0; j < jSize; ++j )
       {
       outfile <<  ' ';
       outfile << std::right << std::fixed << std::setw(8) << std::setprecision(2) << matrix[i][j];

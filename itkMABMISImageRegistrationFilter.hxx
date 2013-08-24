@@ -124,7 +124,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 #endif
   std::vector<unsigned int> curNumIterations;
   // unsigned int curNumOfIterations[] = {15,10,5};
-  for( int i = 0; i < res; i++ )
+  for( int i = 0; i < res; ++i )
     {
     curNumIterations.push_back(iterInResolutions[i]);
     }
@@ -275,7 +275,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 #endif
   std::vector<unsigned int> curNumIterations;
   // unsigned int curNumOfIterations[] = {15,10,5};
-  for( int i = 0; i < res; i++ )
+  for( int i = 0; i < res; ++i )
     {
     curNumIterations.push_back(iterInResolutions[i]);
     }

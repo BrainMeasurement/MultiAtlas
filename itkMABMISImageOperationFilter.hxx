@@ -251,10 +251,10 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 ::PairwiseDistanceAmongImages(vector<string> imageFileNames, int totalNumber, vnl_matrix<double>& distanceMatrix)
 
 {
-  for( int i = 0; i < totalNumber; i++ )
+  for( int i = 0; i < totalNumber; ++i )
     {
     // std::cout << imageFileNames[i] << std::endl;
-    for( int j = i; j < totalNumber; j++ )
+    for( int j = i; j < totalNumber; ++j )
       {
       if( j == i )
         {

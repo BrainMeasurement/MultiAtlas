@@ -54,8 +54,10 @@ MABMISImageDataXMLFileReader::StartElement( const char *name, const char * *atts
     std::string segImageName("");
     while( atts[i] )
       {
-      std::string key(atts[i++]);
-      std::string value(atts[i++]);
+      const std::string key(atts[i]);
+      ++i;
+      const std::string value(atts[i]);
+      ++i;
       if( itksys::SystemTools::Strucmp(key.c_str(), "ImageFile") == 0 )
         {
         imageName = value;
@@ -123,7 +125,7 @@ void
 MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 {
   this->m_CurCharacterData = "";
-  for( int i = 0; i < inLength; i++ )
+  for( int i = 0; i < inLength; ++i )
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
@@ -204,8 +206,10 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
 
     while( atts[i] )
       {
-      std::string key(atts[i++]);
-      std::string value(atts[i++]);
+      std::string key(atts[i]);
+      ++i;
+      std::string value(atts[i]);
+      ++i;
 
       if( itksys::SystemTools::Strucmp(key.c_str(), "ID") == 0 )
         {
@@ -257,8 +261,10 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
     ;
     while( atts[i] )
       {
-      std::string key(atts[i++]);
-      std::string value(atts[i++]);
+      const std::string key(atts[i]);
+      ++i;
+      const std::string value(atts[i]);
+      ++i;
       if( itksys::SystemTools::Strucmp(key.c_str(), "ID") == 0 )
         {
         id = atoi(value.c_str() );
@@ -323,7 +329,7 @@ void
 MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 {
   this->m_CurCharacterData = "";
-  for( int i = 0; i < inLength; i++ )
+  for( int i = 0; i < inLength; ++i )
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
@@ -437,7 +443,7 @@ MABMISAtlasXMLFileWriter::WriteFile()
   // write the tree
   WriteStartElement("Tree", output);
   output << std::endl;
-  for( int i = 0; i < this->m_InputObject->m_Tree.size(); i++ )
+  for( int i = 0; i < this->m_InputObject->m_Tree.size(); ++i )
     {
     output << "<Node ";
     output << "ID=\"" << i << "\"";

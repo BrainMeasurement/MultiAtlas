@@ -264,7 +264,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   // copy training data into the atlas folder
   std::vector<std::string> imageFiles(trainingData->m_NumberImageData);
   std::vector<std::string> segmentFiles(trainingData->m_NumberImageData);
-  for( int i = 0; i < imageFiles.size(); i++ )
+  for( int i = 0; i < imageFiles.size(); ++i )
     {
     imageFiles[i] = atlasFolder + trainingData->m_ImageFileNames[i];
     segmentFiles[i] = atlasFolder + trainingData->m_SegmentationFileNames[i];
@@ -338,7 +338,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   // delete subsampled deformation field
   // if (!isDebug)	if (false)
     {
-    for( int i = 0; i < imageFiles.size(); i++ )
+    for( int i = 0; i < imageFiles.size(); ++i )
       {
       if( i == root )
         {
@@ -364,7 +364,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
 
   // fill distance matrix
   vector<string> atlasfilenames;
-  for( int i = 0; i < tree_size; i++ )
+  for( int i = 0; i < tree_size; ++i )
     {
     std::string atlasfilename;
 
@@ -398,13 +398,13 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   atlas.m_IsSimulatedImage.resize(tree_size);
   atlas.m_RealImageIDs.resize(totalAtlasSize - simulatedAtlasSize);
   atlas.m_SimulatedImageIDs.resize(simulatedAtlasSize);
-  for( int i = 0; i < tree_size; i++ )
+  for( int i = 0; i < tree_size; ++i )
     {
     atlas.m_Tree[i] = tree[i];
     }
   atlas.m_AtlasFilenames.resize(atlasfilenames.size() );
   int countRealImages = 0, countSimulatedImages = 0;
-  for( int i = 0; i < atlasfilenames.size(); i++ )
+  for( int i = 0; i < atlasfilenames.size(); ++i )
     {
     const size_t      sep = atlasfilenames[i].find_last_of(FILESEP);
     std::string fname = atlasfilenames[i];
@@ -439,7 +439,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     }
   // atlas segmentation files
   atlas.m_AtlasSegmentationFilenames.resize(segmentFiles.size() );
-  for( int i = 0; i < segmentFiles.size(); i++ )
+  for( int i = 0; i < segmentFiles.size(); ++i )
     {
     const size_t      sep = segmentFiles[i].find_last_of(FILESEP);
     std::string fname = segmentFiles[i];
@@ -580,7 +580,7 @@ int main( int argc, char *argv[] )
   std::string imagefilename;
   std::string segmentfilename;
 
-  for (int i = 0; i< filenumber; i++) {
+  for (int i = 0; i< filenumber; ++i) {
     imagefilename = sub_ids[i] + "_cbq_" + "000" + ".nii.gz";
     imgfilenames.push_back(imagefilename);
     segmentfilename = sub_ids[i] + "_seg_" + "000" + ".nii.gz";
@@ -612,9 +612,9 @@ void SearchRootAmongAtlases(std::vector<std::string> imgfilenames, int & root)
   int tree_size = imgfilenames.size();
 
   vnl_matrix<double> distanceMatrix(tree_size, tree_size);
-  for( int i = 0; i < tree_size; i++ )
+  for( int i = 0; i < tree_size; ++i )
     {
-    for( int j = 0; j < tree_size; j++ )
+    for( int j = 0; j < tree_size; ++j )
       {
       distanceMatrix[i][j] = 0.0;
       }
@@ -663,7 +663,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
 
   const int atlas_size = imageFileNames.size();
   std::cout << "Register between root and atlases ... ";
-  for( int i = 0; i < atlas_size; i++ )
+  for( int i = 0; i < atlas_size; ++i )
     {
     std::cout << i << ", ";
     if( i == root )
@@ -769,7 +769,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
   datasimulator->SetRoot(root);
   datasimulator->SetAtlasSize(atlas_size);
   datasimulator->SetSimulateSize(simulatedAtlasSize);
-  for( int i = 0; i < atlas_size; i++ )
+  for( int i = 0; i < atlas_size; ++i )
     {
     string allDeformationFieldFileName;
     if( i == root )
@@ -808,7 +808,7 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
   std::vector<std::string> simulateDeformationFieldFileNames(0);
   std::vector<std::string> simulateTemplateFileNames(0);
   std::cout << "The simulated images: " << std::endl;
-  for( int i = 0; i < simulatedAtlasSize; i++ )
+  for( int i = 0; i < simulatedAtlasSize; ++i )
     {
     std::cout << i << ", ";
 

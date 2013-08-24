@@ -306,17 +306,17 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * originImageRawX = new float * *[im_z];
   float* * * originImageRawY = new float * *[im_z];
   float* * * originImageRawZ = new float * *[im_z];
-  for( int k = 0; k < im_z; k++ )
+  for( int k = 0; k < im_z; ++k )
     {
     originImageRawX[k] = new float *[im_y];
     originImageRawY[k] = new float *[im_y];
     originImageRawZ[k] = new float *[im_y];
-    for( int j = 0; j < im_y; j++ )
+    for( int j = 0; j < im_y; ++j )
       {
       originImageRawX[k][j] = new float[im_x];
       originImageRawY[k][j] = new float[im_x];
       originImageRawZ[k][j] = new float[im_x];
-      for( int i = 0; i < im_x; i++ )
+      for( int i = 0; i < im_x; ++i )
         {
         originImageRawX[k][j][i] = 0.0;
         originImageRawY[k][j][i] = 0.0;
@@ -329,17 +329,17 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * sampledImageRawX = new float * *[im_zn];
   float* * * sampledImageRawY = new float * *[im_zn];
   float* * * sampledImageRawZ = new float * *[im_zn];
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
     sampledImageRawX[k] = new float *[im_yn];
     sampledImageRawY[k] = new float *[im_yn];
     sampledImageRawZ[k] = new float *[im_yn];
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
       sampledImageRawX[k][j] = new float[im_xn];
       sampledImageRawY[k][j] = new float[im_xn];
       sampledImageRawZ[k][j] = new float[im_xn];
-      for( int i = 0; i < im_xn; i++ )
+      for( int i = 0; i < im_xn; ++i )
         {
         sampledImageRawX[k][j][i] = 0.0;
         sampledImageRawY[k][j][i] = 0.0;
@@ -368,11 +368,11 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     originImageRawZ[idx[2]][idx[1]][idx[0]] = vectorPixel.GetElement(2);
     }
   // resample image
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
-      for( int i = 0; i < im_xn; i++ )
+      for( int i = 0; i < im_xn; ++i )
         {
         sampledImageRawX[k][j][i] = originImageRawX[k * rz][j * ry][i * rx] / rx;
         sampledImageRawY[k][j][i] = originImageRawY[k * rz][j * ry][i * rx] / ry;
@@ -411,9 +411,9 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 
   WriteDeformationField(resampledDeformationFieldFileName, sampledImage);
   // delete newed variables
-  for( int k = 0; k < im_z; k++ )
+  for( int k = 0; k < im_z; ++k )
     {
-    for( int j = 0; j < im_y; j++ )
+    for( int j = 0; j < im_y; ++j )
       {
       delete[] originImageRawX[k][j];
       delete[] originImageRawY[k][j];
@@ -426,9 +426,9 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   delete[] originImageRawX;
   delete[] originImageRawY;
   delete[] originImageRawZ;
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
       delete[] sampledImageRawX[k][j];
       delete[] sampledImageRawY[k][j];
@@ -475,17 +475,17 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * originImageRawX = new float * *[im_z];
   float* * * originImageRawY = new float * *[im_z];
   float* * * originImageRawZ = new float * *[im_z];
-  for( int k = 0; k < im_z; k++ )
+  for( int k = 0; k < im_z; ++k )
     {
     originImageRawX[k] = new float *[im_y];
     originImageRawY[k] = new float *[im_y];
     originImageRawZ[k] = new float *[im_y];
-    for( int j = 0; j < im_y; j++ )
+    for( int j = 0; j < im_y; ++j )
       {
       originImageRawX[k][j] = new float[im_x];
       originImageRawY[k][j] = new float[im_x];
       originImageRawZ[k][j] = new float[im_x];
-      for( int i = 0; i < im_x; i++ )
+      for( int i = 0; i < im_x; ++i )
         {
         originImageRawX[k][j][i] = 0.0;
         originImageRawY[k][j][i] = 0.0;
@@ -498,17 +498,17 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * sampledImageRawX = new float * *[im_zn];
   float* * * sampledImageRawY = new float * *[im_zn];
   float* * * sampledImageRawZ = new float * *[im_zn];
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
     sampledImageRawX[k] = new float *[im_yn];
     sampledImageRawY[k] = new float *[im_yn];
     sampledImageRawZ[k] = new float *[im_yn];
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
       sampledImageRawX[k][j] = new float[im_xn];
       sampledImageRawY[k][j] = new float[im_xn];
       sampledImageRawZ[k][j] = new float[im_xn];
-      for( int i = 0; i < im_xn; i++ )
+      for( int i = 0; i < im_xn; ++i )
         {
         sampledImageRawX[k][j][i] = 0.0;
         sampledImageRawY[k][j][i] = 0.0;
@@ -537,11 +537,11 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     originImageRawZ[idx[2]][idx[1]][idx[0]] = vectorPixel.GetElement(2);
     }
   // resample image
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
-      for( int i = 0; i < im_xn; i++ )
+      for( int i = 0; i < im_xn; ++i )
         {
         sampledImageRawX[k][j][i] = originImageRawX[k / rz][j / ry][i / rx] * rx;
         sampledImageRawY[k][j][i] = originImageRawY[k / rz][j / ry][i / rx] * ry;
@@ -580,9 +580,9 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 
   WriteDeformationField(resampledDeformationFieldFileName, sampledImage);
   // delete newed variables
-  for( int k = 0; k < im_z; k++ )
+  for( int k = 0; k < im_z; ++k )
     {
-    for( int j = 0; j < im_y; j++ )
+    for( int j = 0; j < im_y; ++j )
       {
       delete[] originImageRawX[k][j];
       delete[] originImageRawY[k][j];
@@ -595,9 +595,9 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   delete[] originImageRawX;
   delete[] originImageRawY;
   delete[] originImageRawZ;
-  for( int k = 0; k < im_zn; k++ )
+  for( int k = 0; k < im_zn; ++k )
     {
-    for( int j = 0; j < im_yn; j++ )
+    for( int j = 0; j < im_yn; ++j )
       {
       delete[] sampledImageRawX[k][j];
       delete[] sampledImageRawY[k][j];
@@ -644,15 +644,15 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * dfx = new float * *[x_size];
   float* * * dfy = new float * *[x_size];
   float* * * dfz = new float * *[x_size];
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
     dfx[i] = new float *[y_size];
     dfy[i] = new float *[y_size];
     dfz[i] = new float *[y_size];
     }
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
-    for( j = 0; j < y_size; j++ )
+    for( j = 0; j < y_size; ++j )
       {
       dfx[i][j] = new float[z_size];
       dfy[i][j] = new float[z_size];
@@ -674,25 +674,25 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     // dfx[i][j][k] = vectorPixel.GetElement(0);
     // dfy[i][j][k] = vectorPixel.GetElement(1);
     // dfz[i][j][k] = vectorPixel.GetElement(2);
-    // k++;
+    // ++k;
     // if (k == z_size)
     // {
-    //	j++;
+    //	++j;
     //	k = 0;
     //	if (j == image_size)
     //	{
-    //		i++;
+    //		++i;
     //		j = 0;
     //	}
     // }
-    // i++;
+    // ++i;
     // if (i == image_size)
     // {
-    //	j++;
+    //	++j;
     //	i = 0;
     //	if (j == image_size)
     //	{
-    //		k++;
+    //		++k;
     //		j = 0;
     //	}
     // }
@@ -707,16 +707,16 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * rdfbx = new float * *[x_size + 2 * SHIFT];
   float* * * rdfby = new float * *[x_size + 2 * SHIFT];
   float* * * rdfbz = new float * *[x_size + 2 * SHIFT];
-  for( i = 0; i < x_size + 2 * SHIFT; i++ )
+  for( i = 0; i < x_size + 2 * SHIFT; ++i )
     {
     totalweights[i] = new float *[y_size + 2 * SHIFT];
     rdfbx[i] = new float *[y_size + 2 * SHIFT];
     rdfby[i] = new float *[y_size + 2 * SHIFT];
     rdfbz[i] = new float *[y_size + 2 * SHIFT];
     }
-  for( i = 0; i < x_size + 2 * SHIFT; i++ )
+  for( i = 0; i < x_size + 2 * SHIFT; ++i )
     {
-    for( j = 0; j < y_size + 2 * SHIFT; j++ )
+    for( j = 0; j < y_size + 2 * SHIFT; ++j )
       {
       totalweights[i][j] = new float[z_size + 2 * SHIFT];
       rdfbx[i][j] = new float[z_size + 2 * SHIFT];
@@ -725,11 +725,11 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
       }
     }
   // initialize these matrices
-  for( i = 0; i < x_size + 2 * SHIFT; i++ )
+  for( i = 0; i < x_size + 2 * SHIFT; ++i )
     {
-    for( j = 0; j < y_size + 2 * SHIFT; j++ )
+    for( j = 0; j < y_size + 2 * SHIFT; ++j )
       {
-      for( k = 0; k < z_size + 2 * SHIFT; k++ )
+      for( k = 0; k < z_size + 2 * SHIFT; ++k )
         {
         totalweights[i][j][k] = 0.0;
         rdfbx[i][j][k] = 0.0;
@@ -739,13 +739,13 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
       }
     }
   // estimating
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
     // std::cerr << i << ", ";
-    for( j = 0; j < y_size; j++ )
+    for( j = 0; j < y_size; ++j )
       {
       // std::cerr << "(" << i << ", " << j << "), " ;
-      for( k = 0; k < z_size; k++ )
+      for( k = 0; k < z_size; ++k )
         {
         for( x = -samplenum; x <= samplenum; x++ )
           {
@@ -896,15 +896,15 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   float* * * rdfx = new float * *[x_size];
   float* * * rdfy = new float * *[x_size];
   float* * * rdfz = new float * *[x_size];
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
     rdfx[i] = new float *[y_size];
     rdfy[i] = new float *[y_size];
     rdfz[i] = new float *[y_size];
     }
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
-    for( j = 0; j < y_size; j++ )
+    for( j = 0; j < y_size; ++j )
       {
       rdfx[i][j] = new float[z_size];
       rdfy[i][j] = new float[z_size];
@@ -913,11 +913,11 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     }
   int count_outside = 0;
   // normalize the enlarged rdfb to rdf
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
-    for( j = 0; j < y_size; j++ )
+    for( j = 0; j < y_size; ++j )
       {
-      for( k = 0; k < z_size; k++ )
+      for( k = 0; k < z_size; ++k )
         {
         if( totalweights[i + SHIFT][j + SHIFT][k + SHIFT] > 0 )
           {
@@ -943,39 +943,39 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     vectorPixel.SetElement(1, rdfy[idx[0]][idx[1]][idx[2]]);
     vectorPixel.SetElement(2, rdfz[idx[0]][idx[1]][idx[2]]);
     dfNewIt.Set(vectorPixel);
-    // k++;
+    // ++k;
     // if (k == z_size)
     // {
-    //	j++;
+    //	++j;
     //	k = 0;
     //	if (j == image_size)
     //	{
-    //		i++;
+    //		++i;
     //		j = 0;
     //	}
     // }
-    // i++;
+    // ++i;
     // if (i == image_size)
     // {
-    //	j++;
+    //	++j;
     //	i = 0;
     //	if (j == image_size)
     //	{
-    //		k++;
+    //		++k;
     //		j = 0;
     //	}
     // }
-    // j++;
+    // ++j;
     // if (j==image_size)
     // {
-    //	i++;
+    //	++i;
     //	j=0;
     // }
     }
   // free memory
-  for( i = 0; i < x_size; i++ )
+  for( i = 0; i < x_size; ++i )
     {
-    for( j = 0; j < y_size; j++ )
+    for( j = 0; j < y_size; ++j )
       {
       delete[] dfx[i][j];     delete[] dfy[i][j];     delete[] dfz[i][j];
       delete[] rdfx[i][j];    delete[] rdfy[i][j];    delete[] rdfz[i][j];
@@ -983,9 +983,9 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     delete[] dfx[i];    delete[] dfy[i];    delete[] dfz[i];
     delete[] rdfx[i];   delete[] rdfy[i];   delete[] rdfz[i];
     }
-  for( i = 0; i < x_size + 2 * SHIFT; i++ )
+  for( i = 0; i < x_size + 2 * SHIFT; ++i )
     {
-    for( j = 0; j < y_size + 2 * SHIFT; j++ )
+    for( j = 0; j < y_size + 2 * SHIFT; ++j )
       {
       delete[] rdfbx[i][j];     delete[] rdfby[i][j];     delete[] rdfbz[i][j];
       delete[] totalweights[i][j];

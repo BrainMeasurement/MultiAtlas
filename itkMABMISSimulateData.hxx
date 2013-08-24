@@ -59,7 +59,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   if( numSampleEachDirection >= 3 && numSampleEachDirection <= 5 )
     {
     c = new float[numSampleEachDirection];
-    for( int i = 0; i < numSampleEachDirection; i++ )
+    for( int i = 0; i < numSampleEachDirection; ++i )
       {
       c[i] = c4[i];
       }
@@ -100,7 +100,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   vnl_vector<float> df_eigenvalues(numEigenVector);
   ////////////////////////////////////////
   // down sample
-  for( int i = 0; i < numFiles; i++ )
+  for( int i = 0; i < numFiles; ++i )
     {
     string deformationFieldFileName;
     deformationFieldFileName = deformationFieldFileNames[i];
@@ -125,7 +125,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   if( doPCATraining )
     {
     // build all vectors from deformation fields
-    for( int i = 0; i < numFiles; i++ )
+    for( int i = 0; i < numFiles; ++i )
       {
       std::string resampledDeformationFieldFileName;
       std::string tempstring;
@@ -148,7 +148,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
     // calculate mean vector
     df_mean /= (float)(numFiles);
     // subtract mean vector from each vector
-    for( int i = 0; i < numFiles; i++ )
+    for( int i = 0; i < numFiles; ++i )
       {
       df_mat.set_column(i, df_mat.get_column(i) - df_mean);
       }
@@ -156,7 +156,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
     // do SVD
     vnl_svd_economy<float> svd_e(df_mat);
     // build eigen-vector matrix of original deformation field matrix
-    for( int i = 0; i < numEigenVector; i++ )
+    for( int i = 0; i < numEigenVector; ++i )
       {
       // U = D*V*Sinv
       df_eigenvalues.data_block()[i] = svd_e.lambdas().data_block()[i];
@@ -208,10 +208,10 @@ MABMISSimulateData<TInputImage, TOutputImage>
       }
 
     std::cout << "Generate intermediate deformations from PCA results... " << std::endl;
-    for( int i = 0; i < numAllCombinations; i++ )
+    for( int i = 0; i < numAllCombinations; ++i )
       {
       std::cerr << i << ", ";
-      for( int j = 0; j < numEigenVector; j++ )
+      for( int j = 0; j < numEigenVector; ++j )
         {
         coeff[j] = 0;
         }
@@ -228,7 +228,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       // create a new file list
       vnl_vector<float> df_intermediate_sub(size_dfn);
       df_intermediate_sub = df_mean;
-      for( int j = 0; j < numEigenVector; j++ )
+      for( int j = 0; j < numEigenVector; ++j )
         {
         // df_intermediate_sub += c[coeff[j]]*df_eigenvector.get_column(j)*df_eigenvalues.data_block()[j];
         df_intermediate_sub += c[coeff[j]] * df_eigenvector.get_column(j);
@@ -312,18 +312,18 @@ MABMISSimulateData<TInputImage, TOutputImage>
       std::cout << "Select the best simulated images... " << std::endl;
       // calculate pairwise distance between each atlas image and each simulated image
       double* * dist = new double *[m_AtlasSize];
-      for( int i = 0; i < m_AtlasSize; i++ )
+      for( int i = 0; i < m_AtlasSize; ++i )
         {
         dist[i] = new double[numAllCombinations];
-        for( int j = 0; j < numAllCombinations; j++ )
+        for( int j = 0; j < numAllCombinations; ++j )
           {
           dist[i][j] = 0.0;
           }
         }
       double distmax = 0.0;
-      for( int i = 0; i < m_AtlasSize; i++ )
+      for( int i = 0; i < m_AtlasSize; ++i )
         {
-        for( int j = 0; j < numAllCombinations; j++ )
+        for( int j = 0; j < numAllCombinations; ++j )
           {
           std::string index_string;     basicoperator->myitoa( j, index_string, 3 );
           std::string curInterTempFileName = "inter_template_000.nii.gz";
@@ -343,11 +343,11 @@ MABMISSimulateData<TInputImage, TOutputImage>
       // calculate the minimum distance between each simulated image and all atlas images
       double* dist_min_each_inter = new double[numAllCombinations];
       int*    index = new int[numAllCombinations];
-      for( int j = 0; j < numAllCombinations; j++ )
+      for( int j = 0; j < numAllCombinations; ++j )
         {
         index[j] = j;
         dist_min_each_inter[j] = distmax;
-        for( int i = 0; i < m_AtlasSize; i++ )
+        for( int i = 0; i < m_AtlasSize; ++i )
           {
           if( dist[i][j] < dist_min_each_inter[j] )
             {
@@ -358,7 +358,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       // sort
       basicoperator->bubbleSort(dist_min_each_inter, index, numAllCombinations);
       // copy files to new names after selection
-      for( int i = 0; i < m_SimulateSize; i++ )
+      for( int i = 0; i < m_SimulateSize; ++i )
         {
         int index_inter = index[i + (numAllCombinations - m_SimulateSize)];
 
@@ -377,7 +377,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
         }
 
       delete[] index;
-      for( int i = 0; i < m_AtlasSize; i++ )
+      for( int i = 0; i < m_AtlasSize; ++i )
         {
         delete[] dist[i];
         }
@@ -385,7 +385,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       delete[] dist_min_each_inter;
       } // do selection
         // remove irrelevant files
-    for( int i = 0; i < numAllCombinations; i++ )
+    for( int i = 0; i < numAllCombinations; ++i )
       {
       std::string index_string;     basicoperator->myitoa( i, index_string, 3 );
 
