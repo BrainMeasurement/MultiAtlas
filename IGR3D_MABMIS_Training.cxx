@@ -67,8 +67,6 @@
 #include <itksys/SystemTools.hxx>
 #include <metaCommand.h>
 
-#define DBL_MAX         1.7976931348623158e+308 /* max value */
-
 // To include all related header files
 #include "IGR3D_MABMIS_TrainingCLP.h"
 #include "itkMABMISImageOperationFilter.h"

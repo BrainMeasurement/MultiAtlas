@@ -10,7 +10,6 @@
 =========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
-// #pragma warning ( disable : 4244 )
 #endif
 
 // for math
@@ -25,7 +24,6 @@
 #include <vector>
 
 // basic itk
-#include "itkImage.h"
 #include "itkVector.h"
 
 // registration
@@ -66,9 +64,6 @@
 // including itksys::SystemTools::MakeDirectory(char*)
 #include <itksys/SystemTools.hxx>
 #include <metaCommand.h>
-
-#define DBL_MAX         1.7976931348623158e+308 /* max value */
-// #define LABEL_MAX       255
 
 // To include all related header files
 #include "IGR3D_MABMIS_TestingCLP.h"
