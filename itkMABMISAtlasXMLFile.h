@@ -71,7 +71,7 @@ public:
   };
 };
 
-class ITK_EXPORT MABMISImageDataXMLFileReader :
+class MABMISImageDataXMLFileReader :
   public         XMLReader<MABMISImageData>
 {
 public:
@@ -119,7 +119,7 @@ private:
   int m_ImageCount;
 };
 
-class ITK_EXPORT MABMISAtlasXMLFileReader :
+class MABMISAtlasXMLFileReader :
   public         XMLReader<MABMISAtlas>
 {
 public:
@@ -167,7 +167,7 @@ private:
   std::string  m_CurCharacterData;
 };
 
-class ITK_EXPORT MABMISAtlasXMLFileWriter :
+class MABMISAtlasXMLFileWriter :
   public         XMLWriterBase<MABMISAtlas>
 {
 public:

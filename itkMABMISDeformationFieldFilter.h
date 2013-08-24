@@ -29,7 +29,7 @@ namespace itk
 namespace Statistics
 {
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MABMISDeformationFieldFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class MABMISDeformationFieldFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
 

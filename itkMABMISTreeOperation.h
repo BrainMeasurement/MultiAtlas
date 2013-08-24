@@ -21,7 +21,7 @@ namespace itk
 namespace Statistics
 {
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MABMISTreeOperation : public ImageToImageFilter<TInputImage, TOutputImage>
+class MABMISTreeOperation : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
 

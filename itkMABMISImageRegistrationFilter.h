@@ -22,7 +22,7 @@ namespace itk
 namespace Statistics
 {
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MABMISImageRegistrationFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class MABMISImageRegistrationFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
 
