@@ -195,8 +195,8 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   if( 1 ) // if (0) // if (1)
     {
-    int* coeff = new int[numEigenVector];
-    int  numAllCombinations = (int)pow( (float)numSampleEachDirection, numEigenVector);
+    std::vector<int> coeff(numEigenVector,0);
+    const int numAllCombinations = (int)pow( (float)numSampleEachDirection, numEigenVector);
 
     // template image: the root of the tree
     InternalImageType::Pointer templateImage = 0;
@@ -305,7 +305,6 @@ MABMISSimulateData<TInputImage, TOutputImage>
       // intermediateFileNamesFile << intermediateTemplateFileName << std::endl;
       } // end for numOfAllCombinations
         // intermediateFileNamesFile.close();
-    delete[] coeff;
 
     // do selection
       {
