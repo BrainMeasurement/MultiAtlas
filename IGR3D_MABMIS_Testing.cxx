@@ -71,22 +71,15 @@
 #include "itkMABMISBasicOperationFilter.h"
 
 #include "itkMABMISAtlasXMLFile.h"
-
-#ifdef _WIN32
-#define FILESEP '\\'
-#else
-#define  FILESEP '/'
-#endif
-
 #include <algorithm>
 static std::string ReplacePathSepForUnix( const std::string & input )
 {
-// HACK:  Only converts to unix, need to test if windows and convert other way
   std::string output = input;
+#ifdef _WIN32
   std::replace(output.begin(), output.end(), '\\', FILESEP);
+#else
   std::replace(output.begin(), output.end(), '/', FILESEP);
-
-  // std::cout << "XXXXXXXXXXXXXXXXXXX " << input << " ---> " << output << std::cout;
+#endif
   return output;
 }
 
@@ -493,7 +486,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
           {
           std::string segHdr_save = imageFileName.substr(0, sep) + "_seg.nii.gz";
 
-          size_t sep = segHdr_save.find_last_of(FILESEP);
+          const size_t sep = segHdr_save.find_last_of(FILESEP);
           if( sep != std::string::npos )
             {
             segHdr_save = imageData->m_OutputDirectory + segHdr_save.substr(sep + 1, std::string::npos);
@@ -545,7 +538,7 @@ int main( int argc, char *argv[] )
   // if the data path is empty, use the path of the xml file instead
   if( inputImageData->m_DataDirectory.size() <= 1 )
     {
-    size_t sep = ImageListXML.find_last_of(FILESEP);
+    const size_t sep = ImageListXML.find_last_of(FILESEP);
     if( sep != std::string::npos )
       {
       inputImageData->m_DataDirectory = ImageListXML.substr(0, sep);
@@ -593,7 +586,7 @@ int main( int argc, char *argv[] )
   itk::MABMISAtlas * atlasTree = treeAtlasXMLReader->GetOutputObject();
 
   // set the atlas path as the same path as the xml file.
-  size_t sep = AtlaseTreeXML.find_last_of(FILESEP);
+  const size_t sep = AtlaseTreeXML.find_last_of(FILESEP);
   if( sep != std::string::npos )
     {
     atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(AtlaseTreeXML.substr(0, sep + 1) + atlasTree->m_AtlasDirectory);
@@ -1028,7 +1021,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
   int atlas_total_size = atlasTree->m_NumberAllAtlases;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
-  size_t      sep = atlasFullName.find_last_of(FILESEP);
+  const size_t      sep = atlasFullName.find_last_of(FILESEP);
   // start to register each image to the root node step by step
   for( int ii = 1; ii < itree_size; ii++ ) // starting from 1, since index[0] showing the root
     {
@@ -1300,7 +1293,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
   std::string fixedImageTag;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0] );
-  size_t      sep = atlasFullName.find_last_of(FILESEP);
+  const size_t      sep = atlasFullName.find_last_of(FILESEP);
   for( int i = 0; i < atlas_image_size + test_image_size; i++ )
     {
     if( isDebug )
@@ -1433,7 +1426,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
   int test_image_size = imageData->m_NumberImageData;
 
   std::string atlasFullName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[0]);
-  size_t      sep = atlasFullName.find_last_of(FILESEP);
+  const size_t      sep = atlasFullName.find_last_of(FILESEP);
 
   // do for all real images, including both atlases and test images
   for( int all_index = 0; all_index < atlas_image_size + test_image_size; all_index++ )

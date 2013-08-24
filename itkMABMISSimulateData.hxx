@@ -3,16 +3,13 @@
 
 #include "itkMABMISSimulateData.h"
 
+//For definition of FILESEP
+#include "itkMABMISAtlasXMLFile.h"
+
 using namespace std;
 
 int numEigenVector = 4;         // t
 int numSampleEachDirection = 4; // n  n^t total number of intermediate templates
-
-#ifdef _WIN32
-#define FILESEP '\\'
-#else
-#define  FILESEP '/'
-#endif
 
 namespace itk
 {
@@ -190,7 +187,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   // output folder, after selection of simulated atlases
   std::string outputFolder = "";
-  size_t      sep = allImgFileName[0].find_last_of(FILESEP);
+  const size_t      sep = allImgFileName[0].find_last_of(FILESEP);
   if( sep != std::string::npos )
     {
     outputFolder = allImgFileName[0].substr(0, sep);

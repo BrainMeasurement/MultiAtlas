@@ -1,12 +1,15 @@
-
-
-
 #ifndef __itkMABMISAtlasXMLFile_h
 #define __itkMABMISAtlasXMLFile_h
 
 #include "itkXMLFile.h"
 #include <string>
 #include <vector>
+
+#ifdef _WIN32
+static const char FILESEP = '\\';
+#else
+static const char FILESEP = '/';
+#endif
 
 namespace itk
 {

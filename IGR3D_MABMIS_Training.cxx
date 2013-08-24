@@ -72,12 +72,6 @@
 
 #include "itkMABMISAtlasXMLFile.h"
 
-#ifdef _WIN32
-#define FILESEP '\\'
-#else
-#define  FILESEP '/'
-#endif
-
 using namespace std;
 
 typedef double CoordinateRepType;
@@ -412,7 +406,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   int countRealImages = 0, countSimulatedImages = 0;
   for( int i = 0; i < atlasfilenames.size(); i++ )
     {
-    size_t      sep = atlasfilenames[i].find_last_of(FILESEP);
+    const size_t      sep = atlasfilenames[i].find_last_of(FILESEP);
     std::string fname = atlasfilenames[i];
     if( sep != string::npos )
       {
@@ -447,7 +441,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   atlas.m_AtlasSegmentationFilenames.resize(segmentFiles.size() );
   for( int i = 0; i < segmentFiles.size(); i++ )
     {
-    size_t      sep = segmentFiles[i].find_last_of(FILESEP);
+    const size_t      sep = segmentFiles[i].find_last_of(FILESEP);
     std::string fname = segmentFiles[i];
     if( sep != string::npos )
       {
@@ -508,7 +502,7 @@ int main( int argc, char *argv[] )
   // if the data path is empty, use the path of the xml file instead
   if( trainingData->m_DataDirectory.size() <= 1 )
     {
-    size_t sep = TrainingDataXML.find_last_of(FILESEP);
+    const size_t sep = TrainingDataXML.find_last_of(FILESEP);
     if( sep != std::string::npos )
       {
       trainingData->m_DataDirectory = TrainingDataXML.substr(0, sep);
@@ -655,7 +649,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
                                       std::vector<int> iterations, double sigma)
 {
   // get the path from the filename
-  size_t      sep = imageFileNames[0].find_last_of(FILESEP);
+  const size_t      sep = imageFileNames[0].find_last_of(FILESEP);
   std::string outputFolder = "";
 
   if( sep != std::string::npos )
@@ -667,7 +661,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     outputFolder = outputFolder + FILESEP;
     }
 
-  int atlas_size = imageFileNames.size();
+  const int atlas_size = imageFileNames.size();
   std::cout << "Register between root and atlases ... ";
   for( int i = 0; i < atlas_size; i++ )
     {
@@ -759,7 +753,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
   vector<string> allDeformationFieldFileNames;
 
   // get the path from the filename
-  size_t      sep = imageFileNames[0].find_last_of(FILESEP);
+  const size_t      sep = imageFileNames[0].find_last_of(FILESEP);
   std::string outputFolder = "";
   if( sep != std::string::npos )
     {
@@ -799,7 +793,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
 std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string> imageFiles, int simulatedAtlasSize)
 {
   // output folder
-  size_t      sep = imageFiles[0].find_last_of(FILESEP);
+  const size_t      sep = imageFiles[0].find_last_of(FILESEP);
   std::string outputFolder = "";
 
   if( sep != std::string::npos )
