@@ -33,13 +33,13 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(MABMISBasicOperationFilter, ImageToImageFilter);
 
-  void RemoveFile(string filename);
+  void RemoveFile(std::string filename);
 
   void bubbleSort(double* arr, int* index, int n);
 
-  void myitoa(int num, string& str, int digit);
+  void myitoa(int num, std::string& str, int digit);
 
-  void SaveMatrix2File(vnl_matrix<double> matrix, int iSize, int jSize, string martixFileName);
+  void SaveMatrix2File(vnl_matrix<double> matrix, int iSize, int jSize, std::string martixFileName);
 
 private:
   MABMISBasicOperationFilter(const Self &); // purposely not implemented

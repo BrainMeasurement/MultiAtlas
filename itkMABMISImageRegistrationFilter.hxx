@@ -3,8 +3,6 @@
 
 #include "itkMABMISImageRegistrationFilter.h"
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -39,11 +37,11 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
                                          double sigmaDef, bool doHistMatch, std::vector<int> iterInResolutions)
 {
   // for debugging
-  cerr << "DiffeoDemonsRegistrationWithParameters" << endl;
-  cerr << fixedImageFileName << endl;
-  cerr << movingImageFileName << endl;
-  cerr << deformedImageFileName << endl;
-  cerr << deformationFieldFileName << endl;
+  std::cerr << "DiffeoDemonsRegistrationWithParameters" << std::endl;
+  std::cerr << fixedImageFileName << std::endl;
+  std::cerr << movingImageFileName << std::endl;
+  std::cerr << deformedImageFileName << std::endl;
+  std::cerr << deformationFieldFileName << std::endl;
 
   int res = iterInResolutions.size();
   // read fixed and moving images
@@ -186,9 +184,9 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 int
 MABMISImageRegistrationFilter<TInputImage, TOutputImage>
-::DiffeoDemonsRegistrationWithInitialWithParameters(string  fixedImageFileName, string movingImageFileName,
-                                                    string initDeformationFieldFileName, string deformedImageFileName,
-                                                    string deformationFieldFileName, double sigmaDef, bool doHistMatch,
+::DiffeoDemonsRegistrationWithInitialWithParameters(std::string  fixedImageFileName, std::string movingImageFileName,
+                                                    std::string initDeformationFieldFileName, std::string deformedImageFileName,
+                                                    std::string deformationFieldFileName, double sigmaDef, bool doHistMatch,
                                                     std::vector<int> iterInResolutions)
 {
   int res = iterInResolutions.size();

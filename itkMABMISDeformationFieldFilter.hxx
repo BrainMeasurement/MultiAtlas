@@ -3,8 +3,6 @@
 
 #include "itkMABMISDeformationFieldFilter.h"
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -163,8 +161,8 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISDeformationFieldFilter<TInputImage, TOutputImage>
-::ApplyDeformationFieldAndWriteWithFileNames(string movingImageName, string deformationFieldFileName,
-                                             string deformedImageName, bool isLinearInterpolator)
+::ApplyDeformationFieldAndWriteWithFileNames(std::string movingImageName, std::string deformationFieldFileName,
+                                             std::string deformedImageName, bool isLinearInterpolator)
 {
   typename ImageOperationType::Pointer imageoperator = ImageOperationType::New();
 

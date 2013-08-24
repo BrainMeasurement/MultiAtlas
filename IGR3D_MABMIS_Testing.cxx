@@ -119,8 +119,6 @@ GetRootName(const std::string & filename)
   return ( filename );
 }
 
-using namespace std;
-
 typedef double CoordinateRepType;
 const   unsigned int SpaceDimension = ImageDimension;
 
@@ -225,8 +223,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
                                       std::vector<int> iterations,    // registration parameters
                                       double sigma);
 
-void LabelFusion(string curSampleImgName, string outSampleSegName, vector<string>  allWarpedAtlasImgNames,
-                 vector<string> allDeformationFieldNames, vector<string> allAtlasSegNames, int numOfAtlases);
+void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std::vector<std::string>  allWarpedAtlasImgNames,
+                 std::vector<std::string> allDeformationFieldNames, std::vector<std::string> allAtlasSegNames, int numOfAtlases);
 
 void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, InternalImageType::Pointer outSampleSegPtr,
                                  InternalImageType::Pointer* warpedImgPtrs, InternalImageType::Pointer* warpedSegPtrs,
@@ -247,15 +245,15 @@ void PairwiseRegistrationOnTreeViaRoot(int root, itk::MABMISImageData* imageData
 // void MultiAtlasBasedSegmentation(int filenumber, int atlas_size, std::vector<std::string> sub_ids);
 int MultiAtlasBasedSegmentation(int root, itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree);
 
-void strtrim(string& str)
+void strtrim(std::string& str)
 {
-  string::size_type pos = str.find_last_not_of(' ');
+  std::string::size_type pos = str.find_last_not_of(' ');
 
-  if( pos != string::npos )
+  if( pos != std::string::npos )
     {
     str.erase(pos + 1);
     pos = str.find_first_not_of(' ');
-    if( pos != string::npos )
+    if( pos != std::string::npos )
       {
       str.erase(0, pos);
       }
@@ -327,7 +325,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   int            totalNumAtlases = atlasTree->m_NumberAllAtlases;
   int            numSimulatedAtlase = atlasTree->m_NumberSimulatedAtlases;
   int            totalNumFiles = totalNumAtlases + imageData->m_NumberImageData;
-  vector<string> allfilenames(totalNumFiles);
+  std::vector<std::string> allfilenames(totalNumFiles);
   for( int i = 0; i < totalNumFiles; ++i )
     {
     if( i < totalNumAtlases )
@@ -653,8 +651,8 @@ int main( int argc, char *argv[] )
   return retVal;
 }
 
-void LabelFusion(string curSampleImgName, string outSampleSegName, vector<string> allWarpedAtlasImgNames,
-                 vector<string> allDeformationFieldNames, vector<string> allAtlasSegNames, int numOfAtlases)
+void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std::vector<std::string> allWarpedAtlasImgNames,
+                 std::vector<std::string> allDeformationFieldNames, std::vector<std::string> allAtlasSegNames, int numOfAtlases)
 {
   // create pointers for each images including: cur_image, our_seg,
   // warpedImg(after histogram matching), warpedSeg (after warping)
@@ -1009,8 +1007,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
                                       std::vector<int> iterations,
                                       double sigma
                                       )
-// (vnl_vector<int> itree_t, int itree_size_t, int atlas_size_t, int simulate_size_t, int sample_size_t, vector<string>
-// originalIntensityImageFileNames, vector<string> deformedImgFileNames, vector<string> deformationFieldFileNames)
+// (vnl_vector<int> itree_t, int itree_size_t, int atlas_size_t, int simulate_size_t, int sample_size_t, std::vector<std::string>
+// originalIntensityImageFileNames, std::vector<std::string> deformedImgFileNames, std::vector<std::string> deformationFieldFileNames)
 {
   // int root = -1; //
   // treeoperator->FindRoot(itree_t, itree_size_t, root);
@@ -1067,7 +1065,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
     int curnode = index[ii];
     int parentnode = itree[curnode];
 
-    cout << "Between nodes: [" << curnode << ", " << parentnode << "]" << std::endl;
+    std::cout << "Between nodes: [" << curnode << ", " << parentnode << "]" << std::endl;
 
     if( (curnode >= atlas_image_size) && (curnode < atlas_total_size) )
       {
@@ -1211,8 +1209,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
         {
         // parent is a simulated image
 
-        string index_string;  basicoperator->myitoa( parentnode - atlas_image_size, index_string, 3 );
-        string sim_df_FileName = "simulated_deform_" + index_string + ".nii.gz";
+        std::string index_string;  basicoperator->myitoa( parentnode - atlas_image_size, index_string, 3 );
+        std::string sim_df_FileName = "simulated_deform_" + index_string + ".nii.gz";
         sim_df_FileName = atlasTree->m_AtlasDirectory + sim_df_FileName;
 
         regoperator->DiffeoDemonsRegistrationWithInitialWithParameters(
@@ -1280,23 +1278,23 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
   // MAYBE FIX LATER -Xiaofeng
   // registration to the root
   // prepare file names
-  vector<string> originalIntensityImageFileNames;
-  vector<string> deformedImgFileNames;
-  vector<string> deformedImgFileNamesImg;
-  vector<string> deformedSegFileNames;
-  vector<string> deformedSegFileNamesImg;
-  vector<string> deformationFieldFileNames;
+  std::vector<std::string> originalIntensityImageFileNames;
+  std::vector<std::string> deformedImgFileNames;
+  std::vector<std::string> deformedImgFileNamesImg;
+  std::vector<std::string> deformedSegFileNames;
+  std::vector<std::string> deformedSegFileNamesImg;
+  std::vector<std::string> deformationFieldFileNames;
 
   ///&*(UGHPHPU@@@@@@@@@@@@@@@@@@@@@@@@@
 /*
   for (int i = 0; i < filenumber; ++i)
   {
-    string originalIntensityImageFileName = sub_ids[i] + "_cbq_000.nii.gz";
-    string deformationFieldFileName = sub_ids[root]+ "_" + sub_ids[i] + "_deform_000.nii.gz";
-    string deformedImgFileName = sub_ids[root] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
-    string deformedImgFileNameImg = sub_ids[root] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
-    string deformedSegFileName = sub_ids[root] + "_" + sub_ids[i] + "_seg_000.nii.gz";
-    string deformedSegFileNameImg = sub_ids[root] + "_" + sub_ids[i] + "_seg_000.nii.gz";
+    std::string originalIntensityImageFileName = sub_ids[i] + "_cbq_000.nii.gz";
+    std::string deformationFieldFileName = sub_ids[root]+ "_" + sub_ids[i] + "_deform_000.nii.gz";
+    std::string deformedImgFileName = sub_ids[root] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
+    std::string deformedImgFileNameImg = sub_ids[root] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
+    std::string deformedSegFileName = sub_ids[root] + "_" + sub_ids[i] + "_seg_000.nii.gz";
+    std::string deformedSegFileNameImg = sub_ids[root] + "_" + sub_ids[i] + "_seg_000.nii.gz";
 
     originalIntensityImageFileNames.push_back(originalIntensityImageFileName);
     deformedImgFileNames.push_back(deformedImgFileName);
@@ -1343,8 +1341,8 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     // prepare file names
 
-    // string originalImgImageFileName = sub_ids[root] + "_cbq_000.nii.gz";
-    // string originalSegImageFileName = sub_ids[root] + "_seg_000.nii.gz";
+    // std::string originalImgImageFileName = sub_ids[root] + "_cbq_000.nii.gz";
+    // std::string originalSegImageFileName = sub_ids[root] + "_seg_000.nii.gz";
     std::string rootImageFileName = ReplacePathSepForUnix(
         atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root] );
     std::string rootSegmentFileName = ReplacePathSepForUnix(
@@ -1533,15 +1531,15 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       deformedSegmentFileName = imageData->m_DataDirectory + deformedSegmentFileName;
       deformedSegmentFileNameImg = imageData->m_DataDirectory + deformedSegmentFileNameImg;
 
-      // string fixedImgImageFileName = sub_ids[sample_index] + "_cbq_000.nii.gz";
-      // string movingImgImageFileName = sub_ids[all_index] + "_cbq_000.nii.gz";
-      // string movingSegImageFileName = sub_ids[all_index] + "_seg_000.nii.gz";
+      // std::string fixedImgImageFileName = sub_ids[sample_index] + "_cbq_000.nii.gz";
+      // std::string movingImgImageFileName = sub_ids[all_index] + "_cbq_000.nii.gz";
+      // std::string movingSegImageFileName = sub_ids[all_index] + "_seg_000.nii.gz";
 
-      // string deformedImgImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
-      // string deformedSegImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
-      // string deformedImgImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
-      // string deformedSegImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
-      // string deformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
+      // std::string deformedImgImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
+      // std::string deformedSegImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
+      // std::string deformedImgImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
+      // std::string deformedSegImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
+      // std::string deformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
 
       // if exist
       bool isComposeExist = true;
@@ -1564,9 +1562,9 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
         }
 
       // compose
-      // string inputDeformationFieldFileName = sub_ids[root] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
-      // string secondDeformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[root] + "_deform_000.nii.gz";
-      string inputDeformationFieldFileName;
+      // std::string inputDeformationFieldFileName = sub_ids[root] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
+      // std::string secondDeformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[root] + "_deform_000.nii.gz";
+      std::string inputDeformationFieldFileName;
       if( all_index < atlas_image_size )
         {
         inputDeformationFieldFileName = atlasTree->m_AtlasDirectory + movingImageTag + "_to_" + root_str
@@ -1577,7 +1575,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
         inputDeformationFieldFileName  = imageData->m_DataDirectory + movingImageTag + "_to_" + root_str
           + "_deform_000.nii.gz";
         }
-      string secondDeformationFieldFileName = imageData->m_DataDirectory + root_str + "_to_" + fixedImageTag
+      std::string secondDeformationFieldFileName = imageData->m_DataDirectory + root_str + "_to_" + fixedImageTag
         + "_deform_000.nii.gz";
       // output composed deformation field
       dfoperator->ComposeDeformationFieldsAndSave(inputDeformationFieldFileName,
@@ -1652,20 +1650,20 @@ int MultiAtlasBasedSegmentation(int root,
 
       std::string testImageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[sample_index];
 
-      // string curSampleImgName = sub_ids[sample_index] +"_cbq_000.nii.gz";
+      // std::string curSampleImgName = sub_ids[sample_index] +"_cbq_000.nii.gz";
       // the output label image of current sample
-      string index_string;
+      std::string index_string;
       basicoperator->myitoa( iter, index_string, 3 );
       std::string testSementFileName = testImageFileName;
       const std::string testSegmentBaseFileName = GetRootName(testSementFileName);
       testSementFileName = testSegmentBaseFileName + "_seg_" + index_string + ".nii.gz";
 
-      // string   outSampleSegName = sub_ids[sample_index] + "_seg_" + index_string + ".nii.gz";
+      // std::string   outSampleSegName = sub_ids[sample_index] + "_seg_" + index_string + ".nii.gz";
 
       // prepare all current atlases names
-      vector<string> allWarpedAtlasImgNames;
-      vector<string> allDeformationFieldNames;
-      vector<string> allAtlasSegNames;
+      std::vector<std::string> allWarpedAtlasImgNames;
+      std::vector<std::string> allDeformationFieldNames;
+      std::vector<std::string> allAtlasSegNames;
 
       int atlas_index = 0;
       for( int i = 0; i < atlas_image_size + test_image_size; ++i )
@@ -1694,8 +1692,8 @@ int MultiAtlasBasedSegmentation(int root,
           }
 
         // assign names
-        // string allWarpedAtlasImgName = sub_ids[sample_index] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
-        // string allDeformationFieldName = sub_ids[sample_index] + "_" + sub_ids[i] + "_deform_000.nii.gz";
+        // std::string allWarpedAtlasImgName = sub_ids[sample_index] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
+        // std::string allDeformationFieldName = sub_ids[sample_index] + "_" + sub_ids[i] + "_deform_000.nii.gz";
         std::string warpedImageFileName = movingImageTag + "_to_" + testImageTag + "_cbq_000.nii.gz";
         std::string dfFileName = movingImageTag + "_to_" + testImageTag + "_deform_000.nii.gz";
 

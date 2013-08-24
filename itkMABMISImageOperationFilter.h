@@ -13,8 +13,6 @@
 
 #define ImageDimension 3
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -80,24 +78,24 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(MABMISImageOperationFilter, ImageToImageFilter);
 
-  void PairwiseDistanceAmongImages(vector<std::string> imageFileNames, int totalNumber,
+  void PairwiseDistanceAmongImages(std::vector<std::string> imageFileNames, int totalNumber,
                                    vnl_matrix<double>& distanceMatrix);
 
-  double calculateDistanceMSD(string& filename1, string& filename2);
+  double calculateDistanceMSD(std::string& filename1, std::string& filename2);
 
-  int ReadImage(string filename, InternalImageType::Pointer& image);
+  int ReadImage(std::string filename, InternalImageType::Pointer& image);
 
-  void WriteImageUCHAR(string filename, InternalImageType::Pointer image);
+  void WriteImageUCHAR(std::string filename, InternalImageType::Pointer image);
 
-  void WriteImageINT(string filename, InternalImageType::Pointer image);
+  void WriteImageINT(std::string filename, InternalImageType::Pointer image);
 
-  void WriteImageSHORT(string filename, InternalImageType::Pointer image);
+  void WriteImageSHORT(std::string filename, InternalImageType::Pointer image);
 
-  void WriteImageFLOAT(string filename, InternalImageType::Pointer image);
+  void WriteImageFLOAT(std::string filename, InternalImageType::Pointer image);
 
-  void WriteImage(string filename, InternalImageType::Pointer image);
+  void WriteImage(std::string filename, InternalImageType::Pointer image);
 
-  void WriteImage(string filename, InternalImageType::Pointer image, char* outputType);
+  void WriteImage(std::string filename, InternalImageType::Pointer image, char* outputType);
 
 private:
   MABMISImageOperationFilter(const Self &); // purposely not implemented

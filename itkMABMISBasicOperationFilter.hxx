@@ -3,8 +3,6 @@
 
 #include "itkMABMISBasicOperationFilter.h"
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -88,7 +86,7 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISBasicOperationFilter<TInputImage, TOutputImage>
-::myitoa(int num, string& str, int digit)
+::myitoa(int num, std::string& str, int digit)
 {
   str = "";
 
@@ -101,7 +99,7 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
     str.append("0");
     }
 
-  stringstream st;
+  std::stringstream st;
   st << num;
   str.append(st.str() );
 

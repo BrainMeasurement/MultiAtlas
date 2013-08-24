@@ -72,8 +72,6 @@
 
 #include "itkMABMISAtlasXMLFile.h"
 
-using namespace std;
-
 typedef double CoordinateRepType;
 const   unsigned int SpaceDimension = ImageDimension;
 
@@ -184,15 +182,15 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
 
 std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string> imgfilenames, int simulatedAtlasSize);
 
-void strtrim(string& str)
+void strtrim(std::string& str)
 {
-  string::size_type pos = str.find_last_not_of(' ');
+  std::string::size_type pos = str.find_last_not_of(' ');
 
-  if( pos != string::npos )
+  if( pos != std::string::npos )
     {
     str.erase(pos + 1);
     pos = str.find_first_not_of(' ');
-    if( pos != string::npos )
+    if( pos != std::string::npos )
       {
       str.erase(0, pos);
       }
@@ -363,7 +361,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   vnl_vector<int> tree(tree_size);    // each tree
 
   // fill distance matrix
-  vector<string> atlasfilenames;
+  std::vector<std::string> atlasfilenames;
   for( int i = 0; i < tree_size; ++i )
     {
     std::string atlasfilename;
@@ -408,13 +406,13 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     {
     const size_t      sep = atlasfilenames[i].find_last_of(FILESEP);
     std::string fname = atlasfilenames[i];
-    if( sep != string::npos )
+    if( sep != std::string::npos )
       {
-      fname = atlasfilenames[i].substr(sep + 1, string::npos);
+      fname = atlasfilenames[i].substr(sep + 1, std::string::npos);
 /*			fname = atlasfilenames[i].substr(0, sep);
       sep = fname.find_last_of(FILESEP);
-      if (sep != string::npos)
-        fname = atlasfilenames[i].substr(sep+1, string::npos);
+      if (sep != std::string::npos)
+        fname = atlasfilenames[i].substr(sep+1, std::string::npos);
       else
         fname = atlasfilenames[i];
         */
@@ -443,13 +441,13 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     {
     const size_t      sep = segmentFiles[i].find_last_of(FILESEP);
     std::string fname = segmentFiles[i];
-    if( sep != string::npos )
+    if( sep != std::string::npos )
       {
-      fname = segmentFiles[i].substr(sep + 1, string::npos);
+      fname = segmentFiles[i].substr(sep + 1, std::string::npos);
 /*			fname = segmentFiles[i].substr(0, sep);
       sep = fname.find_last_of(FILESEP);
-      if (sep != string::npos)
-        fname = segmentFiles[i].substr(sep+1, string::npos);
+      if (sep != std::string::npos)
+        fname = segmentFiles[i].substr(sep+1, std::string::npos);
       else
         fname = segmentFiles[i];
 */
@@ -626,7 +624,7 @@ void SearchRootAmongAtlases(std::vector<std::string> imgfilenames, int & root)
   imgoperator->PairwiseDistanceAmongImages(imgfilenames, tree_size, distanceMatrix);
   if( isDebug )
     {
-    string distFileName = "dist_all_atlases.txt";
+    std::string distFileName = "dist_all_atlases.txt";
     basicoperator->SaveMatrix2File(distanceMatrix, tree_size, tree_size, distFileName);
     }
 
@@ -638,7 +636,7 @@ void SearchRootAmongAtlases(std::vector<std::string> imgfilenames, int & root)
   // save distance matrix and tree
   if( isDebug )
     {
-    string treeFileName = "tree_all_atlases.txt";
+    std::string treeFileName = "tree_all_atlases.txt";
     treeoperator->SaveTreeWithInfo(tree, tree_size, treeFileName);
     }
 
@@ -671,14 +669,14 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
       continue;
       }
     // if not the root image do registration
-    string fixedImageFileName = imageFileNames[root];
-    string movingImageFileName = imageFileNames[i];
+    std::string fixedImageFileName = imageFileNames[root];
+    std::string movingImageFileName = imageFileNames[i];
 
     char i_str[10], root_str[10];
     sprintf(i_str, "%03d", i);
     sprintf(root_str, "%03d", root);
     std::string deformedImageFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_cbq_reg.nii.gz";
-    string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
+    std::string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
 
     deformedImageFileName  = outputFolder + deformedImageFileName;
     deformationFieldFileName = outputFolder + deformationFieldFileName;
@@ -716,7 +714,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     dfoperator->InverseDeformationField3D(deformationField, inversedDeformationField);
 
     std::string invDeformedImageFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_cbq_reg.nii.gz";
-    string      invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_deform_000.nii.gz";
+    std::string      invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_deform_000.nii.gz";
     invDeformedImageFileName = outputFolder + invDeformedImageFileName;
     invDeformationFileName = outputFolder + invDeformationFileName;
 
@@ -750,7 +748,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
   ///////////////////////////////
   // do PCA simulation
   // std::cout << "Build deformation field model ... ";
-  vector<string> allDeformationFieldFileNames;
+  std::vector<std::string> allDeformationFieldFileNames;
 
   // get the path from the filename
   const size_t      sep = imageFileNames[0].find_last_of(FILESEP);
@@ -771,7 +769,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
   datasimulator->SetSimulateSize(simulatedAtlasSize);
   for( int i = 0; i < atlas_size; ++i )
     {
-    string allDeformationFieldFileName;
+    std::string allDeformationFieldFileName;
     if( i == root )
       {
       continue;
@@ -812,11 +810,11 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     {
     std::cout << i << ", ";
 
-    string index_string;
+    std::string index_string;
     basicoperator->myitoa( i, index_string, 3 );
 
-    string simulateDeformationFieldFileName = "simulated_deform_" + index_string + ".nii.gz";
-    string simulateTemplateFileName = "simulated_cbq_" + index_string + ".nii.gz";
+    std::string simulateDeformationFieldFileName = "simulated_deform_" + index_string + ".nii.gz";
+    std::string simulateTemplateFileName = "simulated_cbq_" + index_string + ".nii.gz";
     simulateDeformationFieldFileName = outputFolder + simulateDeformationFieldFileName;
     simulateTemplateFileName = outputFolder + simulateTemplateFileName;
 

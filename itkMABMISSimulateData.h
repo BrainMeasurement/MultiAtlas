@@ -74,9 +74,9 @@ public:
   int  DoPCATraining(std::vector<std::string> deformationFieldFileNames, int numFiles,
                      std::vector<std::string> allImgFileName, int root);
 
-  void LoadIntoArray(string resampledDeformationFieldFileName, float* df_vector);
+  void LoadIntoArray(std::string resampledDeformationFieldFileName, float* df_vector);
 
-  void SaveFromArray(string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
+  void SaveFromArray(std::string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
 
   itkSetMacro(Root, int);
   itkSetMacro(Imx, int);

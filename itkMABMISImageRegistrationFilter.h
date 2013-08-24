@@ -96,9 +96,9 @@ public:
                                              std::string deformedImageFileName, std::string deformationFieldFileName,
                                              double sigmaDef, bool doHistMatch, std::vector<int> iterInResolutions);
 
-  int DiffeoDemonsRegistrationWithInitialWithParameters(string  fixedImageFileName, string movingImageFileName,
-                                                        string initDeformationFieldFileName,
-                                                        string deformedImageFileName, string deformationFieldFileName,
+  int DiffeoDemonsRegistrationWithInitialWithParameters(std::string  fixedImageFileName, std::string movingImageFileName,
+                                                        std::string initDeformationFieldFileName,
+                                                        std::string deformedImageFileName, std::string deformationFieldFileName,
                                                         double sigmaDef, bool doHistMatch,
                                                         std::vector<int> iterInResolutions);
 

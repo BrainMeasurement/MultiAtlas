@@ -6,8 +6,6 @@
 //For definition of FILESEP
 #include "itkMABMISAtlasXMLFile.h"
 
-using namespace std;
-
 int numEigenVector = 4;         // t
 int numSampleEachDirection = 4; // n  n^t total number of intermediate templates
 
@@ -102,11 +100,11 @@ MABMISSimulateData<TInputImage, TOutputImage>
   // down sample
   for( int i = 0; i < numFiles; ++i )
     {
-    string deformationFieldFileName;
+    std::string deformationFieldFileName;
     deformationFieldFileName = deformationFieldFileNames[i];
 
-    string resampledDeformationFieldFileName;
-    string tempstring;
+    std::string resampledDeformationFieldFileName;
+    std::string tempstring;
     tempstring = deformationFieldFileNames[i];
 
     tempstring.erase(tempstring.end() - 4, tempstring.end() );
@@ -172,7 +170,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
     } // end if doPCA
 
   // for debugging
-  // cerr << "Pass: PCA" << endl;
+  // cerr << "Pass: PCA" << std::endl;
 
   // make a temporary folder to store the intermediate files
   std::string tempFolder = "temp_PCATraining";
@@ -234,15 +232,15 @@ MABMISSimulateData<TInputImage, TOutputImage>
         df_intermediate_sub += c[coeff[j]] * df_eigenvector.get_column(j);
         }
 
-      string index_string;    basicoperator->myitoa( i, index_string, 3 );
-      string intermediateSubDeformationFieldFileName = "inter_deform_sub_000.nii.gz";
+      std::string index_string;    basicoperator->myitoa( i, index_string, 3 );
+      std::string intermediateSubDeformationFieldFileName = "inter_deform_sub_000.nii.gz";
       intermediateSubDeformationFieldFileName.erase(
         intermediateSubDeformationFieldFileName.end() - 7, intermediateSubDeformationFieldFileName.end() );
       intermediateSubDeformationFieldFileName.append(index_string);
       intermediateSubDeformationFieldFileName.append(".nii.gz");
       intermediateSubDeformationFieldFileName = tempFolder + FILESEP + intermediateSubDeformationFieldFileName;
 
-      string intermediateDeformationFieldFileName = "inter_deform_000.nii.gz";
+      std::string intermediateDeformationFieldFileName = "inter_deform_000.nii.gz";
       intermediateDeformationFieldFileName.erase(
         intermediateDeformationFieldFileName.end() - 7, intermediateDeformationFieldFileName.end() );
       intermediateDeformationFieldFileName.append(index_string);
@@ -388,10 +386,10 @@ MABMISSimulateData<TInputImage, TOutputImage>
       {
       std::string index_string;     basicoperator->myitoa( i, index_string, 3 );
 
-      string curInterTempFileName = "inter_template_" + index_string + ".nii.gz";
-      string curInterTempDeformFileName = "inter_deform_" + index_string + ".nii.gz";
-      string curInterTempRevFileName = "inter_deform_reverse_" + index_string + ".nii.gz";
-      string curInterTempSubFileName = "inter_deform_sub_" + index_string + ".nii.gz";
+      std::string curInterTempFileName = "inter_template_" + index_string + ".nii.gz";
+      std::string curInterTempDeformFileName = "inter_deform_" + index_string + ".nii.gz";
+      std::string curInterTempRevFileName = "inter_deform_reverse_" + index_string + ".nii.gz";
+      std::string curInterTempSubFileName = "inter_deform_sub_" + index_string + ".nii.gz";
 
       curInterTempFileName = tempFolder + FILESEP + curInterTempFileName;
       curInterTempDeformFileName = tempFolder + FILESEP + curInterTempDeformFileName;
@@ -420,7 +418,7 @@ void
 MABMISSimulateData<TInputImage, TOutputImage>
 ::SaveFromArray(std::string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz)
 {
-  cerr << "deformationFieldFileName: " << deformationFieldFileName << endl;
+  std::cerr << "deformationFieldFileName: " << deformationFieldFileName << std::endl;
 
   // save deformation field array into file
   // create the resampled image

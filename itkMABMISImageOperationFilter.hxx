@@ -3,8 +3,6 @@
 
 #include "itkMABMISImageOperationFilter.h"
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -32,7 +30,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 int
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::ReadImage(string filename, InternalImageType::Pointer& image)
+::ReadImage(std::string filename, InternalImageType::Pointer& image)
 {
   // std::cout << "Reading "<< filename << std:: endl;
 
@@ -55,7 +53,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageUCHAR(string filename, InternalImageType::Pointer image)
+::WriteImageUCHAR(std::string filename, InternalImageType::Pointer image)
 {
   Internal2CharCastFilterType::Pointer caster = Internal2CharCastFilterType::New();
 
@@ -79,7 +77,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageINT(string filename, InternalImageType::Pointer image)
+::WriteImageINT(std::string filename, InternalImageType::Pointer image)
 {
   Internal2IntCastFilterType::Pointer caster = Internal2IntCastFilterType::New();
 
@@ -103,7 +101,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageSHORT(string filename, InternalImageType::Pointer image)
+::WriteImageSHORT(std::string filename, InternalImageType::Pointer image)
 {
   Internal2ShortCastFilterType::Pointer caster = Internal2ShortCastFilterType::New();
 
@@ -127,7 +125,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageFLOAT(string filename, InternalImageType::Pointer image)
+::WriteImageFLOAT(std::string filename, InternalImageType::Pointer image)
 {
   Internal2FloatCastFilterType::Pointer caster = Internal2FloatCastFilterType::New();
 
@@ -151,7 +149,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImage(string filename, InternalImageType::Pointer image)
+::WriteImage(std::string filename, InternalImageType::Pointer image)
 {
   Internal2CharCastFilterType::Pointer caster = Internal2CharCastFilterType::New();
 
@@ -175,7 +173,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImage(string filename, InternalImageType::Pointer image, char* outputType)
+::WriteImage(std::string filename, InternalImageType::Pointer image, char* outputType)
 {
   //
   if( strcmp(outputType, "uchar") == 0 )
@@ -204,7 +202,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 double
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::calculateDistanceMSD(string& imageName1, string&  imageName2)
+::calculateDistanceMSD(std::string& imageName1, std::string&  imageName2)
 {
   double dist;
 
@@ -248,7 +246,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::PairwiseDistanceAmongImages(vector<string> imageFileNames, int totalNumber, vnl_matrix<double>& distanceMatrix)
+::PairwiseDistanceAmongImages(std::vector<std::string> imageFileNames, int totalNumber, vnl_matrix<double>& distanceMatrix)
 
 {
   for( int i = 0; i < totalNumber; ++i )

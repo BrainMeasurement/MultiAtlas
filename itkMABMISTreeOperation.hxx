@@ -3,8 +3,6 @@
 
 #include "itkMABMISTreeOperation.h"
 
-using namespace std;
-
 namespace itk
 {
 namespace Statistics
@@ -56,9 +54,9 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   // save distance matrix and tree
   if( isDebug )
     {
-    string distFileName = "dist_all_atlases_and_simulated.txt";
+    std::string distFileName = "dist_all_atlases_and_simulated.txt";
     basicoperator->SaveMatrix2File(distanceMatrix, tree_size, tree_size, distFileName);
-    string treeFileName = "tree_all_atlases_and_simulated.txt";
+    std::string treeFileName = "tree_all_atlases_and_simulated.txt";
     SaveTreeWithInfo(tree, tree_size, treeFileName);
     }
 
@@ -148,7 +146,7 @@ MABMISTreeOperation<TInputImage, TOutputImage>
 {
   // for debugging
 
-  string distFileName;
+  std::string distFileName;
 
   distFileName = "distance_matrix_generateMSTFromMatrix.txt";
   basicoperator->SaveMatrix2File(curDistance, nnode, nnode, distFileName);
@@ -307,7 +305,7 @@ vnl_vector<int>
 MABMISTreeOperation<TInputImage, TOutputImage>
 ::generateMSTFromMatrixWithFixedRoot(vnl_matrix<double> curDistance, int nnode, vnl_vector<int> treeMST, int root )
 {
-  string distFileName;
+  std::string distFileName;
 
   distFileName = "distance_matrix_generateMSTFromMatrixWithFixedRoot.txt";
   basicoperator->SaveMatrix2File(curDistance, nnode, nnode, distFileName);
