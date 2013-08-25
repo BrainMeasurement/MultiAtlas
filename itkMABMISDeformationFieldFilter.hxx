@@ -210,7 +210,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     }
   // {UNKNOWNCOMPONENTTYPE,UCHAR,CHAR,USHORT,SHORT,UINT,INT,ULONG,LONG,FLOAT,DOUBLE} IOComponentType;
   //                    0     1    2      3     4    5   6     7    8     9     10
-  int input_type = imageIO->GetComponentType(); // 9:float, 10:double
+  const int input_type = imageIO->GetComponentType(); // 9:float, 10:double
 
   //
   DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
@@ -235,17 +235,13 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     {
     imgoperator->WriteImageINT(deformedImageFileName, deformedImage);
     }
-  else if( input_type == 9 ) // FLOAT
-    {
-    imgoperator->WriteImageFLOAT(deformedImageFileName, deformedImage);
-    }
-  else if( input_type == 10 ) // DOUBLE
+  else if( input_type == 9  || input_type == 10 ) // FLOAT || DOUBLE
     {
     imgoperator->WriteImageFLOAT(deformedImageFileName, deformedImage);
     }
   else
     {
-    imgoperator->WriteImageFLOAT(deformedImageFileName, deformedImage);
+    std::cerr << "input_type type not supported " << input_type << std::endl;
     }
 }
 
@@ -349,15 +345,10 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   // load original image
   DeformationFieldIteratorType    itOrigin(originImage, originImage->GetLargestPossibleRegion() );
   VectorPixelType                 vectorPixel;
-  DeformationFieldType::IndexType idx;
-  int                             idx_x, idx_y, idx_z;
   for( itOrigin.GoToBegin(); !itOrigin.IsAtEnd(); ++itOrigin )
     {
     vectorPixel = itOrigin.Get();
-    idx = itOrigin.GetIndex();
-    idx_x = idx.GetElement(0);
-    idx_y = idx.GetElement(1);
-    idx_z = idx.GetElement(2);
+    const DeformationFieldType::IndexType & idx = itOrigin.GetIndex();
 
     // pixel = itOrigin.Get();
     // idx = itOrigin.GetIndex();
@@ -400,7 +391,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   DeformationFieldIteratorType itSampled(sampledImage, sampledImage->GetLargestPossibleRegion() );
   for( itSampled.GoToBegin(); !itSampled.IsAtEnd(); ++itSampled )
     {
-    idx = itSampled.GetIndex();
+    const DeformationFieldType::IndexType &idx = itSampled.GetIndex();
     vectorPixel.SetElement(0, sampledImageRawX[idx[2]][idx[1]][idx[0]]);
     vectorPixel.SetElement(1, sampledImageRawY[idx[2]][idx[1]][idx[0]]);
     vectorPixel.SetElement(2, sampledImageRawZ[idx[2]][idx[1]][idx[0]]);
@@ -518,18 +509,11 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   // load original image
   DeformationFieldIteratorType    itOrigin(originImage, originImage->GetLargestPossibleRegion() );
   VectorPixelType                 vectorPixel;
-  DeformationFieldType::IndexType idx;
-  int                             idx_x, idx_y, idx_z;
   for( itOrigin.GoToBegin(); !itOrigin.IsAtEnd(); ++itOrigin )
     {
     vectorPixel = itOrigin.Get();
-    idx = itOrigin.GetIndex();
-    idx_x = idx.GetElement(0);
-    idx_y = idx.GetElement(1);
-    idx_z = idx.GetElement(2);
+    const DeformationFieldType::IndexType & idx = itOrigin.GetIndex();
 
-    // pixel = itOrigin.Get();
-    // idx = itOrigin.GetIndex();
     originImageRawX[idx[2]][idx[1]][idx[0]] = vectorPixel.GetElement(0);
     originImageRawY[idx[2]][idx[1]][idx[0]] = vectorPixel.GetElement(1);
     originImageRawZ[idx[2]][idx[1]][idx[0]] = vectorPixel.GetElement(2);
@@ -569,7 +553,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   DeformationFieldIteratorType itSampled(sampledImage, sampledImage->GetLargestPossibleRegion() );
   for( itSampled.GoToBegin(); !itSampled.IsAtEnd(); ++itSampled )
     {
-    idx = itSampled.GetIndex();
+    const DeformationFieldType::IndexType &idx = itSampled.GetIndex();
     vectorPixel.SetElement(0, sampledImageRawX[idx[2]][idx[1]][idx[0]]);
     vectorPixel.SetElement(1, sampledImageRawY[idx[2]][idx[1]][idx[0]]);
     vectorPixel.SetElement(2, sampledImageRawZ[idx[2]][idx[1]][idx[0]]);
@@ -757,18 +741,22 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 
               // call interpolateDisplacement
                 {
-                int   ni, nj, nk, nip1, njp1, nkp1;
-                float b, c, d, b1, c1, d1;
-                ni = (int)mdl_subvoxelx; nip1 = ni + 1;
-                nj = (int)mdl_subvoxely; njp1 = nj + 1;
-                nk = (int)mdl_subvoxelz; nkp1 = nk + 1;
+                int ni = (int)mdl_subvoxelx; 
+                int nip1 = ni + 1;
+                int nj = (int)mdl_subvoxely;
+                int njp1 = nj + 1;
+                int nk = (int)mdl_subvoxelz;
+                int nkp1 = nk + 1;
 
                 if( (ni >= 0) && (ni < (int)x_size - 1) && (nj >= 0) && (nj < (int)y_size - 1) && (nk >= 0) &&
                     (nk < (int)z_size - 1) )
                   {
-                  b = mdl_subvoxelx - ni; b1 = 1.0 - b;
-                  c = mdl_subvoxely - nj; c1 = 1.0 - c;
-                  d = mdl_subvoxelz - nk; d1 = 1.0 - d;
+                  const float b = mdl_subvoxelx - ni;
+                  const float b1 = 1.0 - b;
+                  const float c = mdl_subvoxely - nj; 
+                  const float c1 = 1.0 - c;
+                  const float d = mdl_subvoxelz - nk;
+                  const float d1 = 1.0 - d;
 
                   disp_subvoxelx = (d1 * ( dfx[ni][nj][nk] * (b1 * c1) + dfx[nip1][nj][nk] * (b * c1)
                                            + dfx[ni][njp1][nk] * (b1 * c) + dfx[nip1][njp1][nk] * (b * c) )
@@ -818,23 +806,27 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 
               // call iterativeEstimate
                 {
-                int   ni, nj, nk, nip1, njp1, nkp1;
-                float b, c, d, b1, c1, d1, combined, weight;
                 ii += SHIFT; jj += SHIFT; kk += SHIFT;
-                ni = (int)ii; nip1 = ni + 1;
-                nj = (int)jj; njp1 = nj + 1;
-                nk = (int)kk; nkp1 = nk + 1;
+                int ni = (int)ii;
+                int  nip1 = ni + 1;
+                int nj = (int)jj;
+                int njp1 = nj + 1;
+                int nk = (int)kk;
+                int nkp1 = nk + 1;
                 if( ni >= 0 && ni < (int)x_size + 2 * SHIFT - 1  &&  nj >= 0 && nj < (int)y_size + 2 * SHIFT - 1 &&
                     nk >= 0 && nk < (int)z_size + 2 * SHIFT - 1 )
                   {
-                  b = ii - ni;        b1 = 1.0 - b;
-                  c = jj - nj;        c1 = 1.0 - c;
-                  d = kk - nk;        d1 = 1.0 - d;
-                  combined = d1
+                  const float b = ii - ni;
+                  const float b1 = 1.0 - b;
+                  const float c = jj - nj;
+                  const float c1 = 1.0 - c;
+                  const float d = kk - nk;
+                  const float d1 = 1.0 - d;
+                  const float combined = d1
                     * ( (b1
                          * c1) + (b * c1) + (b1 * c) + (b * c) ) + d * ( (b1 * c1) + (b * c1) + (b1 * c) + (b * c) );
 
-                  weight = d1 * (b1 * c1) / combined;
+                  float weight = d1 * (b1 * c1) / combined;
                   totalweights[ni][nj][nk] += weight;
                   rdfbx[ni][nj][nk] += disp_subvoxelx * weight;
                   rdfby[ni][nj][nk] += disp_subvoxely * weight;

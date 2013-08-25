@@ -109,7 +109,7 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
     }
 }
 
-static std::string StripLastNewline(const std::string input)
+static std::string StripLastNewline(const std::string & input)
 {
   std::string output = input;
   size_t      last_element = input.size() - 1;

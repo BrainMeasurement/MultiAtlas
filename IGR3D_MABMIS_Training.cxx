@@ -171,8 +171,6 @@ typedef itk::Vector<ShortPixelType, ImageDimension>      ShortVectorPixelType;
 typedef itk::Image<ShortVectorPixelType, ImageDimension> ShortDeformationFieldType;
 typedef itk::ImageFileWriter<ShortDeformationFieldType>  ShortDeformationFieldWriterType;
 
-int ReadImgInfo(std::vector<std::string> imgfilenames);
-
 void SearchRootAmongAtlases(std::vector<std::string> imgfilenames, int & root);
 
 int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFileNames, std::vector<int> iterations,
@@ -533,75 +531,6 @@ int main( int argc, char *argv[] )
 
   return retVal;
 
-/*
-  std::fstream pFile;
-  std::string buffer;
-
-  pFile.open (SubjectList.c_str());
-  if (pFile == NULL) {
-    perror ("Error opening file");
-  }
-  else  {
-    while ( !pFile.eof() )
-    {
-      getline (pFile, buffer,'\n');
-      strtrim( buffer );
-      if (buffer.size() > 0)
-      {
-        sub_ids.push_back(buffer);
-      }
-    }
-  }
-  pFile.close();
-
-
-
-  filenumber =  sub_ids.size();
-  atlas_size = AtlasSize;
-
-  if ((atlas_size<=0) || (atlas_size>=filenumber)){
-    std::cerr << "atlas_size should be within [1," << filenumber-1 << "]!" << std::endl;
-    return 102; //EXIT_FAILURE;
-  }
-
-  sample_size = filenumber - atlas_size;
-  simulate_size = 2*atlas_size;
-
-  int numAllCombinations = (int)pow((float)numSampleEachDirection, numEigenVector);
-  if (numAllCombinations < simulate_size) {
-        simulate_size = numAllCombinations;
-  }
-
-  allatlasnumber = atlas_size + simulate_size;
-  allfilenumber = atlas_size + sample_size + simulate_size;
-
-  std::string imagefilename;
-  std::string segmentfilename;
-
-  for (int i = 0; i< filenumber; ++i) {
-    imagefilename = sub_ids[i] + "_cbq_" + "000" + ".nii.gz";
-    imgfilenames.push_back(imagefilename);
-    segmentfilename = sub_ids[i] + "_seg_" + "000" + ".nii.gz";
-    segfilenames.push_back(segmentfilename);
-  }
-
-
-  datasimulator = DataSimulatorType::New();
-  imgoperator = ImageOperationFilterType::New();
-  dfoperator = DeformationFieldOperationFilterType::New();
-  regoperator = ImageRegistrationFilterType::New();
-  treeoperator = TreeOperationType::New();
-  basicoperator = BasicOperationFilterType::New();
-
-  // read the size of images
-  ReadImgInfo(imgfilenames);
-
-  datasimulator->SetImx(imx);
-  datasimulator->SetImy(imy);
-  datasimulator->SetImz(imz);
-
-  return DoIt<unsigned short>( argc, argv );
-*/
   return EXIT_SUCCESS;
 }
 
@@ -769,7 +698,6 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
   datasimulator->SetSimulateSize(simulatedAtlasSize);
   for( int i = 0; i < atlas_size; ++i )
     {
-    std::string allDeformationFieldFileName;
     if( i == root )
       {
       continue;
@@ -843,11 +771,3 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
   return simulateTemplateFileNames;
 }
 
-int ReadImgInfo(std::vector<std::string> imgfilenames)
-{
-  InternalImageType::Pointer inputImage1 = 0;
-
-  return imgoperator->ReadImage(imgfilenames[0], inputImage1);
-  // InternalImageType::SizeType input_size = inputImage1->GetLargestPossibleRegion().GetSize();
-  // imx = input_size[0]; imy = input_size[1]; imz = input_size[2];
-}

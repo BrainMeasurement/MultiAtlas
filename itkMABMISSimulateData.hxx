@@ -47,7 +47,6 @@ MABMISSimulateData<TInputImage, TOutputImage>
   bool doResampleDeformationField = true;
   int  size_x = 0; int size_y = 0; int size_z = 0;
   int  size_xn = 0; int size_yn = 0; int size_zn = 0;
-  int  size_df = 0;  // size of deformation field
   int  size_dfn = 0; // size of sub-sampled deformation field
 
   float c4[] = {-0.8416, -0.2533, 0.2533, 0.8416};
@@ -83,7 +82,6 @@ MABMISSimulateData<TInputImage, TOutputImage>
   size_xn =
     (size_x - 1) / sampleRate + 1; size_yn = (size_y - 1) / sampleRate + 1; size_zn = (size_z - 1) / sampleRate + 1;
   size_dfn = (size_xn) * (size_yn) * (size_zn) * 3;
-  size_df = size_x * size_y * size_z * 3;
 
   df_spacing = curDeformationField->GetSpacing();
   df_direction = curDeformationField->GetDirection();
@@ -175,9 +173,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   // make a temporary folder to store the intermediate files
   std::string tempFolder = "temp_PCATraining";
   char        numStr[10];
-  int         num = rand();
-  num = rand();
-  num = num % 10000;
+  int         num = rand() % 10000;
   sprintf(numStr, "%04d", num);
   tempFolder = tempFolder + numStr;
 
@@ -469,23 +465,14 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   dfoperator->ReadDeformationField(resampledDeformationFieldFileName, dfImage);
 
-  int                            im_x, im_y, im_z;
   DeformationFieldType::SizeType im_size = dfImage->GetLargestPossibleRegion().GetSize();
-  im_x = im_size[0];
-  im_y = im_size[1];
-  im_z = im_size[2];
-
-  int dim = 3 * im_x * im_y * im_z;
 
   // load original image
   DeformationFieldIteratorType itOrigin(dfImage, dfImage->GetLargestPossibleRegion() );
-  VectorPixelType              vectorPixel;
-  // DeformationFieldType::IndexType idx;
-  // int idx_x, idx_y, idx_z;
   int index = 0;
   for( itOrigin.GoToBegin(); !itOrigin.IsAtEnd(); ++itOrigin )
     {
-    vectorPixel = itOrigin.Get();
+    const VectorPixelType & vectorPixel = itOrigin.Get();
 
     df_vector[index] = vectorPixel.GetElement(0);
     df_vector[index + 1] = vectorPixel.GetElement(1);

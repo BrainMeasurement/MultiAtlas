@@ -22,14 +22,14 @@ public:
   std::vector<std::string> m_ImageFileNames;
   std::vector<std::string> m_SegmentationFileNames;
 
-  MABMISImageData()
+  MABMISImageData():
+    m_DataDirectory(""),
+    m_OutputDirectory(""),
+    m_NumberImageData(0),
+    m_ImageFileNames(0),
+    m_SegmentationFileNames(0)
   {
-    m_DataDirectory = "";
-    m_OutputDirectory = "";
-    m_NumberImageData = 0;
-    m_ImageFileNames.resize(0);
-    m_SegmentationFileNames.resize(0);
-  };
+  }
   ~MABMISImageData()
   {
   };

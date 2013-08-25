@@ -230,11 +230,10 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
   InternalImageIteratorType it1(image1, image1->GetLargestPossibleRegion() );
   InternalImageIteratorType it2(image2, image2->GetLargestPossibleRegion() );
   dist = 0.0;
-  float value1, value2;
   for( it1.GoToBegin(), it2.GoToBegin(); !it1.IsAtEnd(); ++it1, ++it2 )
     {
-    value1 = it1.Get();
-    value2 = it2.Get();
+    const float value1 = it1.Get();
+    const float value2 = it2.Get();
     dist += (value1 - value2) * (value1 - value2);
     }
   dist = dist / (size[0] * size[1] * size[2]);
@@ -260,9 +259,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
         }
       else
         {
-        double dist = 0.0;
-        // dist = calculateDistance(imageFileNames[i], imageFileNames[j]);
-        dist = calculateDistanceMSD(imageFileNames[i], imageFileNames[j]);
+        const double dist = calculateDistanceMSD(imageFileNames[i], imageFileNames[j]);
         // cout << "dist:: " << dist << endl;
         distanceMatrix[i][j] = sqrt(dist);
         distanceMatrix[j][i] = sqrt(dist);
