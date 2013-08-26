@@ -4,6 +4,11 @@
 #include "itksys/SystemTools.hxx"
 #include "itkMABMISAtlasXMLFile.h"
 
+#include <algorithm>
+#include <functional>
+#include <ctype.h>
+#include <locale>
+
 #define RAISE_EXCEPTION(s)                                     \
     { \
     ExceptionObject \
@@ -15,6 +20,30 @@
       s);                     \
     throw exception; \
     }
+
+#define SPACES " \t\r\n"
+
+inline std::string trim_right (const std::string & s, const std::string & t = SPACES)
+{
+  std::string d (s);
+  std::string::size_type i (d.find_last_not_of (t));
+  if (i == std::string::npos)
+    return "";
+  else
+    return d.erase (d.find_last_not_of (t) + 1) ;
+} 
+
+inline std::string trim_left (const std::string & s, const std::string & t = SPACES)
+{
+  std::string d (s);
+  return d.erase (0, s.find_first_not_of (t)) ;
+} 
+ 
+inline std::string trim (const std::string & s, const std::string & t = SPACES)
+{
+  std::string d (s);
+  return trim_left (trim_right (d, t), t) ;
+}
 
 namespace itk
 {
@@ -97,7 +126,7 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
     }
   if( itksys::SystemTools::Strucmp(name, "DataPath") == 0 )
     {
-    this->m_ImageData->m_DataDirectory = this->m_CurCharacterData;
+		this->m_ImageData->m_DataDirectory = this->m_CurCharacterData.c_str();
     }
   if( itksys::SystemTools::Strucmp(name, "NumberOfImageData") == 0 )
     {
@@ -129,7 +158,8 @@ MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLen
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
-  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
+  //m_CurCharacterData = StripLastNewline(m_CurCharacterData);
+  m_CurCharacterData = trim(m_CurCharacterData);
 }
 
 ///------------------------------------------------------------
@@ -296,7 +326,7 @@ MABMISAtlasXMLFileReader::EndElement(const char *name)
     }
   if( itksys::SystemTools::Strucmp(name, "AtlasDirectory") == 0 )
     {
-    this->m_Atlas->m_AtlasDirectory = this->m_CurCharacterData;
+		this->m_Atlas->m_AtlasDirectory = this->m_CurCharacterData;
     }
   if( itksys::SystemTools::Strucmp(name, "NumberOfAtlases") == 0 )
     {
@@ -333,7 +363,8 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
-  m_CurCharacterData = StripLastNewline(m_CurCharacterData);
+  //m_CurCharacterData = StripLastNewline(m_CurCharacterData);
+  m_CurCharacterData = trim(m_CurCharacterData);
 }
 
 ///------------------------------------------------------------

@@ -48,6 +48,15 @@ MABMISTreeOperation<TInputImage, TOutputImage>
 
   imgoperator->PairwiseDistanceAmongImages(atlasfilenames, tree_size, distanceMatrix);
 
+  std::cout << "Distance matrix: " << std::endl;
+
+  for (int i=0; i < tree_size; ++i )
+  {
+	   for( int j = 0; j < tree_size; ++j )
+		   std::cout << distanceMatrix[i][j] << " ";
+	   std::cout << std::endl;
+  }
+
   // build MST
   tree = generateMSTFromMatrixWithFixedRoot(distanceMatrix, tree_size, tree, root);
 

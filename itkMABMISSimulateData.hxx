@@ -92,6 +92,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   // do PCA training
   ////////////////////////////////////////
   // std::cerr << "Resample deformation fields ..." << std::endl;
+  if (numEigenVector > numFiles) numEigenVector = numFiles; 
   vnl_matrix<float> df_eigenvector(size_dfn, numEigenVector);
   vnl_vector<float> df_eigenvalues(numEigenVector);
   ////////////////////////////////////////
@@ -160,6 +161,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
       // df_eigenvector.scale_column(i, 1/df_eigenvalues.data_block()[i]);
       }
+
     // calculate coefficients and generate all intermediate templates
     // char intermediateTemplateListName[MAX_FILE_NAME_LENGTH];
     // strcpy(intermediateTemplateListName, "simulated_image_list.txt");
@@ -169,11 +171,13 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   // for debugging
   // cerr << "Pass: PCA" << std::endl;
+  
 
   // make a temporary folder to store the intermediate files
   std::string tempFolder = "temp_PCATraining";
   char        numStr[10];
   int         num = rand() % 10000;
+  num = rand() % 10000; 
   sprintf(numStr, "%04d", num);
   tempFolder = tempFolder + numStr;
 

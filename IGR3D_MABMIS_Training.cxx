@@ -72,6 +72,17 @@
 
 #include "itkMABMISAtlasXMLFile.h"
 
+static std::string ReplacePathSepForOS( const std::string & input )
+{
+  std::string output = input;
+#ifdef _WIN32
+  std::replace(output.begin(), output.end(), '/', FILESEP);
+#else
+  std::replace(output.begin(), output.end(), '\\', FILESEP);
+#endif
+  return output;
+}
+
 typedef double CoordinateRepType;
 const   unsigned int SpaceDimension = ImageDimension;
 
@@ -203,6 +214,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
               std::vector<int> iterations, double sigma)
 {
   // sanity check
+	std::cout << "m_DataDirectory: " << trainingData->m_DataDirectory << std::endl;
   if( trainingData->m_SegmentationFileNames.size() != trainingData->m_ImageFileNames.size() )
     {
     std::cerr << "The numbers of image files and segmentation files are NOT equal!!!" << std::endl;
@@ -251,6 +263,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     {
     atlasFolder = outputFolder + outputxmlname;
     }
+  atlasFolder = ReplacePathSepForOS(atlasFolder); 
   if( !atlasFolder.empty() )
     {
     atlasFolder = atlasFolder + FILESEP;
@@ -262,16 +275,23 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   std::vector<std::string> segmentFiles(trainingData->m_NumberImageData);
   for( int i = 0; i < imageFiles.size(); ++i )
     {
-    imageFiles[i] = atlasFolder + trainingData->m_ImageFileNames[i];
-    segmentFiles[i] = atlasFolder + trainingData->m_SegmentationFileNames[i];
+    imageFiles[i] = ReplacePathSepForOS(atlasFolder + trainingData->m_ImageFileNames[i]);
+    segmentFiles[i] = ReplacePathSepForOS(atlasFolder + trainingData->m_SegmentationFileNames[i]);
 
     // copy
     std::string fromImagefile = trainingData->m_ImageFileNames[i];
     if( !trainingData->m_DataDirectory.empty() )
       {
-      fromImagefile  = trainingData->m_DataDirectory + trainingData->m_ImageFileNames[i];
+      fromImagefile  = ReplacePathSepForOS(trainingData->m_DataDirectory + trainingData->m_ImageFileNames[i]);
       }
-    itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str() );
+	
+    bool ret1=itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str() );
+	if (!ret1) 
+      {
+	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
+	  return -1;
+      }
+
     // if file extension is '.nii.gz', also copy the 'img file'
     if( itksys::SystemTools::Strucmp(fromImagefile.substr(fromImagefile.size() - 3, 3).c_str(), "hdr") == 0 )
       {
@@ -281,7 +301,13 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       }
 
     std::string fromSegfile = trainingData->m_DataDirectory + trainingData->m_SegmentationFileNames[i];
-    itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str() );
+
+    bool ret2 = itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str() );
+	if (!ret1) 
+      {
+	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
+	  return -1;
+      }
     // if file extension is '.nii.gz', also copy the 'img file'
     if( itksys::SystemTools::Strucmp(fromSegfile.substr(fromSegfile.size() - 3, 3).c_str(), "hdr") == 0 )
       {
@@ -482,6 +508,8 @@ int main( int argc, char *argv[] )
 
   // step 1: read the training atlases
   itk::MABMISImageDataXMLFileReader::Pointer trainingXMLReader = itk::MABMISImageDataXMLFileReader::New();
+  TrainingDataXML = ReplacePathSepForOS(TrainingDataXML); 
+  TrainingOutputFile = ReplacePathSepForOS(TrainingOutputFile); 
   trainingXMLReader->SetFilename(TrainingDataXML);
   try
     {
@@ -499,6 +527,7 @@ int main( int argc, char *argv[] )
   if( trainingData->m_DataDirectory.size() <= 1 )
     {
     const size_t sep = TrainingDataXML.find_last_of(FILESEP);
+	std::cout <<"sep=" << sep << std::endl;
     if( sep != std::string::npos )
       {
       trainingData->m_DataDirectory = TrainingDataXML.substr(0, sep);
@@ -515,7 +544,6 @@ int main( int argc, char *argv[] )
       trainingData->m_DataDirectory = trainingData->m_DataDirectory + FILESEP;
       }
     }
-
   // Will look into getting rid of these global variables later ---Xiaofeng
   datasimulator = DataSimulatorType::New();
   imgoperator = ImageOperationFilterType::New();

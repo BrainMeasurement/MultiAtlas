@@ -72,13 +72,13 @@
 
 #include "itkMABMISAtlasXMLFile.h"
 #include <algorithm>
-static std::string ReplacePathSepForUnix( const std::string & input )
+static std::string ReplacePathSepForOS( const std::string & input )
 {
   std::string output = input;
 #ifdef _WIN32
-  std::replace(output.begin(), output.end(), '\\', FILESEP);
-#else
   std::replace(output.begin(), output.end(), '/', FILESEP);
+#else
+  std::replace(output.begin(), output.end(), '\\', FILESEP);
 #endif
   return output;
 }
@@ -174,7 +174,7 @@ typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, Deformat
 // global bool variables to adjust the  procedure
 
 bool isEvaluate = false; // if false, we do not know the ground-truth of labels
-bool isDebug = true;     // false;//true; // if true, print out more information
+bool isDebug = false;     // false;//true; // if true, print out more information
 
 int localPatchSize = 1; // (2r+1)*(2r+1)*(2r+1) is the volume of local patch
 
@@ -308,13 +308,14 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::vector<std::string> allfilenames(totalNumFiles);
   for( int i = 0; i < totalNumFiles; ++i )
     {
+		
     if( i < totalNumAtlases )
       {
-      allfilenames[i] = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
+      allfilenames[i] = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
       }
     else
       {
-      allfilenames[i] = imageData->m_DataDirectory + imageData->m_ImageFileNames[i - totalNumAtlases];
+      allfilenames[i] = ReplacePathSepForOS(imageData->m_DataDirectory + imageData->m_ImageFileNames[i - totalNumAtlases]);
       }
     }
 
@@ -534,6 +535,10 @@ int main( int argc, char *argv[] )
 
   // step 1: read the test image list
   itk::MABMISImageDataXMLFileReader::Pointer imageListXMLReader = itk::MABMISImageDataXMLFileReader::New();
+  ImageListXML = ReplacePathSepForOS(ImageListXML); 
+  AtlaseTreeXML = ReplacePathSepForOS(AtlaseTreeXML); 
+  OutputFolder = ReplacePathSepForOS(OutputFolder); 
+
   imageListXMLReader->SetFilename(ImageListXML);
 
   try
@@ -602,17 +607,17 @@ int main( int argc, char *argv[] )
   const size_t dir_sep = AtlaseTreeXML.find_last_of(FILESEP);
   if( dir_sep != std::string::npos )
     {
-    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(AtlaseTreeXML.substr(0, dir_sep + 1) + atlasTree->m_AtlasDirectory);
+    atlasTree->m_AtlasDirectory = ReplacePathSepForOS(AtlaseTreeXML.substr(0, dir_sep + 1) + atlasTree->m_AtlasDirectory);
     }
 
   if( atlasTree->m_AtlasDirectory.size() == 0 )
     {
-    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(".");
+    atlasTree->m_AtlasDirectory = ReplacePathSepForOS(".");
     }
 
   if( !(atlasTree->m_AtlasDirectory[atlasTree->m_AtlasDirectory.size() - 1] == FILESEP) )
     {
-    atlasTree->m_AtlasDirectory = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + FILESEP );
+    atlasTree->m_AtlasDirectory = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + FILESEP );
     }
 
   // Will look into getting rid of these global variables later ---Xiaofeng
@@ -1100,11 +1105,11 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       continue; // goto next one
       }
 
-    std::string rootImageFile = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root]);
+    std::string rootImageFile = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root]);
     std::string testImageFile;
     if( curnode < atlas_image_size )
       {
-      testImageFile = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]);    //
+      testImageFile = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]);    //
                                                                                                                     //
                                                                                                                     //
                                                                                                                     //
@@ -1265,7 +1270,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
   for( int i = 0; i < atlas_image_size + test_image_size; i++ )
     {
-    if( isDebug )
+    //if( isDebug )
       {
       std::cout << i << ", ";
       }
@@ -1278,9 +1283,9 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     // std::string originalImgImageFileName = sub_ids[root] + "_cbq_000.nii.gz";
     // std::string originalSegImageFileName = sub_ids[root] + "_seg_000.nii.gz";
-    std::string rootImageFileName = ReplacePathSepForUnix(
+    std::string rootImageFileName = ReplacePathSepForOS(
         atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root] );
-    std::string rootSegmentFileName = ReplacePathSepForUnix(
+    std::string rootSegmentFileName = ReplacePathSepForOS(
         atlasTree->m_AtlasDirectory + atlasTree->m_AtlasSegmentationFilenames[root] );
 
     std::string fixedImageFileName;
@@ -1293,7 +1298,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     if( i < atlas_image_size )
       {
-      fixedImageFileName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
+      fixedImageFileName = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
       sprintf(i_str, "%03d", i);
       fixedImageTag = i_str;
 
@@ -1352,6 +1357,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     dfoperator->InverseDeformationField3D(deformationField, inversedDeformationField);
     // output reversed deformation field
+
     dfoperator->WriteDeformationField(invDeformationFileName, inversedDeformationField);
     // //update
     regoperator->DiffeoDemonsRegistrationWithInitialWithParameters(
@@ -1359,7 +1365,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       invDeformationFileName,
       deformedImageFileName, invDeformationFileName,
       sigma, doHistMatch, iterations);
-
+        
     // CompressDeformationField2Short(inversedDeformationFieldFileName);
     // apply deformation field on seg file
     if( isEvaluate )
@@ -1410,7 +1416,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
     std::string movingImageTag;
     if( all_index < atlas_image_size )
       {
-      movingImageFileName = ReplacePathSepForUnix(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[all_index]);
+      movingImageFileName = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[all_index]);
       movingSegmentFileName = atlasTree->m_AtlasDirectory + atlasTree->m_AtlasSegmentationFilenames[all_index];
       movingImageTag = std::string(a_str);
       }
