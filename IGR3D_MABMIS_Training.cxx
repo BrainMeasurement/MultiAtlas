@@ -319,7 +319,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
 
   // step 1: find root of the atlas
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Find root atlas ... " << std::endl;;
+  std::cout << "1. Find root atlas ... " << std::endl;;
   ////////////////////////////////
   // build tree on atlases to find the root
   int root = -1;    // root node of tree
@@ -330,7 +330,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   //////////////////////////////
   // registration between root and other atlases
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Run coarse registration ... " << std::endl;
+  std::cout << "2. Run coarse registration ... " << std::endl;
   int val = RegistrationBetweenRootandAtlases(root, imageFiles, iterations, sigma);
   if( val != 0 )
     {
@@ -341,7 +341,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   int simulatedAtlasSize = 2 * imageFiles.size();
 
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Build statistical deformation model..." << std::endl;
+  std::cout << "3. Build statistical deformation model..." << std::endl;
   if( BuildStatisticalDeformationModel(root, imageFiles, simulatedAtlasSize) != 0 )
     {
     return -1;
@@ -352,7 +352,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   /////////////////////////
   // generate simulated template with deformation field
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Generate simulated templates ... " << std::endl;
+  std::cout << "4. Generate simulated templates ... " << std::endl;
   std::vector<std::string> simulatedImageFiles = GenerateSimulatedData(root, imageFiles, simulatedAtlasSize);
   std::cout << "Done. " << std::endl;
 
@@ -379,7 +379,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   //////////////////////////////
   // build the combinative tree
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Build combinative tree ... " << std::endl;
+  std::cout << "5. Build combinative tree ... " << std::endl;
   int             totalAtlasSize = imageFiles.size() + simulatedAtlasSize;
   int             tree_size = totalAtlasSize;
   vnl_vector<int> tree(tree_size);    // each tree
@@ -410,7 +410,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
 
   // write trained atlas to xml file
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Write to output file..." << std::endl;
+  std::cout << "6. Write to output file..." << std::endl;
   itk::MABMISAtlasXMLFileWriter::Pointer atlasWriter = itk::MABMISAtlasXMLFileWriter::New();
   itk::MABMISAtlas                       atlas;
   atlas.m_NumberAllAtlases = totalAtlasSize;
@@ -527,7 +527,7 @@ int main( int argc, char *argv[] )
   if( trainingData->m_DataDirectory.size() <= 1 )
     {
     const size_t sep = TrainingDataXML.find_last_of(FILESEP);
-	std::cout <<"sep=" << sep << std::endl;
+	//std::cout <<"sep=" << sep << std::endl;
     if( sep != std::string::npos )
       {
       trainingData->m_DataDirectory = TrainingDataXML.substr(0, sep);
@@ -617,7 +617,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     }
 
   const int atlas_size = imageFileNames.size();
-  std::cout << "Register between root and atlases ... ";
+  std::cout << "Register between root and atlases ... " << std::endl;
   for( int i = 0; i < atlas_size; ++i )
     {
     std::cout << i << ", ";
@@ -695,6 +695,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
         invDeformedSegmentFileName, false);
       }
     }
+  std::cout << std::endl;
   std::cout << "Done. " << std::endl;
 
   return 0;
@@ -761,7 +762,7 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
 
   std::vector<std::string> simulateDeformationFieldFileNames(0);
   std::vector<std::string> simulateTemplateFileNames(0);
-  std::cout << "The simulated images: " << std::endl;
+  std::cout << "Generating simulated images: " << std::endl;
   for( int i = 0; i < simulatedAtlasSize; ++i )
     {
     std::cout << i << ", ";
@@ -795,7 +796,8 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     dfoperator->ApplyDeformationField(rootImg, invdf, simImg, true);
     imgoperator->WriteImage(simulateTemplateFileNames[i], simImg);
     }
-
+  std::cout << std::endl;
+  
   return simulateTemplateFileNames;
 }
 

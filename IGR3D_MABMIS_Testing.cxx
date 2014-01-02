@@ -319,6 +319,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
       }
     }
 
+  std::cout << "---------------------------------------" << std::endl;
   std::cout << "1. Calculating pairwise distance cross training and test images ..." << std::endl;
   vnl_matrix<double> cross_dist(imageData->m_NumberImageData, totalNumFiles);
   for( int i = 0; i < imageData->m_NumberImageData; ++i )
@@ -353,6 +354,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
   // build the incremental tree
   treeoperator->SetAllAtlasNumber(totalNumAtlases);
+  std::cout << "---------------------------------------" << std::endl;
   std::cout << "2. Build the tree... " << std::endl;
   itree = treeoperator->BuildIncrementalTree(imageData->m_NumberImageData, // #images to be segmented
                                              totalNumAtlases,              // #atlases, including original ones and
@@ -404,7 +406,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::cout << "Done! " << std::endl;
 
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Register all images to the root... " << std::endl;
+  std::cout << "3. Register all images to the root... " << std::endl;
   // register all images to the root, if not done yet.
   RegistrationOntoTreeRoot(itree,      // the incremental tree
                            root,       // the tree root
@@ -416,16 +418,17 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::cout << "Done. " << std::endl;
 
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Pairwise registration via the tree root... " << std::endl;
+  std::cout << "4. Pairwise registration via the tree root... " << std::endl;
   PairwiseRegistrationOnTreeViaRoot(root, imageData, atlasTree, iterations, sigma);
   std::cout << "Done. " << std::endl;
 
   ////////////////////////////////
   // do all multi-atlas based segmentation with weighted label fusion
   std::cout << "---------------------------------------" << std::endl;
-  std::cout << "Segment images using label fusion... " << std::endl;
+  std::cout << "5. Segment images using label fusion... " << std::endl;
   int numIter = MultiAtlasBasedSegmentation(root, imageData, atlasTree);
 
+  std::cout << "---------------------------------------" << std::endl;
   std::cout << "Done. " << std::endl;
 
   // do all multi-atlas based segmentation with weighted label fusion
@@ -1379,6 +1382,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
     std::cout << "Done!" << std::endl;
     } // end of reverse each deformation field (from the root)
       // std::cout << "done." << std::endl;
+    std::cout << std::endl;
 }
 
 void PairwiseRegistrationOnTreeViaRoot(int root,
@@ -1531,6 +1535,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       } // end of sample_index
     }   // end of all_index
 
+  std::cout << std::endl;
   std::cout << "Done!" << std::endl;
 }
 

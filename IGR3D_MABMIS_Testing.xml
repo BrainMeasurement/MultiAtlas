@@ -25,7 +25,7 @@
       <longflag>iterations</longflag>
       <description>Comma separated list of iterations, for low resolution, middle resolution, and high resolution. </description>
       <label>Iterations</label>
-      <default>15,10,5</default>
+      <default>5,3,2</default>
     </integer-vector>
 
     <double>

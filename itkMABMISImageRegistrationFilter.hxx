@@ -37,11 +37,11 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
                                          double sigmaDef, bool doHistMatch, std::vector<int> iterInResolutions)
 {
   // for debugging
-  std::cerr << "DiffeoDemonsRegistrationWithParameters" << std::endl;
-  std::cerr << fixedImageFileName << std::endl;
-  std::cerr << movingImageFileName << std::endl;
-  std::cerr << deformedImageFileName << std::endl;
-  std::cerr << deformationFieldFileName << std::endl;
+  //std::cerr << "DiffeoDemonsRegistrationWithParameters" << std::endl;
+  //std::cerr << fixedImageFileName << std::endl;
+  //std::cerr << movingImageFileName << std::endl;
+  //std::cerr << deformedImageFileName << std::endl;
+  //std::cerr << deformationFieldFileName << std::endl;
 
   int res = iterInResolutions.size();
   // read fixed and moving images
