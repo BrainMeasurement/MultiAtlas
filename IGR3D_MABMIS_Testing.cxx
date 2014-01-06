@@ -676,8 +676,10 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
     dfoperator->ApplyDeformationField(curAtlasSegPtr, deformFieldPtr, warpedSegPtrs[i], false);
     }
 
+  std::cout << "labelfusion checkpoint 1" << std::endl;
   // weighted label fusion
   GaussianWeightedLabelFusion(curSampleImgPtr, outSampleSegPtr, warpedImgPtrs, warpedSegPtrs, numOfAtlases);
+  std::cout << "labelfusion checkpoint 2" << std::endl;
 
   // output segmentation image
   imgoperator->WriteImage(outSampleSegName, outSampleSegPtr);
@@ -765,7 +767,6 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
                                                      warpedImgPtrs[i]->GetLargestPossibleRegion() );
     warpedImgNeighborhoodIts[i] = neighborIt;
     }
-
   int maxLabel = 0; // the maximum labels
   // find out the maximum label from the label images
   for( int  i = 0; i < numOfAtlases; ++i )
@@ -839,14 +840,17 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
     for( int i = 0; i < numOfAtlases; ++i )
       {
       // add-up all weights
-      weight_sum[label_pool[i]] += exp(0.0 - (mse[i]) / (2.0 * kernel_sigma_square) );
+      if ((mse[i]) / (2.0 * kernel_sigma_square) < 50)
+        weight_sum[label_pool[i]] += exp(0.0 - (mse[i]) / (2.0 * kernel_sigma_square) );
+      
       }
+
     // weighted label fusion
     for( int i = 0; i < maxLabel + 1; ++i )
       {
       label_index[i] = i;
       }
-
+    
     // determine the label with the maximum weight
     // basicoperator->bubbleSort(weight_sum, label_index, maxLabel+1);
     // int label_final;
