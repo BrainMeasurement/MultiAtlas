@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Developer Tools</category>
+  <category>Segmentation</category>
   <title>
      Multi-Atlas Based Group Segmentation -- Training
   </title>
