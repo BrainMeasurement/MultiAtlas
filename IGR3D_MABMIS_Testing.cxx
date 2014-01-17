@@ -676,10 +676,8 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
     dfoperator->ApplyDeformationField(curAtlasSegPtr, deformFieldPtr, warpedSegPtrs[i], false);
     }
 
-  std::cout << "labelfusion checkpoint 1" << std::endl;
   // weighted label fusion
   GaussianWeightedLabelFusion(curSampleImgPtr, outSampleSegPtr, warpedImgPtrs, warpedSegPtrs, numOfAtlases);
-  std::cout << "labelfusion checkpoint 2" << std::endl;
 
   // output segmentation image
   imgoperator->WriteImage(outSampleSegName, outSampleSegPtr);
