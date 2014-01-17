@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 2.8.9)
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME MABMIS)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerExtensions")
+  set(EXTENSION_HOMEPAGE "http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/MABMIS")
   set(EXTENSION_CATEGORY "Segmentation")
   set(EXTENSION_CONTRIBUTORS "Xiaofeng Liu (GE GLobal Research), Minjeong Kim (UNC), Dinggang Shen (UNC), Jim Miller (GE GLobal Research)")
-  set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/CLIExtensionTemplate/CLIExtensionTemplate.png?revision=19437&view=co")
+  set(EXTENSION_ICONURL "http://wiki.slicer.org/slicerWiki/images/e/e2/MABMIS_Icon.png")
   set(EXTENSION_DESCRIPTION "Multi-Atlas Based Group Segmentation")
-  set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/a/ab/Slicer-r19441-CLIExtensionTemplate-screenshot.png http://wiki.slicer.org/slicerWiki/images/1/1e/Slicer-r19441-CLIExtensionTemplate-screenshot-2.png")
+  set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/2/2c/MABMIS_trainning_GUI.png http://wiki.slicer.org/slicerWiki/images/6/64/MABMIS_testing_GUI.png http://wiki.slicer.org/slicerWiki/images/c/c3/MABMIS_algorithm.png")
 endif()
 
 #-----------------------------------------------------------------------------
