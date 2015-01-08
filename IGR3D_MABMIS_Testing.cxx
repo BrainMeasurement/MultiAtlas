@@ -42,8 +42,8 @@
 
 #include "itkHistogramMatchingImageFilter.h"
 #include "itkAddImageFilter.h"
-#include "itkDivideByConstantImageFilter.h"
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkDivideImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 #include "itkWarpVectorImageFilter.h"
 #include "itkInverseDeformationFieldImageFilter.h"
 
