@@ -11,8 +11,8 @@
 #include "itkImage.h"
 #include "itkWarpImageFilter.h"
 #include "itkAddImageFilter.h"
-#include "itkDivideByConstantImageFilter.h"
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkDivideImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 
 // interpolator
 #include "itkLinearInterpolateImageFunction.h"
@@ -60,9 +60,9 @@ public:
 
   typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType,
                                      DeformationFieldType>         WarpVectorFilterType;
-  typedef itk::MultiplyByConstantImageFilter<DeformationFieldType, float,
+  typedef itk::MultiplyImageFilter<DeformationFieldType, float,
                                              DeformationFieldType> MultiplyDeformationFieldFilterType;
-  typedef itk::DivideByConstantImageFilter<DeformationFieldType, float,
+  typedef itk::DivideImageFilter<DeformationFieldType, float,
                                            DeformationFieldType>   DivideDeformationFieldFilterType;
   typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType,
                               DeformationFieldType>                AddImageFilterType;
