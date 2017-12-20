@@ -45,7 +45,7 @@
 #include "itkDivideImageFilter.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkWarpVectorImageFilter.h"
-#include "itkInverseDeformationFieldImageFilter.h"
+#include "itkInverseDisplacementFieldImageFilter.h"
 
 // for affine transformation
 #include "itkTransform.h"
@@ -164,12 +164,9 @@ typedef itk::HistogramMatchingImageFilter<InternalImageType, InternalImageType> 
 
 ////////////////////////////////////////////////////////////////////////////
 // operation on deformation fields
-typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType,
-                                   DeformationFieldType>                                      WarpVectorFilterType;
-typedef itk::InverseDeformationFieldImageFilter<DeformationFieldType,
-                                                DeformationFieldType>
-  InverseDeformationFieldImageFilterType;
-typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType> AddImageFilterType;
+typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType> WarpVectorFilterType;
+typedef itk::InverseDisplacementFieldImageFilter<DeformationFieldType, DeformationFieldType>         InverseDeformationFieldImageFilterType;
+typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType>        AddImageFilterType;
 
 // global bool variables to adjust the  procedure
 

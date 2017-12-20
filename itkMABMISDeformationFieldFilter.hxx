@@ -81,7 +81,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   WarpVectorFilterType::Pointer vectorWarper = WarpVectorFilterType::New();
 
   vectorWarper->SetInput( input );
-  vectorWarper->SetDeformationField( deformationField );
+  vectorWarper->SetDisplacementField( deformationField );
   vectorWarper->SetOutputOrigin(deformationField->GetOrigin() );
   vectorWarper->SetOutputSpacing(deformationField->GetSpacing() );
   vectorWarper->SetOutputDirection(deformationField->GetDirection() );
@@ -119,7 +119,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     warper->SetOutputSpacing( movingImage->GetSpacing() );
     warper->SetOutputOrigin( movingImage->GetOrigin() );
     warper->SetOutputDirection( movingImage->GetDirection() );
-    warper->SetDeformationField( deformationField );
+    warper->SetDisplacementField( deformationField );
     try
       {
       warper->Update();
@@ -142,7 +142,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     warper->SetOutputSpacing( movingImage->GetSpacing() );
     warper->SetOutputOrigin( movingImage->GetOrigin() );
     warper->SetOutputDirection( movingImage->GetDirection() );
-    warper->SetDeformationField( deformationField );
+    warper->SetDisplacementField( deformationField );
     try
       {
       warper->Update();

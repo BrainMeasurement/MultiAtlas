@@ -49,7 +49,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   int  size_xn = 0; int size_yn = 0; int size_zn = 0;
   int  size_dfn = 0; // size of sub-sampled deformation field
 
-  float c4[] = {-0.8416, -0.2533, 0.2533, 0.8416};
+  float c4[] = {-0.8416f, -0.2533f, 0.2533f, 0.8416f};
 
   float* c = NULL;
 

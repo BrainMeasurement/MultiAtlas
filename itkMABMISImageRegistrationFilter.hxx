@@ -85,12 +85,12 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
   // float sigmaDef = 1.5;
   if( sigmaDef > 0.1 )
     {
-    filter->SmoothDeformationFieldOn();
+    filter->SmoothDisplacementFieldOn();
     filter->SetStandardDeviations( sigmaDef );
     }
   else
     {
-    filter->SmoothDeformationFieldOff();
+    filter->SmoothDisplacementFieldOff();
     }
 
   // set up smoothing kernel for update field
@@ -236,12 +236,12 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
   // float sigmaDef = 1.5;
   if( sigmaDef > 0.1 )
     {
-    filter->SmoothDeformationFieldOn();
+    filter->SmoothDisplacementFieldOn();
     filter->SetStandardDeviations( sigmaDef );
     }
   else
     {
-    filter->SmoothDeformationFieldOff();
+    filter->SmoothDisplacementFieldOff();
     }
 
   // set up smoothing kernel for update field
@@ -292,7 +292,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
     }
 
   // set initial
-  multires->SetArbitraryInitialDeformationField( initDeformationField );
+  multires->SetArbitraryInitialDisplacementField( initDeformationField );
 
   // Compute the deformation field
   try
