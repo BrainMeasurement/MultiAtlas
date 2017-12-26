@@ -47,11 +47,10 @@ ExternalData_add_test(${Training_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUN
   )
 set_property(TEST ${testname} PROPERTY LABELS ${Training_CLP})
 
+set(testname compareTraingingXMLs) 
 if (WIN32)
-	set(testname compareTraingingXMLs) 
 	ExternalData_add_test(${Training_CLP}Data NAME ${testname} COMMAND diff ${INPUT}/AtlasTree/TrainedAtlas-win.xml ${TEMP}/TrainedAtlas.xml)
 else()
-	set(testname compareTraingingXMLs) 
 	ExternalData_add_test(${Training_CLP}Data NAME ${testname} COMMAND diff ${INPUT}/AtlasTree/TrainedAtlas.xml ${TEMP}/TrainedAtlas.xml)
 endif()
 set_property(TEST compareTraingingXMLs APPEND PROPERTY DEPENDS ${Training_CLP}Test)
@@ -80,3 +79,4 @@ ExternalData_add_test(${Testing_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNC
    --atlasTreeXML ${TEMP}/TrainedAtlas.xml --imageListXML ${TEMP}/TestData/TestData.xml
   )
 set_property(TEST ${testname} PROPERTY LABELS ${Testing_CLP})
+set_property(TEST ${testname} APPEND PROPERTY DEPENDS ${Training_CLP}Test)

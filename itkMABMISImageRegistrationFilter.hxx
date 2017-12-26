@@ -117,11 +117,8 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 
   FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
 
-#if ( ITK_VERSION_MAJOR > 3 ) || ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8 )
   multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-#endif
   std::vector<unsigned int> curNumIterations;
-  // unsigned int curNumOfIterations[] = {15,10,5};
   for( int i = 0; i < res; ++i )
     {
     curNumIterations.push_back(iterInResolutions[i]);
