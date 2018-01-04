@@ -191,7 +191,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
     outputFolder = allImgFileName[0].substr(0, sep);
     }
 
-  if( 1 ) // if (0) // if (1)
+  if( 1 ) // if (0)
     {
     std::vector<int> coeff(numEigenVector,0);
     const int numAllCombinations = (int)pow( (float)numSampleEachDirection, numEigenVector);
@@ -204,6 +204,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       std::cerr << "Please verify the file exists. " << std::endl;
       return -1;
       }
+    const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(allImgFileName[root]);
 
     std::cout << "Generate intermediate deformations from PCA results... " << std::endl;
     for( int i = 0; i < numAllCombinations; ++i )
@@ -298,7 +299,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       InternalImageType::Pointer intermediateTemplateImage = 0;
       dfoperator->ApplyDeformationField(templateImage, reversedDeformationField, intermediateTemplateImage, true);
       // write image
-      imgoperator->WriteImage(intermediateTemplateFileName, intermediateTemplateImage);
+      imgoperator->WriteImage(intermediateTemplateFileName, intermediateTemplateImage, ioType);
 
       // intermediateFileNamesFile << intermediateTemplateFileName << std::endl;
       } // end for numOfAllCombinations

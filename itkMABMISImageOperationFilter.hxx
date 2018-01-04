@@ -1,3 +1,4 @@
+#include "itkMABMISImageOperationFilter.h"
 #ifndef __itkMABMISImageOperationFilter_hxx
 #define __itkMABMISImageOperationFilter_hxx
 
@@ -30,12 +31,10 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 int
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::ReadImage(std::string filename, InternalImageType::Pointer& image)
+::ReadImage(const std::string filename, InternalImageType::Pointer& image)
 {
   // std::cout << "Reading "<< filename << std:: endl;
-
   InternalImageReaderType::Pointer internalImageReader = InternalImageReaderType::New();
-
   internalImageReader->SetFileName(filename);
   try
     {
@@ -50,159 +49,140 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
   return 0;
 }
 
-template <class TInputImage, class TOutputImage>
-void
+template<class TInputImage, class TOutputImage>
+itk::ImageIOBase::IOComponentType
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageUCHAR(std::string filename, InternalImageType::Pointer image)
+::GetIOPixelType(const std::string & filename)
 {
-  Internal2CharCastFilterType::Pointer caster = Internal2CharCastFilterType::New();
+  itk::ImageIOBase::Pointer imageIO;
 
+  try
+    {
+    imageIO = itk::ImageIOFactory::CreateImageIO(filename.c_str(), itk::ImageIOFactory::ReadMode);
+    if( imageIO )
+      {
+      imageIO->SetFileName(filename);
+      imageIO->ReadImageInformation();
+      return imageIO->GetComponentType();
+      }
+    else
+      {
+      std::cout << "Could not create the imageIO for file " << filename << "." << std::endl;
+      exit( EXIT_FAILURE );
+      }
+    }
+  catch( itk::ExceptionObject& err )
+    {
+    std::cout << "Could not read the image information of " << filename << "." << std::endl;
+    std::cout << err << std::endl;
+    exit( EXIT_FAILURE );
+    }
+
+  return itk::ImageIOBase::UCHAR; //this should never be reached
+}
+
+template <class TInputImage, class TOutputImage>
+template <class PixelType>
+int
+MABMISImageOperationFilter<TInputImage, TOutputImage>
+::WriteImage(const std::string filename, InternalImageType::Pointer image)
+{
+  typedef itk::Image<PixelType, ImageDimension> GivenImageType;
+  typedef itk::CastImageFilter<InternalImageType, GivenImageType> CasterType;
+  typename CasterType::Pointer caster = CasterType::New();
+  typedef itk::ImageFileWriter<GivenImageType> WriterType;
+  typename WriterType::Pointer writer = WriterType::New();
   caster->SetInput(image);
-  CharImageWriterType::Pointer writer = CharImageWriterType::New();
+  writer->SetInput(caster->GetOutput());
   writer->SetFileName(filename);
-  writer->SetInput(caster->GetOutput() );
-  writer->SetUseCompression( false );
+  writer->SetUseCompression(false);
   try
     {
     writer->Update();
     }
-  catch( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
     {
     std::cerr << err << std::endl;
-    return;
+    return -1;
     }
-  return;
+  return 0;
+}
+
+template<class TInputImage, class TOutputImage>
+int
+MABMISImageOperationFilter<TInputImage, TOutputImage>
+::WriteImage(const std::string filename, InternalImageType::Pointer image, itk::ImageIOBase::IOComponentType ioType)
+{
+  if( ioType == itk::ImageIOBase::UCHAR )
+    {
+    return this->WriteImage<unsigned char>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::CHAR )
+    {
+    return this->WriteImage<char>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::USHORT )
+    {
+    return this->WriteImage<unsigned short>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::SHORT )
+    {
+    return this->WriteImage<short>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::UINT )
+    {
+    return this->WriteImage<unsigned int>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::INT )
+    {
+    return this->WriteImage<int>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::ULONG )
+    {
+    return this->WriteImage<unsigned long>(filename, image);
+    }
+  else if( ioType == itk::ImageIOBase::LONG )
+    {
+    return this->WriteImage<long>(filename, image);
+    }
+  //else if( ioType == itk::ImageIOBase::ULONGLONG )
+  //  {
+  //  return this->WriteImage<unsigned long long>(filename, image);
+  //  }
+  //else if( ioType == itk::ImageIOBase::LONGLONG )
+  //  {
+  //  return this->WriteImage<long long>(filename, image);
+  //  }
+  else if(ioType == itk::ImageIOBase::FLOAT)
+    {
+    return this->WriteImage<float>(filename, image);
+    }
+  else if(ioType == itk::ImageIOBase::DOUBLE)
+    {
+    return this->WriteImage<InternalPixelType>(filename, image);
+    }
+  else
+    {
+    std::cerr << itk::ImageIOBase::GetComponentTypeAsString(ioType) << " not supported as I/O pixel type" << std::endl;
+    return -1;
+    }
+  return -2;
 }
 
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageINT(std::string filename, InternalImageType::Pointer image)
+::WriteImage(const std::string filename, InternalImageType::Pointer image, char* outputType)
 {
-  Internal2IntCastFilterType::Pointer caster = Internal2IntCastFilterType::New();
-
-  caster->SetInput(image);
-  IntImageWriterType::Pointer writer = IntImageWriterType::New();
-  writer->SetFileName(filename);
-  writer->SetInput(caster->GetOutput() );
-  writer->SetUseCompression( false );
-  try
-    {
-    writer->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << err << std::endl;
-    return;
-    }
-  return;
-}
-
-template <class TInputImage, class TOutputImage>
-void
-MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageSHORT(std::string filename, InternalImageType::Pointer image)
-{
-  Internal2ShortCastFilterType::Pointer caster = Internal2ShortCastFilterType::New();
-
-  caster->SetInput(image);
-  ShortImageWriterType::Pointer writer = ShortImageWriterType::New();
-  writer->SetFileName(filename);
-  writer->SetInput(caster->GetOutput() );
-  writer->SetUseCompression( false );
-  try
-    {
-    writer->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << err << std::endl;
-    return;
-    }
-  return;
-}
-
-template <class TInputImage, class TOutputImage>
-void
-MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImageFLOAT(std::string filename, InternalImageType::Pointer image)
-{
-  Internal2FloatCastFilterType::Pointer caster = Internal2FloatCastFilterType::New();
-
-  caster->SetInput(image);
-  FloatImageWriterType::Pointer writer = FloatImageWriterType::New();
-  writer->SetFileName(filename);
-  writer->SetInput(caster->GetOutput() );
-  writer->SetUseCompression( false );
-  try
-    {
-    writer->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << err << std::endl;
-    return;
-    }
-  return;
-}
-
-template <class TInputImage, class TOutputImage>
-void
-MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImage(std::string filename, InternalImageType::Pointer image)
-{
-  Internal2CharCastFilterType::Pointer caster = Internal2CharCastFilterType::New();
-
-  caster->SetInput(image);
-  CharImageWriterType::Pointer writer = CharImageWriterType::New();
-  writer->SetFileName(filename);
-  writer->SetInput(caster->GetOutput() );
-  writer->SetUseCompression( false );
-  try
-    {
-    writer->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << err << std::endl;
-    return;
-    }
-  return;
-}
-
-template <class TInputImage, class TOutputImage>
-void
-MABMISImageOperationFilter<TInputImage, TOutputImage>
-::WriteImage(std::string filename, InternalImageType::Pointer image, char* outputType)
-{
-  //
-  if( strcmp(outputType, "uchar") == 0 )
-    {
-    WriteImageUCHAR(filename, image);
-    }
-  else if( strcmp(outputType, "short") == 0 )
-    {
-    WriteImageSHORT(filename, image);
-    }
-  else if( strcmp(outputType, "int") == 0 )
-    {
-    WriteImageINT(filename, image);
-    }
-  else if( strcmp(outputType, "float") == 0 )
-    {
-    WriteImageFLOAT(filename, image);
-    }
-  else // default
-    {
-    WriteImage(filename, image);
-    }
+  itk::ImageIOBase::IOComponentType ioType = itk::ImageIOBase::GetComponentTypeFromString(outputType);
+  return this->WriteImage(filename, image, ioType);
 }
 
 // calculate distance between two images by mean squared difference
 template <class TInputImage, class TOutputImage>
 double
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::calculateDistanceMSD(std::string& imageName1, std::string&  imageName2)
+::calculateDistanceMSD(const std::string& imageName1, const std::string&  imageName2)
 {
   double dist;
 
@@ -245,7 +225,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISImageOperationFilter<TInputImage, TOutputImage>
-::PairwiseDistanceAmongImages(std::vector<std::string> imageFileNames, int totalNumber, vnl_matrix<double>& distanceMatrix)
+::PairwiseDistanceAmongImages(const std::vector<std::string>& imageFileNames, int totalNumber, vnl_matrix<double>& distanceMatrix)
 
 {
   for( int i = 0; i < totalNumber; ++i )

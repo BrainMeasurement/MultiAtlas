@@ -682,7 +682,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
 
     if( isEvaluate )
       {
-      dfoperator->ApplyDeformationFieldAndWriteWithFileNames(
+      dfoperator->ApplyDeformationFieldAndWriteWithTypeWithFileNames(
         fixedImageFileName,
         invDeformationFileName,
         invDeformedSegmentFileName, false);
@@ -785,9 +785,10 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     dfoperator->InverseDeformationField3D(df, invdf);
     InternalImageType::Pointer rootImg = 0;
     imgoperator->ReadImage(imageFiles[root], rootImg);
+    const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(imageFiles[root]);
     InternalImageType::Pointer simImg = 0;
     dfoperator->ApplyDeformationField(rootImg, invdf, simImg, true);
-    imgoperator->WriteImage(simulateTemplateFileNames[i], simImg);
+    imgoperator->WriteImage(simulateTemplateFileNames[i], simImg, ioType);
     }
   std::cout << std::endl;
   

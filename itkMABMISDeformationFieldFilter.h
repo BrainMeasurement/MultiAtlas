@@ -107,9 +107,6 @@ public:
   void ApplyDeformationField(InternalImageType::Pointer movingImage, DeformationFieldType::Pointer deformationField,
                              InternalImageType::Pointer & deformedImage, bool isLinearInterpolator);
 
-  void ApplyDeformationFieldAndWriteWithFileNames(std::string movingImageName, std::string deformationFieldFileName,
-                                                  std::string deformedImageName, bool isLinearInterpolator);
-
   void ApplyDeformationFieldAndWriteWithTypeWithFileNames(std::string  movingImageFileName,
                                                           std::string deformationFieldFileName,
                                                           std::string deformedImageFileName, bool isLinear);

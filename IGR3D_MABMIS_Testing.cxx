@@ -645,6 +645,7 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
   InternalImageType::Pointer curSampleImgPtr = 0;
 
   imgoperator->ReadImage(curSampleImgName, curSampleImgPtr);
+  const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(curSampleImgName);
 
   // output sample label image pointer
   InternalImageType::Pointer outSampleSegPtr = 0;
@@ -677,7 +678,7 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
   GaussianWeightedLabelFusion(curSampleImgPtr, outSampleSegPtr, warpedImgPtrs, warpedSegPtrs, numOfAtlases);
 
   // output segmentation image
-  imgoperator->WriteImage(outSampleSegName, outSampleSegPtr);
+  imgoperator->WriteImage(outSampleSegName, outSampleSegPtr, ioType);
 
   delete[] warpedImgPtrs;
   delete[] warpedSegPtrs;
@@ -1372,7 +1373,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
     // apply deformation field on seg file
     if( isEvaluate )
       {
-      dfoperator->ApplyDeformationFieldAndWriteWithFileNames(
+      dfoperator->ApplyDeformationFieldAndWriteWithTypeWithFileNames(
         rootSegmentFileName,
         invDeformationFileName,
         deformedSegmentFileName, false);
@@ -1526,7 +1527,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
 
       if( isEvaluate )
         {
-        dfoperator->ApplyDeformationFieldAndWriteWithFileNames(
+        dfoperator->ApplyDeformationFieldAndWriteWithTypeWithFileNames(
           movingSegmentFileName,
           dfFileName,
           deformedSegmentFileName, false);
