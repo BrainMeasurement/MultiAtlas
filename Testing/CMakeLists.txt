@@ -31,7 +31,7 @@ set(Training_CLP IGR3D_MABMIS_Training)
 
 #-----------------------------------------------------------------------------
 add_executable(${Training_CLP}Test ${Training_CLP}Test.cxx)
-target_link_libraries(${Training_CLP}Test ${Training_CLP}Lib)
+target_link_libraries(${Training_CLP}Test ${Training_CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${Training_CLP}Test PROPERTIES LABELS ${Training_CLP})
 
 
@@ -61,7 +61,7 @@ set(Testing_CLP IGR3D_MABMIS_Testing)
 
 #-----------------------------------------------------------------------------
 add_executable(${Testing_CLP}Test ${Testing_CLP}Test.cxx)
-target_link_libraries(${Testing_CLP}Test ${Testing_CLP}Lib)
+target_link_libraries(${Testing_CLP}Test ${Testing_CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${Testing_CLP}Test PROPERTIES LABELS ${Testing_CLP})
 
 #-----------------------------------------------------------------------------

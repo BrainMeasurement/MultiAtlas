@@ -488,13 +488,6 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   return EXIT_SUCCESS;
 }
 
-template <class T>
-int DoIt( itk::MABMISImageData* trainingData, std::string outputFile,
-          std::vector<int> iterations, double sigma)
-{
-  return Training(trainingData, outputFile, iterations, sigma);
-}
-
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
@@ -547,7 +540,7 @@ int main( int argc, char *argv[] )
 
   // get number of iterations
 
-  int retVal = DoIt<unsigned short>(trainingData, TrainingOutputFile, iterations, SmoothingKernelSize);
+  int retVal = Training(trainingData, TrainingOutputFile, iterations, SmoothingKernelSize);
   delete trainingData;
 
   return retVal;
@@ -794,4 +787,3 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
   
   return simulateTemplateFileNames;
 }
-

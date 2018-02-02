@@ -105,8 +105,7 @@ GetRootName(const std::string & filename)
 
   // Create a base filename
   // i.e Image.hdr --> Image
-  if ( fileExt.length() > 0                    //Ensure that an extension was
-                                               // found
+  if ( fileExt.length() > 0                    //Ensure that an extension was found
        && filename.length() > fileExt.length() //Ensure that the filename does
                                                // not contain only the extension
        )
@@ -117,6 +116,26 @@ GetRootName(const std::string & filename)
     }
   //Default to return same as input when the extension is nothing (Analyze)
   return ( filename );
+}
+
+static std::string
+GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageIndex, std::string iterationString)
+{
+  std::string prefix = iterationString;
+  if (!iterationString.empty())
+    {
+    prefix += "_";
+    }
+
+  if (imageData->m_SegmentationFileNames.size() >= imageIndex && !imageData->m_SegmentationFileNames[imageIndex].empty())
+    {
+    return imageData->m_DataDirectory + prefix + imageData->m_SegmentationFileNames[imageIndex];
+    }
+  else
+    {
+    std::string imageFileName = imageData->m_DataDirectory + prefix + imageData->m_ImageFileNames[imageIndex];
+    return GetRootName(imageFileName) + "-label" + GetExtension(imageFileName);
+    }
 }
 
 typedef double CoordinateRepType;
@@ -207,8 +226,6 @@ typedef itk::Vector<ShortPixelType, ImageDimension>      ShortVectorPixelType;
 typedef itk::Image<ShortVectorPixelType, ImageDimension> ShortDeformationFieldType;
 typedef itk::ImageFileWriter<ShortDeformationFieldType>  ShortDeformationFieldWriterType;
 
-void ReadImgInfo(std::vector<std::string> imgfilenames);
-
 void HistogramMatching(InternalImageType::Pointer inputImage, InternalImageType::Pointer referenceImage,
                        InternalImageType::Pointer & outputImage);
 
@@ -241,6 +258,11 @@ void PairwiseRegistrationOnTreeViaRoot(int root, itk::MABMISImageData* imageData
 
 // void MultiAtlasBasedSegmentation(int filenumber, int atlas_size, std::vector<std::string> sub_ids);
 int MultiAtlasBasedSegmentation(int root, itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree);
+
+const std::string ImageSuffix = "_cbq_000.nii.gz";
+const std::string DeformationSuffix = "_deform_000.nii.gz";
+const std::string SegmentationSuffix = "_seg_000.nii.gz";
+const std::string RegisteredSuffix = "_cbq_reg.nii.gz";
 
 int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
             std::vector<int> iterations, double sigma)
@@ -354,29 +376,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "2. Build the tree... " << std::endl;
   itree = treeoperator->BuildIncrementalTree(imageData->m_NumberImageData, // #images to be segmented
-                                             totalNumAtlases,              // #atlases, including original ones and
-                                                                           // simulated ones
-                                             totalNumFiles,                // total #image files, =
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           //
-                                                                           // imageData->m_NumberImageData+totalNumAtlases
+                                             totalNumAtlases,              // #atlases, including original ones and simulated ones
+                                             totalNumFiles,                // total #image files, = imageData->m_NumberImageData+totalNumAtlases
                                              images_cur,                   // file indices for images to be segmented
                                              atlas_cur,                    // file indices for atlas images
                                              cross_dist,                   // pairwise distance between images
@@ -450,8 +451,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
         {
         sprintf(m_str, "%03d", m);
 
-        std::string imHdr = std::string(m_str) + "_to_" + "testImage" + n_str + "_cbq_000.nii.gz";
-        std::string dfMha = std::string(m_str) + "_to_" + "testImage" + n_str + "_deform_000.nii.gz";
+        std::string imHdr = std::string(m_str) + "_to_" + "testImage" + n_str + ImageSuffix;
+        std::string dfMha = std::string(m_str) + "_to_" + "testImage" + n_str + DeformationSuffix;
         imHdr = imageData->m_DataDirectory + imHdr;
         dfMha = imageData->m_DataDirectory + dfMha;
         basicoperator->RemoveFile(imHdr.c_str() );
@@ -459,8 +460,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
         if( m == root )
           {
-          imHdr = std::string("testImage") + n_str + "_to_" + m_str + "_cbq_reg.nii.gz";
-          dfMha = std::string("testImage") + n_str + "_to_" + m_str + "_deform_000.nii.gz";
+          imHdr = std::string("testImage") + n_str + "_to_" + m_str + RegisteredSuffix;
+          dfMha = std::string("testImage") + n_str + "_to_" + m_str + DeformationSuffix;
           imHdr = imageData->m_DataDirectory + imHdr;
           dfMha = imageData->m_DataDirectory + dfMha;
           basicoperator->RemoveFile(imHdr.c_str() );
@@ -474,8 +475,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
           continue;
           }
         sprintf(m_str, "%03d", m);
-        std::string imHdr = std::string("testImage") + n_str + "_to_testImage" + m_str + "_cbq_000.nii.gz";
-        std::string dfMha = std::string("testImage") + n_str + "_to_testImage" + m_str + "_deform_000.nii.gz";
+        std::string imHdr = std::string("testImage") + n_str + "_to_testImage" + m_str + ImageSuffix;
+        std::string dfMha = std::string("testImage") + n_str + "_to_testImage" + m_str + DeformationSuffix;
         imHdr = imageData->m_DataDirectory + imHdr;
         dfMha = imageData->m_DataDirectory + dfMha;
         basicoperator->RemoveFile(imHdr.c_str() );
@@ -487,18 +488,17 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   for( int n = 0; n < imageData->m_NumberImageData; ++n )
     {
     const std::string imageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[n];
-    const std::string baseFileName = GetRootName(imageFileName);
-    char        i_str[10];
-    bool        copied = false;
+    char i_str[10];
+    bool copied = false;
     for( int i = numIter - 1; i >= 0; i-- )
       {
       sprintf(i_str, "%03d", i);
-      const std::string segHdr = baseFileName + "_seg_" + i_str + ".nii.gz";
+      const std::string segHdr = GetDefaultSegmentationFilename(imageData, n, i_str);
       if( itksys::SystemTools::FileExists(segHdr.c_str(), true) )
         {
         if( !copied )
           {
-          std::string segHdr_save = baseFileName + "_seg.nii.gz";
+          std::string segHdr_save = GetDefaultSegmentationFilename(imageData, n, "");
 
           const size_t dir_sep = segHdr_save.find_last_of(FILESEP);
           if( dir_sep != std::string::npos )
@@ -510,7 +510,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
             segHdr_save = imageData->m_OutputDirectory + segHdr_save;
             }
 
-          itksys::SystemTools::CopyFileAlways(segHdr.c_str(), segHdr_save.c_str() );
+          itksys::SystemTools::CopyFileAlways(segHdr.c_str(), segHdr_save.c_str());
+          std::cout << "Segmentation " << i_str << ": " + segHdr_save << std::endl;
           copied = true;
           }
         basicoperator->RemoveFile(segHdr.c_str() );
@@ -520,13 +521,6 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
   std::cout << "Done. " << std::endl;
   return EXIT_SUCCESS;
-}
-
-template <class T>
-int DoIt( itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
-          std::vector<int> iterations, double sigma)
-{
-  return Testing(imageData, atlasTree, iterations, sigma);
 }
 
 int main( int argc, char *argv[] )
@@ -628,7 +622,7 @@ int main( int argc, char *argv[] )
   treeoperator = TreeOperationType::New();
   basicoperator = BasicOperationFilterType::New();
 
-  int retVal = DoIt<unsigned short>( inputImageData, atlasTree, iterations, SmoothingKernelSize);
+  int retVal = Testing( inputImageData, atlasTree, iterations, SmoothingKernelSize);
 
   delete inputImageData;
   delete atlasTree;
@@ -693,26 +687,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
   // introduce the iterators of each image
   // InternalImageIteratorType sampleImgIt(curSampleImgPtr,
   // curSampleImgPtr->GetLargestPossibleRegion());//GetRequestedRegion());
-  InternalImageIteratorType sampleSegIt(outSampleSegPtr, outSampleSegPtr->GetLargestPossibleRegion() ); //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        //
-                                                                                                        // GetRequestedRegion());
+  InternalImageIteratorType sampleSegIt(outSampleSegPtr, outSampleSegPtr->GetLargestPossibleRegion() ); // GetRequestedRegion());
 
   InternalImageType::SizeType sampleImSize = outSampleSegPtr->GetBufferedRegion().GetSize();
 
@@ -736,27 +711,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
     // warpedImgPtrs[i]->GetLargestPossibleRegion());//GetRequestedRegion() );
     // warpedImgIts[i] = it1;
 
-    InternalImageIteratorType it2( warpedSegPtrs[i], warpedSegPtrs[i]->GetLargestPossibleRegion() ); //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     //
-                                                                                                     // GetRequestedRegion()
-                                                                                                     // );
+    InternalImageIteratorType it2( warpedSegPtrs[i], warpedSegPtrs[i]->GetLargestPossibleRegion() ); // GetRequestedRegion());
     warpedSegIts[i] = it2;
 
     InternalImageNeighborhoodIteratorType neighborIt(radius, warpedImgPtrs[i],
@@ -1063,8 +1018,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       }
     else if( curnode < atlas_image_size )
       {
-      dfFileName = std::string(i_str) + "_to_" + root_str + "_deform_000.nii.gz";
-      df_ImageFileName = std::string(i_str) + "_to_" + root_str + "_cbq_reg.nii.gz";
+      dfFileName = std::string(i_str) + "_to_" + root_str + DeformationSuffix;
+      df_ImageFileName = std::string(i_str) + "_to_" + root_str + RegisteredSuffix;
       dfFileName = atlasTree->m_AtlasDirectory + dfFileName;
       df_ImageFileName = atlasTree->m_AtlasDirectory + df_ImageFileName;
 
@@ -1079,8 +1034,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       {
       int  n = curnode - atlas_total_size;
       char n_str[10]; sprintf(n_str, "%03d", n);
-      dfFileName = std::string("testImage") + n_str + "_to_" + root_str + "_deform_000.nii.gz";
-      df_ImageFileName = std::string("testImage") + n_str + "_to_" + root_str + "_cbq_reg.nii.gz";
+      dfFileName = std::string("testImage") + n_str + "_to_" + root_str + DeformationSuffix;
+      df_ImageFileName = std::string("testImage") + n_str + "_to_" + root_str + RegisteredSuffix;
 
       dfFileName = imageData->m_DataDirectory + dfFileName;
       df_ImageFileName = imageData->m_DataDirectory + df_ImageFileName;
@@ -1091,14 +1046,14 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
     std::string df_ParentFileName;
     if( parentnode < atlas_image_size )
       {
-      df_ParentFileName = std::string(p_str) + "_to_" + root_str + "_deform_000.nii.gz";
+      df_ParentFileName = std::string(p_str) + "_to_" + root_str + DeformationSuffix;
       df_ParentFileName = atlasTree->m_AtlasDirectory + df_ParentFileName;
       }
     else if( parentnode >= atlas_total_size )
       {
       int  n = parentnode - atlas_total_size;
       char n_str[10]; sprintf(n_str, "%03d", n);
-      df_ParentFileName = std::string("testImage") + n_str + "_to_" + root_str + "_deform_000.nii.gz";
+      df_ParentFileName = std::string("testImage") + n_str + "_to_" + root_str + DeformationSuffix;
       df_ParentFileName = imageData->m_DataDirectory + df_ParentFileName;
       }
 
@@ -1112,52 +1067,11 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
     std::string testImageFile;
     if( curnode < atlas_image_size )
       {
-      testImageFile = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]);    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    // atlas
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    //
-                                                                                                                    // image
+      testImageFile = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[curnode]); // atlas image
       }
     else
       {
-      testImageFile = imageData->m_DataDirectory + imageData->m_ImageFileNames[curnode - atlas_total_size];   // test
-                                                                                                              // image
+      testImageFile = imageData->m_DataDirectory + imageData->m_ImageFileNames[curnode - atlas_total_size]; // test image
       }
     if( parentnode == root ) // direct registration without initial deformation
       {
@@ -1284,8 +1198,8 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
 
     // prepare file names
 
-    // std::string originalImgImageFileName = sub_ids[root] + "_cbq_000.nii.gz";
-    // std::string originalSegImageFileName = sub_ids[root] + "_seg_000.nii.gz";
+    // std::string originalImgImageFileName = sub_ids[root] + ImageSuffix;
+    // std::string originalSegImageFileName = sub_ids[root] + SegmentationSuffix;
     std::string rootImageFileName = ReplacePathSepForOS(
         atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[root] );
     std::string rootSegmentFileName = ReplacePathSepForOS(
@@ -1305,13 +1219,13 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       sprintf(i_str, "%03d", i);
       fixedImageTag = i_str;
 
-      deformedImageFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + +"_cbq_000.nii.gz";
-      deformedImageFileNameImg = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + +"_cbq_000.nii.gz";
+      deformedImageFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      deformedImageFileNameImg = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
 
-      deformedSegmentFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + +"_seg_000.nii.gz";
+      deformedSegmentFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + SegmentationSuffix;
 
-      deformationFileName = atlasTree->m_AtlasDirectory + fixedImageTag + "_to_" + rootImageTag + "_deform_000.nii.gz";
-      invDeformationFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + "_deform_000.nii.gz";
+      deformationFileName = atlasTree->m_AtlasDirectory + fixedImageTag + "_to_" + rootImageTag + DeformationSuffix;
+      invDeformationFileName = atlasTree->m_AtlasDirectory + rootImageTag + "_to_" + fixedImageTag + DeformationSuffix;
       }
     else
       {
@@ -1319,13 +1233,13 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       sprintf(i_str, "%03d", i - atlas_image_size);
       fixedImageTag = std::string("testImage") + i_str;
 
-      deformedImageFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + +"_cbq_000.nii.gz";
-      deformedImageFileNameImg = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + +"_cbq_000.nii.gz";
+      deformedImageFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      deformedImageFileNameImg = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
 
-      deformedSegmentFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + +"_seg_000.nii.gz";
+      deformedSegmentFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + SegmentationSuffix;
 
-      deformationFileName = imageData->m_DataDirectory + fixedImageTag + "_to_" + rootImageTag + "_deform_000.nii.gz";
-      invDeformationFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + "_deform_000.nii.gz";
+      deformationFileName = imageData->m_DataDirectory + fixedImageTag + "_to_" + rootImageTag + DeformationSuffix;
+      invDeformationFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + DeformationSuffix;
       }
 
     // if exist??
@@ -1430,7 +1344,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       movingSegmentFileName = movingImageFileName;
       const std::string movingSegmentBaseFileName = GetRootName(movingSegmentFileName);
 
-      movingSegmentFileName = movingSegmentBaseFileName + "_seg_000.nii.gz";
+      movingSegmentFileName = movingSegmentBaseFileName + SegmentationSuffix;
       sprintf(a_str, "%03d", all_index - atlas_image_size);
       movingImageTag = std::string("testImage") + a_str;
       }
@@ -1452,11 +1366,11 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       sprintf(s_str, "%03d", sample_index);
       std::string fixedImageTag = std::string("testImage") + s_str;
 
-      std::string deformedImageFileName = movingImageTag + "_to_" + fixedImageTag + "_cbq_000.nii.gz";
-      std::string deformedImageFileNameImg = movingImageTag + "_to_" + fixedImageTag + "_cbq_000.nii.gz";
-      std::string deformedSegmentFileName = movingImageTag + "_to_" + "testImage" + s_str + "_seg_000.nii.gz";
-      std::string deformedSegmentFileNameImg = movingImageTag + "_to_" + "testImage" + s_str + "_seg_000.nii.gz";
-      std::string dfFileName = movingImageTag + "_to_" + fixedImageTag + "_deform_000.nii.gz";
+      std::string deformedImageFileName = movingImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      std::string deformedImageFileNameImg = movingImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      std::string deformedSegmentFileName = movingImageTag + "_to_" + "testImage" + s_str + SegmentationSuffix;
+      std::string deformedSegmentFileNameImg = movingImageTag + "_to_" + "testImage" + s_str + SegmentationSuffix;
+      std::string dfFileName = movingImageTag + "_to_" + fixedImageTag + DeformationSuffix;
 
       deformedImageFileName = imageData->m_DataDirectory + deformedImageFileName;
       deformedImageFileNameImg = imageData->m_DataDirectory + deformedImageFileNameImg;
@@ -1465,15 +1379,15 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       deformedSegmentFileName = imageData->m_DataDirectory + deformedSegmentFileName;
       deformedSegmentFileNameImg = imageData->m_DataDirectory + deformedSegmentFileNameImg;
 
-      // std::string fixedImgImageFileName = sub_ids[sample_index] + "_cbq_000.nii.gz";
-      // std::string movingImgImageFileName = sub_ids[all_index] + "_cbq_000.nii.gz";
-      // std::string movingSegImageFileName = sub_ids[all_index] + "_seg_000.nii.gz";
+      // std::string fixedImgImageFileName = sub_ids[sample_index] + ImageSuffix;
+      // std::string movingImgImageFileName = sub_ids[all_index] + ImageSuffix;
+      // std::string movingSegImageFileName = sub_ids[all_index] + SegmentationSuffix;
 
-      // std::string deformedImgImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
-      // std::string deformedSegImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
-      // std::string deformedImgImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_cbq_000.nii.gz";
-      // std::string deformedSegImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_seg_000.nii.gz";
-      // std::string deformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
+      // std::string deformedImgImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + ImageSuffix;
+      // std::string deformedSegImageFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + SegmentationSuffix;
+      // std::string deformedImgImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + ImageSuffix;
+      // std::string deformedSegImageFileNameImg = sub_ids[sample_index] + "_" + sub_ids[all_index] + SegmentationSuffix;
+      // std::string deformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[all_index] + DeformationSuffix;
 
       // if exist
       bool isComposeExist = true;
@@ -1496,21 +1410,18 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
         }
 
       // compose
-      // std::string inputDeformationFieldFileName = sub_ids[root] + "_" + sub_ids[all_index] + "_deform_000.nii.gz";
-      // std::string secondDeformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[root] + "_deform_000.nii.gz";
+      // std::string inputDeformationFieldFileName = sub_ids[root] + "_" + sub_ids[all_index] + DeformationSuffix;
+      // std::string secondDeformationFieldFileName = sub_ids[sample_index] + "_" + sub_ids[root] + DeformationSuffix;
       std::string inputDeformationFieldFileName;
       if( all_index < atlas_image_size )
         {
-        inputDeformationFieldFileName = atlasTree->m_AtlasDirectory + movingImageTag + "_to_" + root_str
-          + "_deform_000.nii.gz";
+        inputDeformationFieldFileName = atlasTree->m_AtlasDirectory + movingImageTag + "_to_" + root_str + DeformationSuffix;
         }
       else
         {
-        inputDeformationFieldFileName  = imageData->m_DataDirectory + movingImageTag + "_to_" + root_str
-          + "_deform_000.nii.gz";
+        inputDeformationFieldFileName  = imageData->m_DataDirectory + movingImageTag + "_to_" + root_str + DeformationSuffix;
         }
-      std::string secondDeformationFieldFileName = imageData->m_DataDirectory + root_str + "_to_" + fixedImageTag
-        + "_deform_000.nii.gz";
+      std::string secondDeformationFieldFileName = imageData->m_DataDirectory + root_str + "_to_" + fixedImageTag + DeformationSuffix;
       // output composed deformation field
       dfoperator->ComposeDeformationFieldsAndSave(inputDeformationFieldFileName,
                                                   secondDeformationFieldFileName,
@@ -1583,15 +1494,12 @@ int MultiAtlasBasedSegmentation(int root,
 
       std::string testImageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[sample_index];
 
-      // std::string curSampleImgName = sub_ids[sample_index] +"_cbq_000.nii.gz";
+      // std::string curSampleImgName = sub_ids[sample_index] +ImageSuffix;
       // the output label image of current sample
       std::string index_string;
       basicoperator->myitoa( iter, index_string, 3 );
-      std::string testSementFileName = testImageFileName;
-      const std::string testSegmentBaseFileName = GetRootName(testSementFileName);
-      testSementFileName = testSegmentBaseFileName + "_seg_" + index_string + ".nii.gz";
 
-      // std::string   outSampleSegName = sub_ids[sample_index] + "_seg_" + index_string + ".nii.gz";
+      const std::string testSegmentFileName = GetDefaultSegmentationFilename(imageData, sample_index, index_string);
 
       // prepare all current atlases names
       std::vector<std::string> allWarpedAtlasImgNames;
@@ -1625,10 +1533,8 @@ int MultiAtlasBasedSegmentation(int root,
           }
 
         // assign names
-        // std::string allWarpedAtlasImgName = sub_ids[sample_index] + "_" + sub_ids[i] + "_cbq_000.nii.gz";
-        // std::string allDeformationFieldName = sub_ids[sample_index] + "_" + sub_ids[i] + "_deform_000.nii.gz";
-        std::string warpedImageFileName = movingImageTag + "_to_" + testImageTag + "_cbq_000.nii.gz";
-        std::string dfFileName = movingImageTag + "_to_" + testImageTag + "_deform_000.nii.gz";
+        std::string warpedImageFileName = movingImageTag + "_to_" + testImageTag + ImageSuffix;
+        std::string dfFileName = movingImageTag + "_to_" + testImageTag + DeformationSuffix;
 
         warpedImageFileName = imageData->m_DataDirectory + warpedImageFileName;
         dfFileName = imageData->m_DataDirectory + dfFileName;
@@ -1640,11 +1546,8 @@ int MultiAtlasBasedSegmentation(int root,
           }
         else
           {
-          atlasSegName = imageData->m_DataDirectory + imageData->m_ImageFileNames[i - atlas_image_size];
-          const std::string atlasSegBaseName = GetRootName( atlasSegName );
-
           basicoperator->myitoa( iter - 1, index_string, 3 );
-          atlasSegName = atlasSegBaseName + "_seg_" + index_string + ".nii.gz";
+          atlasSegName = GetDefaultSegmentationFilename(imageData, i - atlas_image_size, index_string);
           }
 
         allWarpedAtlasImgNames.push_back(warpedImageFileName);
@@ -1656,8 +1559,8 @@ int MultiAtlasBasedSegmentation(int root,
         }
       // do weighted label fusion
 
-      LabelFusion(testImageFileName,  // the input image to be segmented
-                  testSementFileName, // the output segmented image
+      LabelFusion(testImageFileName,
+                  testSegmentFileName,
                   allWarpedAtlasImgNames,
                   allDeformationFieldNames,
                   allAtlasSegNames,
@@ -1674,7 +1577,6 @@ int MultiAtlasBasedSegmentation(int root,
     if( isEvaluate )
       {
       // pairwise segmentation accuracy
-
       // pairwise segmentation consistency
       }
     iter++;
@@ -1682,4 +1584,3 @@ int MultiAtlasBasedSegmentation(int root,
 
   return iter;
 }
-

@@ -95,7 +95,7 @@ MABMISImageOperationFilter<TInputImage, TOutputImage>
   caster->SetInput(image);
   writer->SetInput(caster->GetOutput());
   writer->SetFileName(filename);
-  writer->SetUseCompression(false);
+  writer->SetUseCompression(true);
   try
     {
     writer->Update();

@@ -9,18 +9,6 @@
 #include <ctype.h>
 #include <locale>
 
-#define RAISE_EXCEPTION(s)                                     \
-    { \
-    ExceptionObject \
-    exception( \
-      __FILE__, \
-      __LINE__); \
-    exception. \
-    SetDescription( \
-      s);                     \
-    throw exception; \
-    }
-
 #define SPACES " \t\r\n"
 
 inline std::string trim_right (const std::string & s, const std::string & t = SPACES)
@@ -121,7 +109,7 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
     {
     if( m_ImageData == 0 )
       {
-      RAISE_EXCEPTION("The xml format is not right. Please check it!");
+      itkGenericExceptionMacro("The xml format is not right. Please check it!");
       }
     }
   if( itksys::SystemTools::Strucmp(name, "DataPath") == 0 )
@@ -255,9 +243,9 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
         }
       else if( itksys::SystemTools::Strucmp(key.c_str(), "SIMULATED") == 0 )
         {
-        if( itksys::SystemTools::Strucmp(value.c_str(), "TRUE") ||
-            itksys::SystemTools::Strucmp(value.c_str(), "1") ||
-            itksys::SystemTools::Strucmp(value.c_str(), "T") )
+        if (itksys::SystemTools::Strucmp(value.c_str(), "TRUE") == 0 ||
+            itksys::SystemTools::Strucmp(value.c_str(), "1") == 0 ||
+            itksys::SystemTools::Strucmp(value.c_str(), "T") == 0)
           {
           isSimulated = true;
           }
@@ -321,7 +309,7 @@ MABMISAtlasXMLFileReader::EndElement(const char *name)
     {
     if( m_Atlas == 0 )
       {
-      RAISE_EXCEPTION("The xml format is not right");
+      itkGenericExceptionMacro("The xml format is not right");
       }
     }
   if( itksys::SystemTools::Strucmp(name, "AtlasDirectory") == 0 )
@@ -368,13 +356,77 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 }
 
 ///------------------------------------------------------------
+// ----  class MABMISImageDataXMLFileWriter  ------------------
+///------------------------------------------------------------
+
+int
+MABMISImageDataXMLFileWriter::CanWriteFile(const char * name)
+{
+  return true;
+}
+
+int
+MABMISImageDataXMLFileWriter::WriteFile()
+{
+  // sanity checks
+  if( m_InputObject == 0 )
+    {
+    itkGenericExceptionMacro("No MABMISAtlas to Write");
+    }
+  if( m_Filename.length() == 0 )
+    {
+    itkGenericExceptionMacro("No filename given");
+    }
+  std::ofstream output( m_Filename.c_str() );
+  if( output.fail() )
+    {
+    itkGenericExceptionMacro("Can't Open "<< m_Filename);
+    }
+
+  WriteStartElement("?xml version=\"1.0\"?", output);
+  output << std::endl;
+  WriteStartElement("!DOCTYPE MABMISImageData", output);
+  output << std::endl;
+
+  WriteStartElement("MABMISImageData", output);
+  output << std::endl;
+
+  WriteStartElement("DataPath", output);
+  output << this->m_InputObject->m_DataDirectory;
+  WriteEndElement("DataPath", output);
+  output << std::endl;
+
+  WriteStartElement("NumberOfImageData", output);
+  output << this->m_InputObject->m_NumberImageData;
+  WriteEndElement("NumberOfImageData", output);
+  output << std::endl;
+
+  WriteStartElement("ImageDataSets", output);
+  output << std::endl;
+  for( int n = 0; n < this->m_InputObject->m_ImageFileNames.size(); n++ )
+    {
+    output << "<Dataset ImageFile=\"" << this->m_InputObject->m_ImageFileNames[n] << "\"";
+    output << " SegmentationFile=\"" << this->m_InputObject->m_SegmentationFileNames[n] << "\"/>" << std::endl;
+    }
+
+  WriteEndElement("ImageDataSets", output);
+  output << std::endl;
+
+  WriteEndElement("MABMISImageData", output);
+  output << std::endl;
+  output.close();
+
+  return 0;
+}
+
+///------------------------------------------------------------
 // ----  class MABMISAtlasXMLFileWriter  ----------------------
 ///------------------------------------------------------------
 
 int
 MABMISAtlasXMLFileWriter::CanWriteFile( const char *itkNotUsed(name) )
 {
-  return true;                  // not sure what else to say
+  return true;
 }
 
 int
@@ -383,20 +435,16 @@ MABMISAtlasXMLFileWriter::WriteFile()
   // sanity checks
   if( m_InputObject == 0 )
     {
-    std::string errmsg("No MABMISAtlas to Write");
-    RAISE_EXCEPTION(errmsg);
+    itkGenericExceptionMacro("No MABMISAtlas to Write");
     }
   if( m_Filename.length() == 0 )
     {
-    std::string errmsg("No filename given");
-    RAISE_EXCEPTION(errmsg);
+    itkGenericExceptionMacro("No filename given");
     }
   std::ofstream output( m_Filename.c_str() );
   if( output.fail() )
     {
-    std::string errmsg("Can't Open ");
-    errmsg += m_Filename;
-    RAISE_EXCEPTION(errmsg);
+    itkGenericExceptionMacro("Can't Open "<< m_Filename);
     }
 
   WriteStartElement("?xml version=\"1.0\"?", output);
@@ -493,6 +541,7 @@ MABMISAtlasXMLFileWriter::WriteFile()
 
   return 0;
 }
+
 }
 
 #endif

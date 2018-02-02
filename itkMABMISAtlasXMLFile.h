@@ -32,7 +32,7 @@ public:
   }
   ~MABMISImageData()
   {
-  };
+  }
 };
 
 class MABMISAtlas
@@ -65,14 +65,14 @@ public:
     m_TreeSize = 0;
     m_TreeRoot = -1;
     m_TreeHeight = 0;
-  };
+  }
   ~MABMISAtlas()
   {
-  };
+  }
 };
 
 class MABMISImageDataXMLFileReader :
-  public         XMLReader<MABMISImageData>
+  public XMLReader<MABMISImageData>
 {
 public:
   /** Standard typedefs */
@@ -95,10 +95,10 @@ protected:
     m_OutputObject = new itk::MABMISImageData;
     m_ImageCount = 0;
     m_ImageData = 0;
-  };
+  }
   virtual ~MABMISImageDataXMLFileReader()
   {
-  };
+  }
 
   virtual void StartElement(const char *name, const char * *atts);
 
@@ -107,20 +107,51 @@ protected:
   virtual void CharacterDataHandler(const char *inData, int inLength);
 
 private:
-  MABMISImageDataXMLFileReader(const Self &);       // purposely not
-  // implemented
-  void operator=(const Self &);                         // purposely not
-
-  // implemented
-
+  MABMISImageDataXMLFileReader(const Self &) ITK_DELETED_FUNCTION;
+  void operator=(const Self &) ITK_DELETED_FUNCTION;
   MABMISImageData* m_ImageData;
   std::string      m_CurCharacterData;
 
   int m_ImageCount;
 };
 
+class MABMISImageDataXMLFileWriter :
+  public XMLWriterBase<MABMISImageData>
+{
+public:
+  /** standard typedefs */
+  typedef XMLWriterBase<MABMISImageData> Superclass;
+  typedef MABMISImageDataXMLFileWriter   Self;
+  typedef SmartPointer<Self>             Pointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(MABMISImageDataXMLFileWriter,  XMLWriterBase<MABMISImageData> );
+
+  /** Test whether a file is writable. */
+  virtual int CanWriteFile(const char *name);
+
+  /** Actually write out the file in question */
+  int WriteFile() ITK_OVERRIDE;
+
+protected:
+  MABMISImageDataXMLFileWriter()
+  {
+  }
+
+  virtual ~MABMISImageDataXMLFileWriter()
+  {
+  }
+
+private:
+  MABMISImageDataXMLFileWriter(const Self &) ITK_DELETED_FUNCTION;
+  void operator=(const Self &) ITK_DELETED_FUNCTION;
+};
+
 class MABMISAtlasXMLFileReader :
-  public         XMLReader<MABMISAtlas>
+  public XMLReader<MABMISAtlas>
 {
 public:
   /** Standard typedefs */
@@ -145,10 +176,10 @@ protected:
   {
     m_OutputObject = new itk::MABMISAtlas;
     m_Atlas = 0;
-  };
+  }
   virtual ~MABMISAtlasXMLFileReader()
   {
-  };
+  }
 
   virtual void StartElement(const char *name, const char * *atts);
 
@@ -157,18 +188,14 @@ protected:
   virtual void CharacterDataHandler(const char *inData, int inLength);
 
 private:
-  MABMISAtlasXMLFileReader(const Self &);       // purposely not
-  // implemented
-  void operator=(const Self &);                         // purposely not
-
-  // implemented
-
+  MABMISAtlasXMLFileReader(const Self &) ITK_DELETED_FUNCTION;
+  void operator=(const Self &) ITK_DELETED_FUNCTION;
   MABMISAtlas* m_Atlas;
   std::string  m_CurCharacterData;
 };
 
 class MABMISAtlasXMLFileWriter :
-  public         XMLWriterBase<MABMISAtlas>
+  public XMLWriterBase<MABMISAtlas>
 {
 public:
   /** standard typedefs */
@@ -186,7 +213,7 @@ public:
   virtual int CanWriteFile(const char *name);
 
   /** Actually write out the file in question */
-  virtual int WriteFile();
+  int WriteFile() ITK_OVERRIDE;
 
 protected:
   MABMISAtlasXMLFileWriter()
@@ -198,11 +225,8 @@ protected:
   }
 
 private:
-  MABMISAtlasXMLFileWriter(const Self &); // purposely not
-                                          // implemented
-  void operator=(const Self &);           // purposely not
-
-  // implemented
+  MABMISAtlasXMLFileWriter(const Self &) ITK_DELETED_FUNCTION;
+  void operator=(const Self &) ITK_DELETED_FUNCTION;
 };
 }
 

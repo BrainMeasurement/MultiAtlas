@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Segmentation</category>
+  <title>MABMIS Testing Invoke</title>
+  <description>Create an XML file suitable for invoking MABMIS testing module</description>
+  <version></version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Dženan Zukić (Kitware Inc.)</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <label>Parameters</label>
+    <description>Input images and resulting XML</description>
+
+    <file fileExtensions=".xml">
+     <longflag>atlasTreeXML</longflag>
+     <description>xml file of the multi-atlases after training</description>
+     <label>Multi-Atlas XML</label>
+     <channel>input</channel>
+   </file>
+
+    <file fileExtensions=".xml">
+      <longflag>imageListXML</longflag>
+      <description>xml file that will contain a list of images to be segmented</description>
+      <label>Image list XML</label>
+      <channel>output</channel>
+    </file>
+
+	<directory>
+      <longflag>imageDir</longflag>
+      <description>A directory where to write transformed, resampled and cropped images. Default: imageListXML's location.</description>
+      <label>Image directory</label>
+      <channel>input</channel>
+    </directory>
+
+    <image>
+      <longflag>image0</longflag>
+      <description>An input image</description>
+      <label>Image 0</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform0</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 0</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image1</longflag>
+      <description>An input image</description>
+      <label>Image 1</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform1</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 1</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image2</longflag>
+      <description>An input image</description>
+      <label>Image 2</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform2</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 2</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image3</longflag>
+      <description>An input image</description>
+      <label>Image 3</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform3</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 3</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image4</longflag>
+      <description>An input image</description>
+      <label>Image 4</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform4</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 4</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image5</longflag>
+      <description>An input image</description>
+      <label>Image 5</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform5</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 5</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image6</longflag>
+      <description>An input image</description>
+      <label>Image 6</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform6</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 6</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image7</longflag>
+      <description>An input image</description>
+      <label>Image 7</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform7</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 7</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image8</longflag>
+      <description>An input image</description>
+      <label>Image 8</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform8</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 8</label>
+      <channel>input</channel>
+    </transform>
+    <image>
+      <longflag>image9</longflag>
+      <description>An input image</description>
+      <label>Image 9</label>
+      <channel>input</channel>
+    </image>
+    <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
+      <longflag>transform9</longflag>
+      <description>A transform which aligns the image to the atlas root</description>
+      <label>Transform 9</label>
+      <channel>input</channel>
+    </transform>
+  </parameters>
+</executable>
