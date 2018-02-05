@@ -1,11 +1,9 @@
-#include "IGR3D_MABMIS_Testing_InvokeCLP.h"
+#include "IGR3D_MABMIS_Direct_InvokeCLP.h"
 
-#include "itkMABMISAtlasXMLFile.h"
-#include "itksys/SystemTools.hxx"
+#include "Testing.h"
+
 #include "itkAffineTransform.h"
 #include "itkTransformFileReader.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkResampleImageFilter.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
@@ -131,6 +129,10 @@ switch (componentType)
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+
+  imageListXML = ReplacePathSepForOS(imageListXML);
+  atlasTreeXML = ReplacePathSepForOS(atlasTreeXML);
+  imageDir = ReplacePathSepForOS(imageDir);
 
   try
     {

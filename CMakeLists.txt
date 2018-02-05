@@ -40,6 +40,7 @@ SEMMacroBuildCLI(
   ADDITIONAL_SRCS
 	itkMABMISAtlasXMLFile.cxx
 	Training.cxx
+	commonMABMIS.cxx
   #EXECUTABLE_ONLY
   )
 
@@ -50,16 +51,19 @@ SEMMacroBuildCLI(
   ADDITIONAL_SRCS
 	itkMABMISAtlasXMLFile.cxx
 	Testing.cxx
+	commonMABMIS.cxx
   #EXECUTABLE_ONLY
   )
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
-  NAME IGR3D_MABMIS_Testing_Invoke
+  NAME IGR3D_MABMIS_Direct_Invoke
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   ADDITIONAL_SRCS
 	itkMABMISAtlasXMLFile.cxx
 	Testing.cxx
+	Training.cxx
+	commonMABMIS.cxx
   #EXECUTABLE_ONLY
   )
 

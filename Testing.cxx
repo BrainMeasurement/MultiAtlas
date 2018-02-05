@@ -33,10 +33,6 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 
-// reader / writer
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-
 // filter
 #include "itkResampleImageFilter.h"
 
@@ -60,66 +56,8 @@
 #include <itkDiffeomorphicDemonsRegistrationFilter.h>
 #include <itkMultiResolutionPDEDeformableRegistration.h>
 
-// including itksys::SystemTools::MakeDirectory(char*)
-#include <itksys/SystemTools.hxx>
 #include <metaCommand.h>
 
-// To include all related header files
-#include "itkMABMISImageOperationFilter.h"
-#include "itkMABMISDeformationFieldFilter.h"
-#include "itkMABMISSimulateData.h"
-#include "itkMABMISImageRegistrationFilter.h"
-#include "itkMABMISTreeOperation.h"
-#include "itkMABMISBasicOperationFilter.h"
-
-#include "itkMABMISAtlasXMLFile.h"
-#include <algorithm>
-
-std::string ReplacePathSepForOS( const std::string & input )
-{
-  std::string output = input;
-#ifdef _WIN32
-  std::replace(output.begin(), output.end(), '/', FILESEP);
-#else
-  std::replace(output.begin(), output.end(), '\\', FILESEP);
-#endif
-  return output;
-}
-
-static std::string
-GetExtension(const std::string & filename)
-{
-  std::string fileExt( itksys::SystemTools::GetFilenameLastExtension(filename) );
-  //If the last extension is .gz, then need to pull off 2 extensions.
-  //.gz is the only valid compression extension.
-  if ( fileExt == std::string(".gz") )
-    {
-    fileExt = itksys::SystemTools::GetFilenameLastExtension( 
-              itksys::SystemTools::GetFilenameWithoutLastExtension(filename) );
-    fileExt += ".gz";
-    }
-  return ( fileExt );
-}
-
-static std::string
-GetRootName(const std::string & filename)
-{
-  const std::string fileExt = GetExtension(filename);
-
-  // Create a base filename
-  // i.e Image.hdr --> Image
-  if ( fileExt.length() > 0                    //Ensure that an extension was found
-       && filename.length() > fileExt.length() //Ensure that the filename does
-                                               // not contain only the extension
-       )
-    {
-    const std::string::size_type it = filename.find_last_of(fileExt);
-    const std::string            baseName( filename, 0, it - ( fileExt.length() - 1 ) );
-    return ( baseName );
-    }
-  //Default to return same as input when the extension is nothing (Analyze)
-  return ( filename );
-}
 
 static std::string
 GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageIndex, std::string iterationString)
@@ -141,93 +79,6 @@ GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageInde
     }
 }
 
-typedef double CoordinateRepType;
-const   unsigned int SpaceDimension = ImageDimension;
-
-// basic data type
-typedef unsigned char                                  CharPixelType;  // for image IO usage
-typedef float                                          FloatPixelType; // for
-typedef int                                            IntPixelType;
-typedef short                                          ShortPixelType;
-typedef float                                          InternalPixelType; // for internal processing usage
-typedef itk::Vector<InternalPixelType, ImageDimension> VectorPixelType;
-
-// basic image type
-typedef itk::Image<CharPixelType, ImageDimension>     CharImageType;
-typedef itk::Image<IntPixelType, ImageDimension>      IntImageType;
-typedef itk::Image<ShortPixelType, ImageDimension>    ShortImageType;
-typedef itk::Image<FloatPixelType, ImageDimension>    FloatImageType;
-typedef itk::Image<InternalPixelType, ImageDimension> InternalImageType;
-typedef itk::Image<VectorPixelType, ImageDimension>   DeformationFieldType;
-
-// basic iterator type
-typedef itk::ImageRegionIterator<DeformationFieldType> DeformationFieldIteratorType;
-typedef itk::ImageRegionIterator<InternalImageType>    InternalImageIteratorType;
-typedef itk::ImageRegionIterator<CharImageType>        CharImageIteratorType;
-
-// basic image reader/writer related type
-typedef itk::ImageFileReader<CharImageType>     CharImageReaderType;
-typedef itk::ImageFileReader<InternalImageType> InternalImageReaderType;
-typedef itk::ImageFileWriter<InternalImageType> InternalImageWriterType;
-
-typedef itk::WarpImageFilter<InternalImageType, InternalImageType, DeformationFieldType> InternalWarpFilterType;
-typedef itk::ImageFileWriter<CharImageType>                                              CharImageWriterType;
-typedef itk::ImageFileWriter<IntImageType>                                               IntImageWriterType;
-typedef itk::ImageFileWriter<FloatImageType>                                             FloatImageWriterType;
-typedef itk::ImageFileWriter<ShortImageType>                                             ShortImageWriterType;
-
-typedef itk::ImageFileReader<DeformationFieldType> DeformationFieldReaderType;
-typedef itk::ImageFileWriter<DeformationFieldType> DeformationFieldWriterType;
-
-//////////////////////////////////////////////////////////////////////////////
-// image filter type
-typedef itk::ResampleImageFilter<InternalImageType, InternalImageType>          ResampleFilterType;
-typedef itk::HistogramMatchingImageFilter<InternalImageType, InternalImageType> InternalHistMatchFilterType;
-
-////////////////////////////////////////////////////////////////////////////
-// operation on deformation fields
-typedef itk::WarpVectorImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType> WarpVectorFilterType;
-typedef itk::InverseDisplacementFieldImageFilter<DeformationFieldType, DeformationFieldType>         InverseDeformationFieldImageFilterType;
-typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType, DeformationFieldType>        AddImageFilterType;
-
-// global bool variables to adjust the  procedure
-
-bool isEvaluate = false; // if false, we do not know the ground-truth of labels
-bool isDebug = false;     // false;//true; // if true, print out more information
-
-int localPatchSize = 1; // (2r+1)*(2r+1)*(2r+1) is the volume of local patch
-
-// demons registration parameters
-// int iterInResolutions[4][3]={{5,3,2},{10,5,5},{15,10,5},{20,15,10}};
-// int itereach = 2; //
-// int itereach0 = 0;int itereach1 = 1;int itereach2 = 2;int itereach3 = 3;
-// double sigmaDef = 1.5;
-// double sigmaDef10 = 1.0;double sigmaDef15 = 1.5;double sigmaDef20 = 2.0;
-// double sigmaDef25 = 2.5;double sigmaDef30 = 3.0;double sigmaDef35 = 3.5;
-bool doHistMatch = true;
-bool doHistMatchTrue = true; bool doHistMatchFalse = false;
-
-typedef itk::Statistics::MABMISSimulateData<InternalImageType, InternalImageType> DataSimulatorType;
-DataSimulatorType::Pointer datasimulator = DataSimulatorType::New();
-
-typedef itk::Statistics::MABMISImageOperationFilter<CharImageType, CharImageType> ImageOperationFilterType;
-ImageOperationFilterType::Pointer imgoperator = ImageOperationFilterType::New();
-typedef itk::Statistics::MABMISDeformationFieldFilter<InternalImageType,
-                                                      InternalImageType> DeformationFieldOperationFilterType;
-DeformationFieldOperationFilterType::Pointer dfoperator = DeformationFieldOperationFilterType::New();
-typedef itk::Statistics::MABMISImageRegistrationFilter<CharImageType, CharImageType> ImageRegistrationFilterType;
-ImageRegistrationFilterType::Pointer regoperator = ImageRegistrationFilterType::New();
-typedef itk::Statistics::MABMISTreeOperation<InternalImageType, InternalImageType> TreeOperationType;
-TreeOperationType::Pointer treeoperator = TreeOperationType::New();
-
-typedef itk::Statistics::MABMISBasicOperationFilter<CharImageType, CharImageType> BasicOperationFilterType;
-BasicOperationFilterType::Pointer basicoperator = BasicOperationFilterType::New();
-
-//
-
-typedef itk::Vector<ShortPixelType, ImageDimension>      ShortVectorPixelType;
-typedef itk::Image<ShortVectorPixelType, ImageDimension> ShortDeformationFieldType;
-typedef itk::ImageFileWriter<ShortDeformationFieldType>  ShortDeformationFieldWriterType;
 
 void HistogramMatching(InternalImageType::Pointer inputImage, InternalImageType::Pointer referenceImage,
                        InternalImageType::Pointer & outputImage);

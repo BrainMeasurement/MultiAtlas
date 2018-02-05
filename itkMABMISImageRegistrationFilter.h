@@ -1,21 +1,11 @@
 #ifndef __itkMABMISImageRegistrationFilter_h
 #define __itkMABMISImageRegistrationFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
+#include "commonMABMIS.h"
 
 #include "itkHistogramMatchingImageFilter.h"
-
-#include "itkImage.h"
-
 #include "itkMABMISDeformationFieldFilter.h"
 #include "itkMABMISImageOperationFilter.h"
-
-#define ImageDimension 3
 
 namespace itk
 {
@@ -104,8 +94,7 @@ public:
 
   itkSetMacro(Root, int);
 private:
-  MABMISImageRegistrationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageRegistrationFilter);
 
   int m_Root;
 protected:

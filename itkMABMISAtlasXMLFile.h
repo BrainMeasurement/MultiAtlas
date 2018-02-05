@@ -107,8 +107,8 @@ protected:
   virtual void CharacterDataHandler(const char *inData, int inLength);
 
 private:
-  MABMISImageDataXMLFileReader(const Self &) ITK_DELETED_FUNCTION;
-  void operator=(const Self &) ITK_DELETED_FUNCTION;
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageDataXMLFileReader);
+
   MABMISImageData* m_ImageData;
   std::string      m_CurCharacterData;
 
@@ -146,8 +146,7 @@ protected:
   }
 
 private:
-  MABMISImageDataXMLFileWriter(const Self &) ITK_DELETED_FUNCTION;
-  void operator=(const Self &) ITK_DELETED_FUNCTION;
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageDataXMLFileWriter);
 };
 
 class MABMISAtlasXMLFileReader :
@@ -188,8 +187,8 @@ protected:
   virtual void CharacterDataHandler(const char *inData, int inLength);
 
 private:
-  MABMISAtlasXMLFileReader(const Self &) ITK_DELETED_FUNCTION;
-  void operator=(const Self &) ITK_DELETED_FUNCTION;
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISAtlasXMLFileReader);
+
   MABMISAtlas* m_Atlas;
   std::string  m_CurCharacterData;
 };
@@ -225,8 +224,7 @@ protected:
   }
 
 private:
-  MABMISAtlasXMLFileWriter(const Self &) ITK_DELETED_FUNCTION;
-  void operator=(const Self &) ITK_DELETED_FUNCTION;
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISAtlasXMLFileWriter);
 };
 }
 

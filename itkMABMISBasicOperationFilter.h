@@ -1,14 +1,7 @@
 #ifndef __itkMABMISBasicOperationFilter_h
 #define __itkMABMISBasicOperationFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
-
-#define ImageDimension 3
+#include "commonMABMIS.h"
 
 namespace itk
 {
@@ -42,8 +35,7 @@ public:
   void SaveMatrix2File(vnl_matrix<double> matrix, int iSize, int jSize, std::string martixFileName);
 
 private:
-  MABMISBasicOperationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISBasicOperationFilter);
 
 protected:
   MABMISBasicOperationFilter();

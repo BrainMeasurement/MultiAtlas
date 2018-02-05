@@ -1,17 +1,10 @@
 #ifndef __itkMABMISImageOperationFilter_h
 #define __itkMABMISImageOperationFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
+#include "commonMABMIS.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
 #include "itkCastImageFilter.h"
-
-#include "itkImage.h"
-
-#define ImageDimension 3
+#include "itkWarpImageFilter.h"
 
 namespace itk
 {
@@ -82,8 +75,7 @@ public:
   void WriteImage(const std::string filename, InternalImageType::Pointer image, char* outputType);
 
 private:
-  MABMISImageOperationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageOperationFilter);
 
   int m_Root;
 protected:

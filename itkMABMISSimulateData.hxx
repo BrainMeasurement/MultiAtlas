@@ -6,8 +6,7 @@
 //For definition of FILESEP
 #include "itkMABMISAtlasXMLFile.h"
 
-int numEigenVector = 4;         // t
-int numSampleEachDirection = 4; // n  n^t total number of intermediate templates
+constexpr int numSampleEachDirection = 4; // n  n^numEigenVector total number of intermediate templates
 
 namespace itk
 {
@@ -48,6 +47,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   int  size_x = 0; int size_y = 0; int size_z = 0;
   int  size_xn = 0; int size_yn = 0; int size_zn = 0;
   int  size_dfn = 0; // size of sub-sampled deformation field
+  int numEigenVector = 4;
 
   float c4[] = {-0.8416f, -0.2533f, 0.2533f, 0.8416f};
 

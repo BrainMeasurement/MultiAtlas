@@ -1,20 +1,11 @@
 #ifndef __itkMABMISSimulateData_h
 #define __itkMABMISSimulateData_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
-
-#include "itkImage.h"
+#include "commonMABMIS.h"
 
 #include "itkMABMISDeformationFieldFilter.h"
 #include "itkMABMISImageOperationFilter.h"
 #include "itkMABMISBasicOperationFilter.h"
-
-#define ImageDimension 3
 
 namespace itk
 {
@@ -85,8 +76,7 @@ public:
   itkSetMacro(AtlasSize, int);
   itkSetMacro(SimulateSize, int);
 private:
-  MABMISSimulateData(const Self &); // purposely not implemented
-  void operator=(const Self &);     // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISSimulateData);
 
   int m_Root;
 

@@ -33,10 +33,6 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 
-// reader / writer
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-
 // filter
 #include "itkResampleImageFilter.h"
 
@@ -58,119 +54,12 @@
 #include <itkDiffeomorphicDemonsRegistrationFilter.h>
 #include <itkMultiResolutionPDEDeformableRegistration.h>
 
-// including itksys::SystemTools::MakeDirectory(char*)
-#include <itksys/SystemTools.hxx>
 #include <metaCommand.h>
 
-// To include all related header files
-#include "itkMABMISImageOperationFilter.h"
-#include "itkMABMISDeformationFieldFilter.h"
-#include "itkMABMISSimulateData.h"
-#include "itkMABMISImageRegistrationFilter.h"
-#include "itkMABMISTreeOperation.h"
-#include "itkMABMISBasicOperationFilter.h"
 
-std::string ReplacePathSepForOS( const std::string & input )
-{
-  std::string output = input;
-#ifdef _WIN32
-  std::replace(output.begin(), output.end(), '/', FILESEP);
-#else
-  std::replace(output.begin(), output.end(), '\\', FILESEP);
-#endif
-  return output;
-}
-
-typedef double CoordinateRepType;
-const   unsigned int SpaceDimension = ImageDimension;
-
-// basic data type
-typedef unsigned char                                  CharPixelType;  // for image IO usage
-typedef float                                          FloatPixelType; // for
-typedef int                                            IntPixelType;
-typedef short                                          ShortPixelType;
-typedef float                                          InternalPixelType; // for internal processing usage
-typedef itk::Vector<InternalPixelType, ImageDimension> VectorPixelType;
-
-// basic image type
-typedef itk::Image<CharPixelType, ImageDimension>     CharImageType;
-typedef itk::Image<IntPixelType, ImageDimension>      IntImageType;
-typedef itk::Image<ShortPixelType, ImageDimension>    ShortImageType;
-typedef itk::Image<FloatPixelType, ImageDimension>    FloatImageType;
-typedef itk::Image<InternalPixelType, ImageDimension> InternalImageType;
-typedef itk::Image<VectorPixelType, ImageDimension>   DisplacementFieldType;
-
-// basic iterator type
-typedef itk::ImageRegionIterator<DisplacementFieldType> DeformationFieldIteratorType;
-typedef itk::ImageRegionIterator<InternalImageType>     InternalImageIteratorType;
-typedef itk::ImageRegionIterator<CharImageType>         CharImageIteratorType;
-
-// basic image reader/writer related type
-typedef itk::ImageFileReader<CharImageType>     CharImageReaderType;
-typedef itk::ImageFileReader<InternalImageType> InternalImageReaderType;
-typedef itk::ImageFileWriter<InternalImageType> InternalImageWriterType;
-
-typedef itk::WarpImageFilter<InternalImageType, InternalImageType, DisplacementFieldType> InternalWarpFilterType;
-typedef itk::ImageFileWriter<CharImageType>                                               CharImageWriterType;
-typedef itk::ImageFileWriter<IntImageType>                                                IntImageWriterType;
-typedef itk::ImageFileWriter<FloatImageType>                                              FloatImageWriterType;
-typedef itk::ImageFileWriter<ShortImageType>                                              ShortImageWriterType;
-
-typedef itk::ImageFileReader<DisplacementFieldType> DeformationFieldReaderType;
-typedef itk::ImageFileWriter<DisplacementFieldType> DeformationFieldWriterType;
-
-//////////////////////////////////////////////////////////////////////////////
-// image filter type
-typedef itk::ResampleImageFilter<InternalImageType, InternalImageType>          ResampleFilterType;
-typedef itk::HistogramMatchingImageFilter<InternalImageType, InternalImageType> InternalHistMatchFilterType;
-
-////////////////////////////////////////////////////////////////////////////
-// operation on deformation fields
-typedef itk::WarpVectorImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType> WarpVectorFilterType;
-typedef itk::InverseDisplacementFieldImageFilter<DisplacementFieldType, DisplacementFieldType>          InverseDeformationFieldImageFilterType;
-typedef itk::AddImageFilter<DisplacementFieldType, DisplacementFieldType, DisplacementFieldType>        AddImageFilterType;
-
-// global bool variables to adjust the  procedure
-
-bool isEvaluate = false; // if false, we do not know the ground-truth of labels
-bool isDebug = false;    // false;//true; // if true, print out more information
-
-// -----------------------------------------------------------------------------
-// global variables
-
-// int localPatchSize = 1; //(2r+1)*(2r+1)*(2r+1) is the volume of local patch
-
-// demons registration parameters
-// int iterInResolutions[4][3]={{5,3,2},{10,5,5},{15,10,5},{20,15,10}};
-// int itereach = 2; //
-// int itereach0 = 0;int itereach1 = 1;int itereach2 = 2;int itereach3 = 3;
-// double sigmaDef = 1.5;
-// double sigmaDef10 = 1.0;double sigmaDef15 = 1.5;double sigmaDef20 = 2.0;
-// double sigmaDef25 = 2.5;double sigmaDef30 = 3.0;double sigmaDef35 = 3.5;
-bool doHistMatch = true;
-bool doHistMatchTrue = true; bool doHistMatchFalse = false;
-
-// -----------------------------------------------------------------------------
-
-typedef itk::Statistics::MABMISSimulateData<InternalImageType, InternalImageType> DataSimulatorType;
-DataSimulatorType::Pointer datasimulator = DataSimulatorType::New();
-
-typedef itk::Statistics::MABMISImageOperationFilter<CharImageType, CharImageType> ImageOperationFilterType;
-ImageOperationFilterType::Pointer imgoperator = ImageOperationFilterType::New();
-typedef itk::Statistics::MABMISDeformationFieldFilter<InternalImageType,
-                                                      InternalImageType> DeformationFieldOperationFilterType;
-DeformationFieldOperationFilterType::Pointer dfoperator = DeformationFieldOperationFilterType::New();
-typedef itk::Statistics::MABMISImageRegistrationFilter<CharImageType, CharImageType> ImageRegistrationFilterType;
-ImageRegistrationFilterType::Pointer regoperator = ImageRegistrationFilterType::New();
-typedef itk::Statistics::MABMISTreeOperation<InternalImageType, InternalImageType> TreeOperationType;
-TreeOperationType::Pointer treeoperator = TreeOperationType::New();
-
-typedef itk::Statistics::MABMISBasicOperationFilter<CharImageType, CharImageType> BasicOperationFilterType;
-BasicOperationFilterType::Pointer basicoperator = BasicOperationFilterType::New();
-
-DisplacementFieldType::SpacingType   df_spacing;
-DisplacementFieldType::DirectionType df_direction;
-DisplacementFieldType::PointType     df_origin;
+DeformationFieldType::SpacingType   df_spacing;
+DeformationFieldType::DirectionType df_direction;
+DeformationFieldType::PointType     df_origin;
 
 typedef itk::Vector<ShortPixelType, ImageDimension>      ShortVectorPixelType;
 typedef itk::Image<ShortVectorPixelType, ImageDimension> ShortDeformationFieldType;
@@ -584,10 +473,10 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     // ---------------------------------------------------------------------
     // ------------- Generate the inverse deformation field
 
-    DisplacementFieldType::Pointer deformationField = 0;
+    DeformationFieldType::Pointer deformationField = 0;
     dfoperator->ReadDeformationField(deformationFieldFileName, deformationField);
 
-    DisplacementFieldType::Pointer inversedDeformationField = DisplacementFieldType::New();
+    DeformationFieldType::Pointer inversedDeformationField = DeformationFieldType::New();
     inversedDeformationField->SetRegions(deformationField->GetLargestPossibleRegion() );
     inversedDeformationField->SetSpacing(deformationField->GetSpacing() );
     inversedDeformationField->SetDirection(deformationField->GetDirection() );
@@ -705,10 +594,10 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     simulateTemplateFileNames.push_back(simulateTemplateFileName);
 
     // load simulated deformation field
-    DisplacementFieldType::Pointer df = 0;
+    DeformationFieldType::Pointer df = 0;
     dfoperator->ReadDeformationField(simulateDeformationFieldFileNames[i], df);
 
-    DisplacementFieldType::Pointer invdf = DisplacementFieldType::New();
+    DeformationFieldType::Pointer invdf = DeformationFieldType::New();
     invdf->SetRegions(df->GetLargestPossibleRegion() );
     invdf->SetSpacing(df->GetSpacing() );
     invdf->SetDirection(df->GetDirection() );
