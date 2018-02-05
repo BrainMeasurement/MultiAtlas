@@ -33,11 +33,17 @@
       <channel>input</channel>
     </directory>
 
-    <image>
+    <image type="scalar">
       <longflag>image0</longflag>
       <description>An input image</description>
       <label>Image 0</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation0</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 0</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform0</longflag>
@@ -45,11 +51,17 @@
       <label>Transform 0</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image1</longflag>
       <description>An input image</description>
       <label>Image 1</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation1</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 1</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform1</longflag>
@@ -57,11 +69,17 @@
       <label>Transform 1</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image2</longflag>
       <description>An input image</description>
       <label>Image 2</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation2</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 2</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform2</longflag>
@@ -69,11 +87,17 @@
       <label>Transform 2</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image3</longflag>
       <description>An input image</description>
       <label>Image 3</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation3</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 3</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform3</longflag>
@@ -81,11 +105,17 @@
       <label>Transform 3</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image4</longflag>
       <description>An input image</description>
       <label>Image 4</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation4</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 4</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform4</longflag>
@@ -93,11 +123,17 @@
       <label>Transform 4</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image5</longflag>
       <description>An input image</description>
       <label>Image 5</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation5</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 5</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform5</longflag>
@@ -105,11 +141,17 @@
       <label>Transform 5</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image6</longflag>
       <description>An input image</description>
       <label>Image 6</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation6</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 6</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform6</longflag>
@@ -117,11 +159,17 @@
       <label>Transform 6</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image7</longflag>
       <description>An input image</description>
       <label>Image 7</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation7</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 7</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform7</longflag>
@@ -129,11 +177,17 @@
       <label>Transform 7</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image8</longflag>
       <description>An input image</description>
       <label>Image 8</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation8</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 8</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform8</longflag>
@@ -141,11 +195,17 @@
       <label>Transform 8</label>
       <channel>input</channel>
     </transform>
-    <image>
+    <image type="scalar">
       <longflag>image9</longflag>
       <description>An input image</description>
       <label>Image 9</label>
       <channel>input</channel>
+    </image>
+    <image type="label">
+      <longflag>segmentation9</longflag>
+      <description>The output segmentation</description>
+      <label>Segmentation 9</label>
+      <channel>output</channel>
     </image>
     <transform fileExtensions=".tfm,.h5,.hdf5,.mat,.txt">
       <longflag>transform9</longflag>

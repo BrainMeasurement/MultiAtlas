@@ -137,6 +137,10 @@ int main( int argc, char *argv[] )
     itk::MABMISImageData miData;
     const std::string extension = ".nrrd";
     std::cout << "Examining inputs" << std::endl;
+    if (!imageListXMLArg.isSet())
+      {
+      imageListXML = ".";
+      }
     std::string listDir = itksys::SystemTools::GetParentDirectory(imageListXML);
     listDir = itksys::SystemTools::GetRealPath(listDir);
     imageDir = itksys::SystemTools::GetRealPath(imageDir);
@@ -196,13 +200,6 @@ int main( int argc, char *argv[] )
       }
     miData.m_NumberImageData = imageFileNames.size();
 
-    //write the XML
-    itk::MABMISImageDataXMLFileWriter::Pointer miWriter =
-        itk::MABMISImageDataXMLFileWriter::New();
-    miWriter->SetObject(&miData);
-    miWriter->SetFilename(imageListXML);
-    miWriter->WriteFile();
-
     //read atlas tree
     itk::MABMISAtlasXMLFileReader::Pointer atlasReader =
         itk::MABMISAtlasXMLFileReader::New();
@@ -253,6 +250,20 @@ int main( int argc, char *argv[] )
       std::cout << "Resampling " << imageFileNames[i] << std::endl;
       resampleAndWrite(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i],
           region, origin, spacing, direction, transforms[i], componentType);      
+      }
+
+    //write the XML or invoke testing
+    if (imageListXMLArg.isSet())
+      {
+      itk::MABMISImageDataXMLFileWriter::Pointer miWriter =
+          itk::MABMISImageDataXMLFileWriter::New();
+      miWriter->SetObject(&miData);
+      miWriter->SetFilename(imageListXML);
+      miWriter->WriteFile();
+      }
+    else
+      {
+      //testing(miData);
       }
     }
   catch (itk::ExceptionObject &exc)

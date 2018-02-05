@@ -2,6 +2,7 @@
 #define __itkMABMISTreeOperation_hxx
 
 #include "itkMABMISTreeOperation.h"
+#include <iomanip>
 
 namespace itk
 {
