@@ -56,8 +56,6 @@
 #include <itkDiffeomorphicDemonsRegistrationFilter.h>
 #include <itkMultiResolutionPDEDeformableRegistration.h>
 
-#include <metaCommand.h>
-
 
 static std::string
 GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageIndex, std::string iterationString)

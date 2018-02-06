@@ -8,12 +8,46 @@
   <license></license>
   <contributor>Dženan Zukić (Kitware Inc.)</contributor>
   <acknowledgements></acknowledgements>
+
+  <parameters advanced="true">
+    <label>Registration</label>
+    <description>Parameters used for registration</description>
+
+    <integer-vector>
+      <flag>i</flag>
+      <longflag>iterations</longflag>
+      <description>Comma separated list of iterations, for low resolution, middle resolution, and high resolution. </description>
+      <label>Iterations</label>
+      <default>5,3,2</default>
+    </integer-vector>
+
+    <double>
+      <flag>s</flag>
+      <longflag>sigma</longflag>
+      <description>The standard deviation for smoothing deformation field</description>
+      <label>Smoothing</label>
+      <default>1.5</default>
+    </double>
+  </parameters>
+ 
   <parameters>
-    <label>Parameters</label>
-    <description>Input images and resulting XML</description>
+    <label>General</label>
+    <description>Image list and atlas XMLs</description>
+	
+	<string-enumeration>
+      <flag>m</flag>
+      <longflag>mode</longflag>
+      <description>Processing mode</description>
+      <label>Mode</label>
+      <default>Direct invoke</default>
+      <element>Direct invoke</element>
+      <element>Create imageXML</element>
+      <element>(re)train atlas</element>
+    </string-enumeration>
 
     <file fileExtensions=".xml">
      <longflag>atlasTreeXML</longflag>
+	 <flag>a</flag>
      <description>xml file of the multi-atlases after training</description>
      <label>Multi-Atlas XML</label>
      <channel>input</channel>
@@ -21,6 +55,7 @@
 
     <file fileExtensions=".xml">
       <longflag>imageListXML</longflag>
+	  <flag>l</flag>
       <description>xml file that will contain a list of images to be segmented</description>
       <label>Image list XML</label>
       <channel>output</channel>
@@ -28,11 +63,16 @@
 
 	<directory>
       <longflag>imageDir</longflag>
+	  <flag>d</flag>
       <description>A directory where to write transformed, resampled and cropped images. Default: imageListXML's location.</description>
       <label>Image directory</label>
       <channel>input</channel>
     </directory>
-
+  </parameters>
+ 
+  <parameters>
+    <label>I/O</label>
+    <description>Inputs and outputs</description>
     <image type="scalar">
       <longflag>image0</longflag>
       <description>An input image</description>

@@ -35,10 +35,8 @@
 
 // filter
 #include "itkResampleImageFilter.h"
-
 #include "itkCastImageFilter.h"
 #include "itkWarpImageFilter.h"
-
 #include "itkHistogramMatchingImageFilter.h"
 #include "itkAddImageFilter.h"
 #include "itkWarpVectorImageFilter.h"
@@ -53,8 +51,6 @@
 #include <itkCommand.h>
 #include <itkDiffeomorphicDemonsRegistrationFilter.h>
 #include <itkMultiResolutionPDEDeformableRegistration.h>
-
-#include <metaCommand.h>
 
 
 DeformationFieldType::SpacingType   df_spacing;
@@ -167,7 +163,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       fromImagefile  = ReplacePathSepForOS(trainingData->m_DataDirectory + trainingData->m_ImageFileNames[i]);
       }
 	
-    bool ret1=itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str() );
+    bool ret1=itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str());
 	if (!ret1) 
       {
 	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
@@ -179,12 +175,12 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       {
       std::string fromfileImg = fromImagefile.substr(0, fromImagefile.size() - 3) + "img";
       std::string tofileImg = imageFiles[i].substr(0, imageFiles[i].size() - 3) + "img";
-      itksys::SystemTools::CopyFileAlways(fromfileImg.c_str(), tofileImg.c_str() );
+      itksys::SystemTools::CopyFileAlways(fromfileImg.c_str(), tofileImg.c_str());
       }
 
     std::string fromSegfile = trainingData->m_DataDirectory + trainingData->m_SegmentationFileNames[i];
 
-    bool ret2 = itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str() );
+    bool ret2 = itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str());
 	if (!ret1) 
       {
 	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
@@ -195,7 +191,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       {
       std::string fromfileImg = fromSegfile.substr(0, fromSegfile.size() - 3) + "img";
       std::string tofileImg = segmentFiles[i].substr(0, segmentFiles[i].size() - 3) + "img";
-      itksys::SystemTools::CopyFileAlways(fromfileImg.c_str(), tofileImg.c_str() );
+      itksys::SystemTools::CopyFileAlways(fromfileImg.c_str(), tofileImg.c_str());
       }
     }
 

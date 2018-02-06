@@ -9,8 +9,8 @@ set(EXTENSION_ICONURL "http://wiki.slicer.org/slicerWiki/images/e/e2/MABMIS_Icon
 set(EXTENSION_DESCRIPTION "Multi-Atlas Based Group Segmentation")
 set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/2/2c/MABMIS_trainning_GUI.png http://wiki.slicer.org/slicerWiki/images/6/64/MABMIS_testing_GUI.png http://wiki.slicer.org/slicerWiki/images/c/c3/MABMIS_algorithm.png")
 
-find_package(SlicerExecutionModel REQUIRED)
-include(${SlicerExecutionModel_USE_FILE})
+find_package(Slicer REQUIRED)
+include(${Slicer_USE_FILE})
 
 set(MABMIS_ITK_COMPONENTS
   ITKIOImageBase
@@ -24,8 +24,6 @@ find_package(ITK 4.6 COMPONENTS ${MABMIS_ITK_COMPONENTS} REQUIRED)
 set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
 include(${ITK_USE_FILE})
 
-find_package(Slicer)
-include(${Slicer_USE_FILE})
 
 #-----------------------------------------------------------------------------
 set(MODULE_TARGET_LIBRARIES

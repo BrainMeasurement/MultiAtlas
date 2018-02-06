@@ -1,6 +1,7 @@
 #include "IGR3D_MABMIS_Direct_InvokeCLP.h"
 
 #include "Testing.h"
+#include "Training.h"
 
 #include "itkAffineTransform.h"
 #include "itkTransformFileReader.h"
@@ -201,34 +202,58 @@ int main( int argc, char *argv[] )
         }
       }
     miData.m_NumberImageData = imageFileNames.size();
-
-    //read atlas tree
-    itk::MABMISAtlasXMLFileReader::Pointer atlasReader =
-        itk::MABMISAtlasXMLFileReader::New();
-    atlasReader->SetFilename(atlasTreeXML);
-    atlasReader->GenerateOutputInformation();
-    itk::MABMISAtlas * atlas = atlasReader->GetOutputObject();
-
-    //get atlas root image
-    std::string rootFilename;
-    unsigned i = 0;
-    for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
+    if (miData.m_NumberImageData == 0)
       {
-      if (atlas->m_Tree[i] == atlas->m_TreeRoot)
+      itkGenericExceptionMacro("Some images have to be provided");
+      }
+
+    if (mode == "(re)train atlas")
+      {
+      //check if all images have segmentations
+      for (unsigned i = 0; i < miData.m_SegmentationFileNames.size(); i++)
         {
-        rootFilename = atlas->m_AtlasFilenames[i];
-        break;
+        if (miData.m_SegmentationFileNames[i].empty())
+          {
+          itkGenericExceptionMacro(<< miData.m_ImageFileNames[i] << " lacks a segmentation!");
+          }
         }
       }
 
-    if (atlas->m_AtlasDirectory[0] == '.') //relative path
+    itk::MABMISAtlas* atlas = nullptr;
+    std::string rootFilename;
+    if (atlasTreeXMLArg.isSet())
       {
-      rootFilename = itksys::SystemTools::GetParentDirectory(atlasTreeXML)
-          + atlas->m_AtlasDirectory.substr(1) + '/' + rootFilename;
+      //read atlas tree
+      itk::MABMISAtlasXMLFileReader::Pointer atlasReader =
+          itk::MABMISAtlasXMLFileReader::New();
+      atlasReader->SetFilename(atlasTreeXML);
+      atlasReader->GenerateOutputInformation();
+      atlas = atlasReader->GetOutputObject();
+      
+      //get atlas root image
+      unsigned i = 0;
+      for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
+        {
+        if (atlas->m_Tree[i] == atlas->m_TreeRoot)
+          {
+          rootFilename = atlas->m_AtlasFilenames[i];
+          break;
+          }
+        }
+      
+      if (atlas->m_AtlasDirectory[0] == '.') //relative path
+        {
+        rootFilename = itksys::SystemTools::GetParentDirectory(atlasTreeXML)
+            + atlas->m_AtlasDirectory.substr(1) + '/' + rootFilename;
+        }
+      else
+        {
+        rootFilename = atlas->m_AtlasDirectory + '/' + rootFilename;
+        }
       }
     else
       {
-      rootFilename = atlas->m_AtlasDirectory + '/' + rootFilename;
+      rootFilename = imageFileNames[0];
       }
 
     typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
@@ -249,13 +274,28 @@ int main( int argc, char *argv[] )
       itk::ImageIOBase::IOComponentType componentType;
       itk::GetImageType(imageFileNames[i], pixelType, componentType);
 
-      std::cout << "Resampling " << imageFileNames[i] << std::endl;
-      resampleAndWrite(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i],
-          region, origin, spacing, direction, transforms[i], componentType);      
+      shortReader->SetFileName(imageFileNames[i]);
+      shortReader->UpdateOutputInformation();
+
+      if (region != shortReader->GetOutput()->GetLargestPossibleRegion()
+          || origin != shortReader->GetOutput()->GetOrigin()
+          || spacing != shortReader->GetOutput()->GetSpacing()
+          || direction != shortReader->GetOutput()->GetDirection()
+          || GetExtension(imageFileNames[i]) != GetExtension(miData.m_ImageFileNames[i]))
+        {
+        std::cout << "Resampling " << imageFileNames[i] << std::endl;
+        resampleAndWrite(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i],
+            region, origin, spacing, direction, transforms[i], componentType);      
+        }
+      else
+        {
+        std::cout << "Copying " << imageFileNames[i] << std::endl;
+        itksys::SystemTools::CopyFileAlways(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i]);
+        }
       }
 
     //write the XML or invoke testing
-    if (imageListXMLArg.isSet())
+    if (mode == "Create imageXML")
       {
       itk::MABMISImageDataXMLFileWriter::Pointer miWriter =
           itk::MABMISImageDataXMLFileWriter::New();
@@ -263,9 +303,28 @@ int main( int argc, char *argv[] )
       miWriter->SetFilename(imageListXML);
       miWriter->WriteFile();
       }
+    else if (mode == "Direct invoke")
+      {
+      Testing(&miData, atlas, iterations, sigma);
+      }
+    else if (mode == "(re)train atlas")
+      {
+      if (atlas) //merge images from the atlas into the list
+        {
+        for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
+          {
+          miData.m_ImageFileNames.push_back(atlas->m_AtlasFilenames[i]);
+          miData.m_SegmentationFileNames.push_back(atlas->m_AtlasSegmentationFilenames[i]);
+          }
+        miData.m_NumberImageData = miData.m_ImageFileNames.size();
+        miData.m_DataDirectory = atlas->m_AtlasDirectory; // needed?
+        }
+
+      Training(&miData, atlasTreeXML, iterations, sigma);
+      }
     else
       {
-      //testing(miData);
+      itkGenericExceptionMacro("Unknown processing mode");
       }
     }
   catch (itk::ExceptionObject &exc)
