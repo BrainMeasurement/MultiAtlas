@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Segmentation</category>
-  <title>MABMIS Testing Invoke</title>
-  <description>Create an XML file suitable for invoking MABMIS testing module</description>
+  <title>MABMIS Direct Invoke</title>
+  <description>Allows invoking MABMIS without pre-created XML files, as well as atlas creationg and re-training. Does image resampling if needed.</description>
   <version></version>
   <documentation-url></documentation-url>
   <license></license>
   <contributor>Dženan Zukić (Kitware Inc.)</contributor>
   <acknowledgements></acknowledgements>
-
-  <parameters advanced="true">
-    <label>Registration</label>
-    <description>Parameters used for registration</description>
-
-    <integer-vector>
-      <flag>i</flag>
-      <longflag>iterations</longflag>
-      <description>Comma separated list of iterations, for low resolution, middle resolution, and high resolution. </description>
-      <label>Iterations</label>
-      <default>5,3,2</default>
-    </integer-vector>
-
-    <double>
-      <flag>s</flag>
-      <longflag>sigma</longflag>
-      <description>The standard deviation for smoothing deformation field</description>
-      <label>Smoothing</label>
-      <default>1.5</default>
-    </double>
-  </parameters>
  
   <parameters>
     <label>General</label>
@@ -37,7 +16,13 @@
 	<string-enumeration>
       <flag>m</flag>
       <longflag>mode</longflag>
-      <description>Processing mode</description>
+      <description>Processing mode.\n\
+\
+	  Direct invoke: provide atlas and test images, get segmentations for test images.\n\
+\
+	  Create imageXML: provide test images, get ImageXML ready for invoking Testing or Training. If atlasTreeXML is provided, test images are resampled to match its root image. Otherwise, test images are resampled to match the first provided test image.\n\
+\
+	  Atlas creation or re-training: if atlasTreeXML is provided, atlas is re-trained with additional images. Otherwise atlas is created based on the provided images (and their segmentations).\n</description>
       <label>Mode</label>
       <default>Direct invoke</default>
       <element>Direct invoke</element>
@@ -68,6 +53,27 @@
       <label>Image directory</label>
       <channel>input</channel>
     </directory>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Registration</label>
+    <description>Parameters used for registration</description>
+
+    <integer-vector>
+      <flag>i</flag>
+      <longflag>iterations</longflag>
+      <description>Comma separated list of iterations, for low resolution, middle resolution, and high resolution. </description>
+      <label>Iterations</label>
+      <default>5,3,2</default>
+    </integer-vector>
+
+    <double>
+      <flag>s</flag>
+      <longflag>sigma</longflag>
+      <description>The standard deviation for smoothing deformation field</description>
+      <label>Smoothing</label>
+      <default>1.5</default>
+    </double>
   </parameters>
  
   <parameters>

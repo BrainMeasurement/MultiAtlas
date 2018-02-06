@@ -111,21 +111,74 @@ switch (componentType)
   }
 }
 
-#define HANDLE_IMAGE(n)                           \
-{                                                 \
-  if (image##n##Arg.isSet())                      \
-    {                                             \
-    imageFileNames.push_back(image##n);           \
-    if (transform##n##Arg.isSet())                \
-      {                                           \
-      transformFileNames.push_back(transform##n); \
-      }                                           \
-    else                                          \
-      {                                           \
-      transformFileNames.push_back("");           \
-      }                                           \
-    }                                             \
+void resampleOrCopy(const std::string & rootFilename, const std::string & outDir,
+    const std::vector<std::string> & inFiles,
+    const std::vector<std::string> & outFiles,
+    std::vector<TransformType::Pointer > & transforms)
+{
+  typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
+  ShortReaderType::Pointer shortReader = ShortReaderType::New();
+  shortReader->SetFileName(rootFilename);
+  shortReader->UpdateOutputInformation();
+
+  //atlas root metadata
+  ShortImageType::RegionType region = shortReader->GetOutput()->GetLargestPossibleRegion();
+  ShortImageType::PointType origin = shortReader->GetOutput()->GetOrigin();
+  ShortImageType::SpacingType spacing = shortReader->GetOutput()->GetSpacing();
+  ShortImageType::DirectionType direction = shortReader->GetOutput()->GetDirection();
+
+  //transform the images to match the atlas root and write them
+  for (unsigned i = 0; i < inFiles.size(); i++)
+    {
+    itk::ImageIOBase::IOPixelType pixelType;
+    itk::ImageIOBase::IOComponentType componentType;
+    itk::GetImageType(inFiles[i], pixelType, componentType);
+
+    shortReader->SetFileName(inFiles[i]);
+    shortReader->UpdateOutputInformation();
+
+    if (region != shortReader->GetOutput()->GetLargestPossibleRegion()
+        || origin != shortReader->GetOutput()->GetOrigin()
+        || spacing != shortReader->GetOutput()->GetSpacing()
+        || direction != shortReader->GetOutput()->GetDirection()
+        || GetExtension(inFiles[i]) != GetExtension(outFiles[i]))
+      {
+      std::cout << "Resampling " << inFiles[i] << std::endl;
+      resampleAndWrite(inFiles[i], outDir + '/' + outFiles[i],
+          region, origin, spacing, direction, transforms[i], componentType);
+      }
+    else
+      {
+      std::cout << "Copying " << inFiles[i] << std::endl;
+      itksys::SystemTools::CopyFileAlways(inFiles[i], outDir + '/' + outFiles[i]);
+      }
+    }
 }
+
+#define HANDLE_IMAGE(n)                                 \
+{                                                       \
+  if (image##n##Arg.isSet())                            \
+    {                                                   \
+    imageFileNames.push_back(image##n);                 \
+    if (transform##n##Arg.isSet())                      \
+      {                                                 \
+      transformFileNames.push_back(transform##n);       \
+      }                                                 \
+    else                                                \
+      {                                                 \
+      transformFileNames.push_back("");                 \
+      }                                                 \
+    if (segmentation##n##Arg.isSet())                   \
+      {                                                 \
+      segmentationFileNames.push_back(segmentation##n); \
+      }                                                 \
+    else                                                \
+      {                                                 \
+      segmentationFileNames.push_back("");              \
+      }                                                 \
+    }                                                   \
+}
+//segmentationFileNames
 
 int main( int argc, char *argv[] )
 {
@@ -160,6 +213,7 @@ int main( int argc, char *argv[] )
     //check which parameters are present
     std::vector<std::string> imageFileNames;
     std::vector<std::string> transformFileNames;
+    std::vector<std::string> segmentationFileNames;
     HANDLE_IMAGE(0);
     HANDLE_IMAGE(1);
     HANDLE_IMAGE(2);
@@ -189,7 +243,7 @@ int main( int argc, char *argv[] )
         transformReader->Update();
         if (transformReader->GetTransformList()->size() > 1)
           {
-          itkGenericExceptionMacro("Only simple affine transforms are supported. "
+          itkGenericExceptionMacro("Only simple transforms are supported. "
               << transformFileNames[i] << " contains more than one transform!");
           }
         itk::TransformBaseTemplate<double>::Pointer genericTransform = transformReader->GetTransformList()->front();
@@ -256,43 +310,7 @@ int main( int argc, char *argv[] )
       rootFilename = imageFileNames[0];
       }
 
-    typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
-    ShortReaderType::Pointer shortReader = ShortReaderType::New();
-    shortReader->SetFileName(rootFilename);
-    shortReader->UpdateOutputInformation();
-
-    //atlas root metadata
-    ShortImageType::RegionType region = shortReader->GetOutput()->GetLargestPossibleRegion();
-    ShortImageType::PointType origin = shortReader->GetOutput()->GetOrigin();
-    ShortImageType::SpacingType spacing = shortReader->GetOutput()->GetSpacing();
-    ShortImageType::DirectionType direction = shortReader->GetOutput()->GetDirection();
-
-    //transform the images to match the atlas root and write them
-    for (unsigned i = 0; i < imageFileNames.size(); i++)
-      {
-      itk::ImageIOBase::IOPixelType pixelType;
-      itk::ImageIOBase::IOComponentType componentType;
-      itk::GetImageType(imageFileNames[i], pixelType, componentType);
-
-      shortReader->SetFileName(imageFileNames[i]);
-      shortReader->UpdateOutputInformation();
-
-      if (region != shortReader->GetOutput()->GetLargestPossibleRegion()
-          || origin != shortReader->GetOutput()->GetOrigin()
-          || spacing != shortReader->GetOutput()->GetSpacing()
-          || direction != shortReader->GetOutput()->GetDirection()
-          || GetExtension(imageFileNames[i]) != GetExtension(miData.m_ImageFileNames[i]))
-        {
-        std::cout << "Resampling " << imageFileNames[i] << std::endl;
-        resampleAndWrite(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i],
-            region, origin, spacing, direction, transforms[i], componentType);      
-        }
-      else
-        {
-        std::cout << "Copying " << imageFileNames[i] << std::endl;
-        itksys::SystemTools::CopyFileAlways(imageFileNames[i], imageDir + '/' + miData.m_ImageFileNames[i]);
-        }
-      }
+    resampleOrCopy(rootFilename, imageDir, imageFileNames, miData.m_ImageFileNames, transforms);
 
     //write the XML or invoke testing
     if (mode == "Create imageXML")
@@ -309,6 +327,9 @@ int main( int argc, char *argv[] )
       }
     else if (mode == "(re)train atlas")
       {
+      //segmentations are now inputs which accompany the images, and need to be transformed the same way
+      resampleOrCopy(rootFilename, imageDir, segmentationFileNames, miData.m_SegmentationFileNames, transforms);
+
       if (atlas) //merge images from the atlas into the list
         {
         for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
@@ -317,7 +338,9 @@ int main( int argc, char *argv[] )
           miData.m_SegmentationFileNames.push_back(atlas->m_AtlasSegmentationFilenames[i]);
           }
         miData.m_NumberImageData = miData.m_ImageFileNames.size();
+
         miData.m_DataDirectory = atlas->m_AtlasDirectory; // needed?
+        miData.m_OutputDirectory = atlas->m_AtlasDirectory;
         }
 
       Training(&miData, atlasTreeXML, iterations, sigma);
