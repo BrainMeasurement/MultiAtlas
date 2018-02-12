@@ -19,14 +19,14 @@ inline std::string trim_right (const std::string & s, const std::string & t = SP
     return "";
   else
     return d.erase (d.find_last_not_of (t) + 1) ;
-} 
+}
 
 inline std::string trim_left (const std::string & s, const std::string & t = SPACES)
 {
   std::string d (s);
   return d.erase (0, s.find_first_not_of (t)) ;
-} 
- 
+}
+
 inline std::string trim (const std::string & s, const std::string & t = SPACES)
 {
   std::string d (s);
@@ -126,18 +126,6 @@ MABMISImageDataXMLFileReader::EndElement(const char *name)
     }
 }
 
-static std::string StripLastNewline(const std::string & input)
-{
-  std::string output = input;
-  size_t      last_element = input.size() - 1;
-
-  if( input[last_element] == '\n' )
-    {
-    output = input.substr(0, last_element);
-    }
-  return output;
-}
-
 void
 MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 {
@@ -146,7 +134,6 @@ MABMISImageDataXMLFileReader::CharacterDataHandler(const char *inData, int inLen
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
-  //m_CurCharacterData = StripLastNewline(m_CurCharacterData);
   m_CurCharacterData = trim(m_CurCharacterData);
 }
 
@@ -172,13 +159,13 @@ MABMISAtlasXMLFileReader::GenerateOutputInformation()
   this->parse();
 
   // validate the results are right.
-  int numRealImages = this->m_OutputObject->m_NumberAllAtlases - this->m_OutputObject->m_NumberSimulatedAtlases;
-  int numSimImages = this->m_OutputObject->m_NumberSimulatedAtlases;
+  unsigned numRealImages = this->m_OutputObject->m_NumberAllAtlases - this->m_OutputObject->m_NumberSimulatedAtlases;
+  unsigned numSimImages = this->m_OutputObject->m_NumberSimulatedAtlases;
   this->m_OutputObject->m_SimulatedImageIDs.resize(numSimImages);
   this->m_OutputObject->m_RealImageIDs.resize(numRealImages);
 
-  int countRealImages = 0, countSimImages = 0;
-  for( int n = 0; n < this->m_OutputObject->m_IsSimulatedImage.size(); n++ )
+  unsigned countRealImages = 0, countSimImages = 0;
+  for( unsigned n = 0; n < this->m_OutputObject->m_IsSimulatedImage.size(); n++ )
     {
     if( this->m_OutputObject->m_IsSimulatedImage[n] )
       {
@@ -217,7 +204,7 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
   else if( itksys::SystemTools::Strucmp(name, "ATLAS") == 0 )
     {
     int         i = 0;
-    int         id;
+    int         id = -4;
     std::string fname = "";
     std::string segFName = "";
     bool        isSimulated = false;
@@ -267,7 +254,7 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
   else if( itksys::SystemTools::Strucmp(name, "Tree") == 0 )
     {
     m_Atlas->m_Tree.resize(m_Atlas->m_NumberAllAtlases);
-    for( int n = 0; n < m_Atlas->m_Tree.size(); n++ )
+    for( unsigned n = 0; n < m_Atlas->m_Tree.size(); n++ )
       {
       m_Atlas->m_Tree[n] = -1;
       }
@@ -275,7 +262,7 @@ MABMISAtlasXMLFileReader::StartElement( const char *name, const char * *atts )
   else if( itksys::SystemTools::Strucmp(name, "Node") == 0 )
     {
     int i = 0;
-    int id, parentID;
+    int id = -2, parentID = -3;
     ;
     while( atts[i] )
       {
@@ -351,7 +338,6 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
     {
     m_CurCharacterData = m_CurCharacterData + inData[i];
     }
-  //m_CurCharacterData = StripLastNewline(m_CurCharacterData);
   m_CurCharacterData = trim(m_CurCharacterData);
 }
 
@@ -360,7 +346,7 @@ MABMISAtlasXMLFileReader::CharacterDataHandler(const char *inData, int inLength)
 ///------------------------------------------------------------
 
 int
-MABMISImageDataXMLFileWriter::CanWriteFile(const char * name)
+MABMISImageDataXMLFileWriter::CanWriteFile(const char *)
 {
   return true;
 }
@@ -403,7 +389,7 @@ MABMISImageDataXMLFileWriter::WriteFile()
 
   WriteStartElement("ImageDataSets", output);
   output << std::endl;
-  for( int n = 0; n < this->m_InputObject->m_ImageFileNames.size(); n++ )
+  for( unsigned n = 0; n < this->m_InputObject->m_ImageFileNames.size(); n++ )
     {
     output << "<Dataset ImageFile=\"" << this->m_InputObject->m_ImageFileNames[n] << "\"";
     output << " SegmentationFile=\"" << this->m_InputObject->m_SegmentationFileNames[n] << "\"/>" << std::endl;
@@ -478,7 +464,7 @@ MABMISAtlasXMLFileWriter::WriteFile()
   // atlas file list
   WriteStartElement("AtlasFileList", output);
   output << std::endl;
-  for( int n = 0; n < this->m_InputObject->m_AtlasFilenames.size(); n++ )
+  for( unsigned n = 0; n < this->m_InputObject->m_AtlasFilenames.size(); n++ )
     {
     output << "<Atlas ";
     output << "ID=\"" << n << "\"";
@@ -522,7 +508,7 @@ MABMISAtlasXMLFileWriter::WriteFile()
   // write the tree
   WriteStartElement("Tree", output);
   output << std::endl;
-  for( int i = 0; i < this->m_InputObject->m_Tree.size(); ++i )
+  for( unsigned i = 0; i < this->m_InputObject->m_Tree.size(); ++i )
     {
     output << "<Node ";
     output << "ID=\"" << i << "\"";

@@ -2,6 +2,7 @@
 #define __itkMABMISBasicOperationFilter_hxx
 
 #include "itkMABMISBasicOperationFilter.h"
+#include <iomanip>
 
 namespace itk
 {

@@ -5,12 +5,6 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
-static const char FILESEP = '\\';
-#else
-static const char FILESEP = '/';
-#endif
-
 namespace itk
 {
 class MABMISImageData

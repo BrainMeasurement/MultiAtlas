@@ -1,7 +1,22 @@
 #ifndef __commonMABMIS_h
 #define __commonMABMIS_h
 
+// for math
+#include <vcl_iostream.h>
+#include <vnl/vnl_random.h>
+#include <vnl/vnl_matrix.h>
+#include <vnl/vnl_vector.h>
+#include <vnl/vnl_matlab_print.h>
+#include <vnl/algo/vnl_svd.h>
+#include <vnl/algo/vnl_svd_economy.h>
+#include <string>
 #include <vector>
+
+#ifdef WIN32
+constexpr char FILESEP = '\\';
+#else
+constexpr char FILESEP = '/';
+#endif
 
 // including itksys::SystemTools::MakeDirectory(char*)
 #include <itksys/SystemTools.hxx>
@@ -11,6 +26,40 @@
 #include "itkImageRegionIterator.h"
 
 constexpr unsigned int ImageDimension = 3;
+
+// basic itk
+#include "itkVector.h"
+
+// registration
+#include "itkImageRegistrationMethod.h"
+#include "itkSymmetricForcesDemonsRegistrationFilter.h"
+
+// interpolator
+#include "itkLinearInterpolateImageFunction.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
+
+// filter
+#include "itkResampleImageFilter.h"
+
+#include "itkCastImageFilter.h"
+#include "itkWarpImageFilter.h"
+
+#include "itkHistogramMatchingImageFilter.h"
+#include "itkAddImageFilter.h"
+#include "itkDivideImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+#include "itkWarpVectorImageFilter.h"
+#include "itkInverseDisplacementFieldImageFilter.h"
+
+// for affine transformation
+#include "itkTransform.h"
+#include "itkAffineTransform.h"
+#include "itkImageRegistrationMethod.h"
+
+// for Diffeomorphic Demons
+#include <itkCommand.h>
+#include <itkDiffeomorphicDemonsRegistrationFilter.h>
+#include <itkMultiResolutionPDEDeformableRegistration.h>
 
 // To include all related header files
 #include "itkMABMISBasicOperationFilter.h"

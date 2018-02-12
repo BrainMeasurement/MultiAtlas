@@ -11,52 +11,6 @@
 
 #include "Testing.h"
 
-// for math
-#include <vcl_iostream.h>
-#include <vnl/vnl_random.h>
-#include <vnl/vnl_matrix.h>
-#include <vnl/vnl_vector.h>
-#include <vnl/vnl_matlab_print.h>
-#include <vnl/algo/vnl_svd.h>
-#include <vnl/algo/vnl_svd_economy.h>
-#include <string>
-#include <vector>
-
-// basic itk
-#include "itkVector.h"
-
-// registration
-#include "itkImageRegistrationMethod.h"
-#include "itkSymmetricForcesDemonsRegistrationFilter.h"
-
-// interpolator
-#include "itkLinearInterpolateImageFunction.h"
-#include "itkNearestNeighborInterpolateImageFunction.h"
-
-// filter
-#include "itkResampleImageFilter.h"
-
-#include "itkCastImageFilter.h"
-#include "itkWarpImageFilter.h"
-
-#include "itkHistogramMatchingImageFilter.h"
-#include "itkAddImageFilter.h"
-#include "itkDivideImageFilter.h"
-#include "itkMultiplyImageFilter.h"
-#include "itkWarpVectorImageFilter.h"
-#include "itkInverseDisplacementFieldImageFilter.h"
-
-// for affine transformation
-#include "itkTransform.h"
-#include "itkAffineTransform.h"
-#include "itkImageRegistrationMethod.h"
-
-// for Diffeomorphic Demons
-#include <itkCommand.h>
-#include <itkDiffeomorphicDemonsRegistrationFilter.h>
-#include <itkMultiResolutionPDEDeformableRegistration.h>
-
-
 static std::string
 GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageIndex, std::string iterationString)
 {
@@ -179,7 +133,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::vector<std::string> allfilenames(totalNumFiles);
   for( int i = 0; i < totalNumFiles; ++i )
     {
-		
+
     if( i < totalNumAtlases )
       {
       allfilenames[i] = ReplacePathSepForOS(atlasTree->m_AtlasDirectory + atlasTree->m_AtlasFilenames[i]);
@@ -539,7 +493,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
       // add-up all weights
       if ((mse[i]) / (2.0 * kernel_sigma_square) < 50)
         weight_sum[label_pool[i]] += exp(0.0 - (mse[i]) / (2.0 * kernel_sigma_square) );
-      
+
       }
 
     // weighted label fusion
@@ -547,7 +501,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
       {
       label_index[i] = i;
       }
-    
+
     // determine the label with the maximum weight
     // basicoperator->bubbleSort(weight_sum, label_index, maxLabel+1);
     // int label_final;
@@ -1028,7 +982,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       invDeformationFileName,
       deformedImageFileName, invDeformationFileName,
       sigma, doHistMatch, iterations);
-        
+
     // CompressDeformationField2Short(inversedDeformationFieldFileName);
     // apply deformation field on seg file
     if( isEvaluate )

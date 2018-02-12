@@ -11,48 +11,6 @@
 
 #include "Training.h"
 
-// for math
-#include <vcl_iostream.h>
-#include <vnl/vnl_random.h>
-#include <vnl/vnl_matrix.h>
-#include <vnl/vnl_vector.h>
-#include <vnl/vnl_matlab_print.h>
-#include <vnl/algo/vnl_svd.h>
-#include <vnl/algo/vnl_svd_economy.h>
-#include <string>
-#include <vector>
-
-// basic itk
-#include "itkVector.h"
-
-// registration
-#include "itkImageRegistrationMethod.h"
-#include "itkSymmetricForcesDemonsRegistrationFilter.h"
-
-// interpolators
-#include "itkLinearInterpolateImageFunction.h"
-#include "itkNearestNeighborInterpolateImageFunction.h"
-
-// filter
-#include "itkResampleImageFilter.h"
-#include "itkCastImageFilter.h"
-#include "itkWarpImageFilter.h"
-#include "itkHistogramMatchingImageFilter.h"
-#include "itkAddImageFilter.h"
-#include "itkWarpVectorImageFilter.h"
-#include "itkInverseDisplacementFieldImageFilter.h"
-
-// for affine transformation
-#include "itkTransform.h"
-#include "itkAffineTransform.h"
-#include "itkImageRegistrationMethod.h"
-
-// for Diffeomorphic Demons
-#include <itkCommand.h>
-#include <itkDiffeomorphicDemonsRegistrationFilter.h>
-#include <itkMultiResolutionPDEDeformableRegistration.h>
-
-
 DeformationFieldType::SpacingType   df_spacing;
 DeformationFieldType::DirectionType df_direction;
 DeformationFieldType::PointType     df_origin;
@@ -141,7 +99,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     {
     atlasFolder = outputFolder + outputxmlname;
     }
-  atlasFolder = ReplacePathSepForOS(atlasFolder); 
+  atlasFolder = ReplacePathSepForOS(atlasFolder);
   if( !atlasFolder.empty() )
     {
     atlasFolder = atlasFolder + FILESEP;
@@ -162,9 +120,9 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
       {
       fromImagefile  = ReplacePathSepForOS(trainingData->m_DataDirectory + trainingData->m_ImageFileNames[i]);
       }
-	
+
     bool ret1=itksys::SystemTools::CopyFileAlways(fromImagefile.c_str(), imageFiles[i].c_str());
-	if (!ret1) 
+	if (!ret1)
       {
 	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
 	  return -1;
@@ -181,7 +139,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     std::string fromSegfile = trainingData->m_DataDirectory + trainingData->m_SegmentationFileNames[i];
 
     bool ret2 = itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str());
-	if (!ret1) 
+	if (!ret1)
       {
 	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
 	  return -1;
@@ -609,6 +567,6 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     imgoperator->WriteImage(simulateTemplateFileNames[i], simImg, ioType);
     }
   std::cout << std::endl;
-  
+
   return simulateTemplateFileNames;
 }

@@ -35,8 +35,7 @@ target_link_libraries(${Training_CLP}Test ${Training_CLP}Lib ${SlicerExecutionMo
 set_target_properties(${Training_CLP}Test PROPERTIES LABELS ${Training_CLP})
 
 
-configure_file(${INPUT}/TrainingData/TrainingData.xml ${TEMP}/TrainingData.xml)
-configure_files(${INPUT}/TrainingData/ ${TEMP}/)
+configure_file(${INPUT}/TrainingData/TrainingData.xml ${TEMP}/TrainingData.xml COPYONLY)
 
 #-----------------------------------------------------------------------------
 set(testname ${Training_CLP}Test)

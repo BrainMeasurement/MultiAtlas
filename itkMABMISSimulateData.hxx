@@ -3,9 +3,6 @@
 
 #include "itkMABMISSimulateData.h"
 
-//For definition of FILESEP
-#include "itkMABMISAtlasXMLFile.h"
-
 constexpr int numSampleEachDirection = 4; // n  n^numEigenVector total number of intermediate templates
 
 namespace itk
@@ -92,7 +89,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   // do PCA training
   ////////////////////////////////////////
   // std::cerr << "Resample deformation fields ..." << std::endl;
-  if (numEigenVector > numFiles) numEigenVector = numFiles; 
+  if (numEigenVector > numFiles) numEigenVector = numFiles;
   vnl_matrix<float> df_eigenvector(size_dfn, numEigenVector);
   vnl_vector<float> df_eigenvalues(numEigenVector);
   ////////////////////////////////////////
@@ -171,13 +168,13 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   // for debugging
   // cerr << "Pass: PCA" << std::endl;
-  
+
 
   // make a temporary folder to store the intermediate files
   std::string tempFolder = "temp_PCATraining";
   char        numStr[10];
   int         num = rand() % 10000;
-  num = rand() % 10000; 
+  num = rand() % 10000;
   sprintf(numStr, "%04d", num);
   tempFolder = tempFolder + numStr;
 
