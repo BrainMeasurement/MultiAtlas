@@ -283,9 +283,8 @@ int main( int argc, char *argv[] )
       atlasReader->SetFilename(atlasTreeXML);
       atlasReader->GenerateOutputInformation();
       atlas = atlasReader->GetOutputObject();
-      
+
       //get atlas root image
-      unsigned i = 0;
       for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
         {
         if (atlas->m_Tree[i] == atlas->m_TreeRoot)
@@ -294,7 +293,7 @@ int main( int argc, char *argv[] )
           break;
           }
         }
-      
+
       if (atlas->m_AtlasDirectory[0] == '.') //relative path
         {
         rootFilename = itksys::SystemTools::GetParentDirectory(atlasTreeXML)

@@ -62,12 +62,12 @@ public:
   typename ImageOperationType::Pointer imgoperator;
   typename BasicOperationType::Pointer basicoperator;
 
-  int  DoPCATraining(std::vector<std::string> deformationFieldFileNames, int numFiles,
-                     std::vector<std::string> allImgFileName, int root);
+  int DoPCATraining(const std::vector<std::string>& deformationFieldFileNames, int numFiles,
+                    const std::vector<std::string>& allImgFileName, int root);
 
-  void LoadIntoArray(std::string resampledDeformationFieldFileName, float* df_vector);
+  void LoadIntoArray(const std::string& resampledDeformationFieldFileName, float* df_vector);
 
-  void SaveFromArray(std::string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
+  void SaveFromArray(const std::string& deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
 
   itkSetMacro(Root, int);
   itkSetMacro(Imx, int);

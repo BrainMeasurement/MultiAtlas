@@ -12,7 +12,7 @@ class MABMISImageData
 public:
   std::string              m_DataDirectory;
   std::string              m_OutputDirectory;
-  int                      m_NumberImageData;
+  unsigned                 m_NumberImageData;
   std::vector<std::string> m_ImageFileNames;
   std::vector<std::string> m_SegmentationFileNames;
 
@@ -34,8 +34,8 @@ class MABMISAtlas
 public:
   std::string m_AtlasDirectory;
 
-  int                      m_NumberAllAtlases;
-  int                      m_NumberSimulatedAtlases;
+  unsigned                 m_NumberAllAtlases;
+  unsigned                 m_NumberSimulatedAtlases;
   std::vector<std::string> m_AtlasFilenames;
   std::vector<std::string> m_AtlasSegmentationFilenames;
 
@@ -45,7 +45,7 @@ public:
   std::vector<int> m_SimulatedImageIDs;
 
   std::vector<int> m_Tree;
-  int              m_TreeSize;
+  unsigned int     m_TreeSize;
   int              m_TreeRoot;
   int              m_TreeHeight;
 
@@ -106,7 +106,7 @@ private:
   MABMISImageData* m_ImageData;
   std::string      m_CurCharacterData;
 
-  int m_ImageCount;
+  unsigned m_ImageCount;
 };
 
 class MABMISImageDataXMLFileWriter :

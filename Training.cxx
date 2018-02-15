@@ -109,7 +109,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   // copy training data into the atlas folder
   std::vector<std::string> imageFiles(trainingData->m_NumberImageData);
   std::vector<std::string> segmentFiles(trainingData->m_NumberImageData);
-  for( int i = 0; i < imageFiles.size(); ++i )
+  for( unsigned i = 0; i < imageFiles.size(); ++i )
     {
     imageFiles[i] = ReplacePathSepForOS(atlasFolder + trainingData->m_ImageFileNames[i]);
     segmentFiles[i] = ReplacePathSepForOS(atlasFolder + trainingData->m_SegmentationFileNames[i]);
@@ -139,9 +139,9 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     std::string fromSegfile = trainingData->m_DataDirectory + trainingData->m_SegmentationFileNames[i];
 
     bool ret2 = itksys::SystemTools::CopyFileAlways(fromSegfile.c_str(), segmentFiles[i].c_str());
-	if (!ret1)
+	if (!ret2)
       {
-	  std::cerr << "ERROR: Cannot copy atlas image file to trained atlas folder!" << std::endl;
+	  std::cerr << "ERROR: Cannot copy atlas segmentation file to trained atlas folder!" << std::endl;
 	  return -1;
       }
     // if file extension is '.nii.gz', also copy the 'img file'
@@ -174,7 +174,7 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     }
   std::cout << "Done!" << std::endl;
 
-  int simulatedAtlasSize = 2 * imageFiles.size();
+  unsigned simulatedAtlasSize = 2 * imageFiles.size();
 
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "3. Build statistical deformation model..." << std::endl;
@@ -196,9 +196,9 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   // delete subsampled deformation field
   // if (!isDebug)	if (false)
     {
-    for( int i = 0; i < imageFiles.size(); ++i )
+    for( unsigned i = 0; i < imageFiles.size(); ++i )
       {
-      if( i == root )
+      if( int(i) == root )
         {
         continue;
         }
@@ -216,13 +216,13 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   // build the combinative tree
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "5. Build combinative tree ... " << std::endl;
-  int             totalAtlasSize = imageFiles.size() + simulatedAtlasSize;
-  int             tree_size = totalAtlasSize;
+  unsigned totalAtlasSize = imageFiles.size() + simulatedAtlasSize;
+  unsigned tree_size = totalAtlasSize;
   vnl_vector<int> tree(tree_size);    // each tree
 
   // fill distance matrix
   std::vector<std::string> atlasfilenames;
-  for( int i = 0; i < tree_size; ++i )
+  for( unsigned i = 0; i < tree_size; ++i )
     {
     std::string atlasfilename;
 
@@ -256,15 +256,15 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
   atlas.m_IsSimulatedImage.resize(tree_size);
   atlas.m_RealImageIDs.resize(totalAtlasSize - simulatedAtlasSize);
   atlas.m_SimulatedImageIDs.resize(simulatedAtlasSize);
-  for( int i = 0; i < tree_size; ++i )
+  for( unsigned i = 0; i < tree_size; ++i )
     {
     atlas.m_Tree[i] = tree[i];
     }
   atlas.m_AtlasFilenames.resize(atlasfilenames.size() );
-  int countRealImages = 0, countSimulatedImages = 0;
-  for( int i = 0; i < atlasfilenames.size(); ++i )
+  unsigned countRealImages = 0, countSimulatedImages = 0;
+  for( unsigned i = 0; i < atlasfilenames.size(); ++i )
     {
-    const size_t      sep = atlasfilenames[i].find_last_of(FILESEP);
+    const size_t sep = atlasfilenames[i].find_last_of(FILESEP);
     std::string fname = atlasfilenames[i];
     if( sep != std::string::npos )
       {
@@ -297,9 +297,9 @@ int Training( itk::MABMISImageData* trainingData, std::string outputFile,
     }
   // atlas segmentation files
   atlas.m_AtlasSegmentationFilenames.resize(segmentFiles.size() );
-  for( int i = 0; i < segmentFiles.size(); ++i )
+  for( unsigned i = 0; i < segmentFiles.size(); ++i )
     {
-    const size_t      sep = segmentFiles[i].find_last_of(FILESEP);
+    const size_t sep = segmentFiles[i].find_last_of(FILESEP);
     std::string fname = segmentFiles[i];
     if( sep != std::string::npos )
       {
@@ -536,8 +536,7 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     {
     std::cout << i << ", ";
 
-    std::string index_string;
-    basicoperator->myitoa( i, index_string, 3 );
+    std::string index_string = basicoperator->myitoa( i, 3 );
 
     std::string simulateDeformationFieldFileName = "simulated_deform_" + index_string + ".nii.gz";
     std::string simulateTemplateFileName = "simulated_cbq_" + index_string + ".nii.gz";

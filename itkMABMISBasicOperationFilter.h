@@ -30,7 +30,8 @@ public:
 
   void bubbleSort(double* arr, int* index, int n);
 
-  void myitoa(int num, std::string& str, int digit);
+  //convert integer into string, enforcing a minimum of number of digits by adding leading zeroes
+  std::string myitoa(int number, int digits);
 
   void SaveMatrix2File(vnl_matrix<double> matrix, int iSize, int jSize, std::string martixFileName);
 

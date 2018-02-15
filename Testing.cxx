@@ -48,7 +48,7 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
 
 void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, InternalImageType::Pointer outSampleSegPtr,
                                  InternalImageType::Pointer* warpedImgPtrs, InternalImageType::Pointer* warpedSegPtrs,
-                                 int numOfAtlases);
+                                 unsigned numOfAtlases);
 
 void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental tree
                               int root,                       // the tree root
@@ -63,7 +63,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root, itk::MABMISImageData* imageData
                                        std::vector<int> iterations, double sigma);
 
 // void MultiAtlasBasedSegmentation(int filenumber, int atlas_size, std::vector<std::string> sub_ids);
-int MultiAtlasBasedSegmentation(int root, itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree);
+int MultiAtlasBasedSegmentation(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree);
 
 const std::string ImageSuffix = "_cbq_000.nii.gz";
 const std::string DeformationSuffix = "_deform_000.nii.gz";
@@ -82,17 +82,17 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
     }
   /////////////////////////////////////
   // the atlas tree
-  int tree_size = atlasTree->m_NumberAllAtlases;
+  unsigned tree_size = atlasTree->m_NumberAllAtlases;
 
   // incremental tree: the atlas tree PLUS images to be segmented
-  int             itree_size = atlasTree->m_NumberAllAtlases + imageData->m_NumberImageData;
+  unsigned itree_size = atlasTree->m_NumberAllAtlases + imageData->m_NumberImageData;
   vnl_vector<int> itree(itree_size);
-  for( int i = 0; i < itree_size; ++i )
+  for( unsigned i = 0; i < itree_size; ++i )
     {
     itree.put(i, 0);
     }
   // copy current tree into an incremental tree
-  for( int i = 0; i < tree_size; ++i )
+  for( unsigned i = 0; i < tree_size; ++i )
     {
     itree.put(i, atlasTree->m_Tree[i]);                                   // combinative tree: all atlases including
                                                                           // simulated data
@@ -101,14 +101,14 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   treeoperator->GetTreeHeight(itree, atlasTree->m_TreeSize, atlasTree->m_TreeHeight);
   int root = atlasTree->m_TreeRoot;  // root node
   // Validate the tree is correct
-  for( int n = 0; n < atlasTree->m_TreeSize; ++n )
+  for( unsigned n = 0; n < atlasTree->m_TreeSize; ++n )
     {
     bool valid = true;
-    if( atlasTree->m_Tree[n] >= atlasTree->m_TreeSize )
+    if( atlasTree->m_Tree[n] >= int(atlasTree->m_TreeSize) )
       {
       valid = false;
       }
-    if( atlasTree->m_Tree[n] < 0 && n != atlasTree->m_TreeRoot )
+    if( atlasTree->m_Tree[n] < 0 && int(n) != atlasTree->m_TreeRoot )
       {
       valid = false;
       }
@@ -128,10 +128,10 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "Build incremental tree ... " << std::endl;
 
-  int            totalNumAtlases = atlasTree->m_NumberAllAtlases;
-  int            totalNumFiles = totalNumAtlases + imageData->m_NumberImageData;
+  unsigned totalNumAtlases = atlasTree->m_NumberAllAtlases;
+  unsigned totalNumFiles = totalNumAtlases + imageData->m_NumberImageData;
   std::vector<std::string> allfilenames(totalNumFiles);
-  for( int i = 0; i < totalNumFiles; ++i )
+  for( unsigned i = 0; i < totalNumFiles; ++i )
     {
 
     if( i < totalNumAtlases )
@@ -147,9 +147,9 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "1. Calculating pairwise distance cross training and test images ..." << std::endl;
   vnl_matrix<double> cross_dist(imageData->m_NumberImageData, totalNumFiles);
-  for( int i = 0; i < imageData->m_NumberImageData; ++i )
+  for( unsigned i = 0; i < imageData->m_NumberImageData; ++i )
     {
-    for( int j = 0; j < totalNumFiles; ++j )
+    for( unsigned j = 0; j < totalNumFiles; ++j )
       {
       cross_dist.put(i, j, imgoperator->calculateDistanceMSD(allfilenames[totalNumAtlases + i], allfilenames[j]) );
       }
@@ -163,16 +163,16 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
   // indices to for atlas files and image files to be segmented.
   int* atlas_cur = new int[totalNumFiles];
-  for( int i = 0; i < totalNumFiles; ++i )
+  for( unsigned i = 0; i < totalNumFiles; ++i )
     {
     atlas_cur[i] = 0;
     }
-  for( int i = 0; i < totalNumAtlases; ++i )
+  for( unsigned i = 0; i < totalNumAtlases; ++i )
     {
     atlas_cur[i] = i;
     }
   int* images_cur = new int[imageData->m_NumberImageData];
-  for( int i = 0; i < imageData->m_NumberImageData; ++i )
+  for( unsigned i = 0; i < imageData->m_NumberImageData; ++i )
     {
     images_cur[i] = i + totalNumAtlases;
     }
@@ -230,7 +230,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   // do all multi-atlas based segmentation with weighted label fusion
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "5. Segment images using label fusion... " << std::endl;
-  int numIter = MultiAtlasBasedSegmentation(root, imageData, atlasTree);
+  int numIter = MultiAtlasBasedSegmentation(imageData, atlasTree);
 
   std::cout << "---------------------------------------" << std::endl;
   std::cout << "Done. " << std::endl;
@@ -249,11 +249,11 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
     {
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "Removing intermediate registration files..." << std::endl;
-    for( int n = 0; n < imageData->m_NumberImageData; ++n )
+    for( unsigned n = 0; n < imageData->m_NumberImageData; ++n )
       {
       char n_str[10], m_str[10];
       sprintf(n_str, "%03d", n);
-      for( int m = 0; m < atlasTree->m_NumberAllAtlases - atlasTree->m_NumberSimulatedAtlases; ++m )
+      for( int m = 0; m < int(atlasTree->m_NumberAllAtlases) - int(atlasTree->m_NumberSimulatedAtlases); ++m )
         {
         sprintf(m_str, "%03d", m);
 
@@ -274,7 +274,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
           basicoperator->RemoveFile(dfMha.c_str() );
           }
         }
-      for( int m = 0; m < imageData->m_NumberImageData; ++m )
+      for( unsigned m = 0; m < imageData->m_NumberImageData; ++m )
         {
         if( m == n )
           {
@@ -291,7 +291,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
       }
     }
   // remove segmentation results in iterations.
-  for( int n = 0; n < imageData->m_NumberImageData; ++n )
+  for( unsigned n = 0; n < imageData->m_NumberImageData; ++n )
     {
     const std::string imageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[n];
     char i_str[10];
@@ -382,14 +382,12 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
 
 void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, InternalImageType::Pointer outSampleSegPtr,
                                  InternalImageType::Pointer* warpedImgPtrs, InternalImageType::Pointer* warpedSegPtrs,
-                                 int numOfAtlases)
+                                 unsigned numOfAtlases)
 {
   // introduce the iterators of each image
   // InternalImageIteratorType sampleImgIt(curSampleImgPtr,
   // curSampleImgPtr->GetLargestPossibleRegion());//GetRequestedRegion());
   InternalImageIteratorType sampleSegIt(outSampleSegPtr, outSampleSegPtr->GetLargestPossibleRegion() ); // GetRequestedRegion());
-
-  InternalImageType::SizeType sampleImSize = outSampleSegPtr->GetBufferedRegion().GetSize();
 
   // InternalImageIteratorType* warpedImgIts = new InternalImageIteratorType[numOfAtlases];
   InternalImageIteratorType* warpedSegIts = new InternalImageIteratorType[numOfAtlases];
@@ -405,7 +403,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
 
   InternalImageNeighborhoodIteratorType sampleImgNeighborIt(radius, curSampleImgPtr,
                                                             curSampleImgPtr->GetLargestPossibleRegion() );
-  for( int i = 0; i < numOfAtlases; ++i )
+  for( unsigned i = 0; i < numOfAtlases; ++i )
     {
     // InternalImageIteratorType it1( warpedImgPtrs[i],
     // warpedImgPtrs[i]->GetLargestPossibleRegion());//GetRequestedRegion() );
@@ -418,15 +416,15 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
                                                      warpedImgPtrs[i]->GetLargestPossibleRegion() );
     warpedImgNeighborhoodIts[i] = neighborIt;
     }
-  int maxLabel = 0; // the maximum labels
+  unsigned maxLabel = 0; // the maximum labels
   // find out the maximum label from the label images
-  for( int  i = 0; i < numOfAtlases; ++i )
+  for( unsigned  i = 0; i < numOfAtlases; ++i )
     {
     warpedSegIts[i].GoToBegin();
     }
   while( !warpedSegIts[0].IsAtEnd() )
     {
-    for( int  i = 0; i < numOfAtlases; ++i )
+    for( unsigned  i = 0; i < numOfAtlases; ++i )
       {
       if( warpedSegIts[i].Get() > maxLabel )
         {
@@ -435,9 +433,6 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
       ++warpedSegIts[i];
       }
     }
-
-  InternalImageIteratorType::IndexType idx;
-  InternalImageIteratorType::IndexType idx1;
 
   int     temp1, temp2;
   double  kernel_sigma = 1; // std of Gaussian approximation, set to the median of all distances
@@ -450,7 +445,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
   double* weight_sum =  new double[maxLabel + 1];
   // for each voxel do label fusion,(vx, vy, vz) is the current location
   double kernel_sigma_square = kernel_sigma * kernel_sigma;
-  for( int i = 0; i < numOfAtlases; ++i )
+  for( unsigned i = 0; i < numOfAtlases; ++i )
     {
     warpedImgNeighborhoodIts[i].GoToBegin();
     warpedSegIts[i].GoToBegin();
@@ -463,10 +458,10 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
 //		if (idx[0] == 30 && idx[1]==20 && idx[2] ==8)
 //			idx[0] = idx[0];
     double msec = 0.0;
-    for( int i = 0; i < numOfAtlases; ++i )
+    for( unsigned i = 0; i < numOfAtlases; ++i )
       {
       label_pool[i] = warpedSegIts[i].Get();
-      for( int n = 0; n < sampleImgNeighborIt.Size(); ++n )
+      for( unsigned n = 0; n < sampleImgNeighborIt.Size(); ++n )
         {
         temp1 = sampleImgNeighborIt.GetPixel(n);
         temp2 = warpedImgNeighborhoodIts[i].GetPixel(n);
@@ -476,19 +471,19 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
       mse[i] = msec;
       }
     // sort the mean square difference
-    for( int i = 0; i < numOfAtlases; ++i )
+    for( unsigned i = 0; i < numOfAtlases; ++i )
       {
       index[i] = i;
       sort1[i] = mse[i];
       }
     basicoperator->bubbleSort(sort1, index, numOfAtlases);
-    kernel_sigma_square = sort1[(int)( (numOfAtlases - 1) / 2)] + 0.0001;
+    kernel_sigma_square = sort1[(int(numOfAtlases) - 1) / 2] + 0.0001;
     // weight each label
-    for( int i = 0; i < maxLabel + 1; ++i )
+    for( unsigned i = 0; i < maxLabel + 1; ++i )
       {
       weight_sum[i] = 0.0;
       }
-    for( int i = 0; i < numOfAtlases; ++i )
+    for( unsigned i = 0; i < numOfAtlases; ++i )
       {
       // add-up all weights
       if ((mse[i]) / (2.0 * kernel_sigma_square) < 50)
@@ -497,7 +492,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
       }
 
     // weighted label fusion
-    for( int i = 0; i < maxLabel + 1; ++i )
+    for( unsigned i = 0; i < maxLabel + 1; ++i )
       {
       label_index[i] = i;
       }
@@ -506,9 +501,9 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
     // basicoperator->bubbleSort(weight_sum, label_index, maxLabel+1);
     // int label_final;
     // label_final = label_index[maxLabel];
-    int    label_final = 0;
+    unsigned label_final = 0;
     double weight_final = 0.0;
-    for( int i = 0; i < maxLabel + 1; ++i )
+    for( unsigned i = 0; i < maxLabel + 1; ++i )
       {
       if( weight_sum[i] > weight_final )
         {
@@ -519,7 +514,7 @@ void GaussianWeightedLabelFusion(InternalImageType::Pointer curSampleImgPtr, Int
 
     // assign label to the segmentations
     sampleSegIt.Set(label_final);
-    for( int i = 0; i < numOfAtlases; ++i )
+    for( unsigned i = 0; i < numOfAtlases; ++i )
       {
       ++warpedImgNeighborhoodIts[i];
       ++warpedSegIts[i];
@@ -799,7 +794,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
         {
         // parent is a simulated image
 
-        std::string index_string;  basicoperator->myitoa( parentnode - atlas_image_size, index_string, 3 );
+        std::string index_string = basicoperator->myitoa( parentnode - atlas_image_size, 3 );
         std::string sim_df_FileName = "simulated_deform_" + index_string + ".nii.gz";
         sim_df_FileName = atlasTree->m_AtlasDirectory + sim_df_FileName;
 
@@ -1049,7 +1044,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       movingImageTag = std::string("testImage") + a_str;
       }
     // for (int sample_index = atlas_size; sample_index < filenumber; sample_index++)
-    for( int sample_index = 0; sample_index < imageData->m_NumberImageData; sample_index++ )
+    for( int sample_index = 0; sample_index < int(imageData->m_NumberImageData); sample_index++ )
       {
       if( isDebug )
         {
@@ -1150,9 +1145,7 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
   std::cout << "Done!" << std::endl;
 }
 
-// void MultiAtlasBasedSegmentation(int filenumber, int atlas_size, std::vector<std::string> sub_ids)
-int MultiAtlasBasedSegmentation(int root,
-                                itk::MABMISImageData* imageData,
+int MultiAtlasBasedSegmentation(itk::MABMISImageData* imageData,
                                 itk::MABMISAtlas* atlasTree)
 {
   std::cout << "Start to process segmentation..." << std::endl;
@@ -1196,8 +1189,7 @@ int MultiAtlasBasedSegmentation(int root,
 
       // std::string curSampleImgName = sub_ids[sample_index] +ImageSuffix;
       // the output label image of current sample
-      std::string index_string;
-      basicoperator->myitoa( iter, index_string, 3 );
+      std::string index_string = basicoperator->myitoa( iter, 3 );
 
       const std::string testSegmentFileName = GetDefaultSegmentationFilename(imageData, sample_index, index_string);
 
@@ -1246,7 +1238,7 @@ int MultiAtlasBasedSegmentation(int root,
           }
         else
           {
-          basicoperator->myitoa( iter - 1, index_string, 3 );
+          index_string = basicoperator->myitoa( iter-1, 3 );
           atlasSegName = GetDefaultSegmentationFilename(imageData, i - atlas_image_size, index_string);
           }
 
