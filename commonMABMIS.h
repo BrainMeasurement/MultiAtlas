@@ -164,4 +164,9 @@ extern TreeOperationType::Pointer treeoperator;
 typedef itk::Statistics::MABMISBasicOperationFilter<CharImageType, CharImageType> BasicOperationFilterType;
 extern BasicOperationFilterType::Pointer basicoperator;
 
+constexpr char ImageSuffix[] = "_cbq_000.nii.gz";
+constexpr char DeformationSuffix[] = "_deform_000.nii.gz";
+constexpr char SegmentationSuffix[] = "_seg_000.nii.gz";
+constexpr char RegisteredSuffix[] = "_cbq_reg.nii.gz";
+
 #endif //__commonMABMIS_h

@@ -65,11 +65,6 @@ void PairwiseRegistrationOnTreeViaRoot(int root, itk::MABMISImageData* imageData
 // void MultiAtlasBasedSegmentation(int filenumber, int atlas_size, std::vector<std::string> sub_ids);
 int MultiAtlasBasedSegmentation(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree);
 
-const std::string ImageSuffix = "_cbq_000.nii.gz";
-const std::string DeformationSuffix = "_deform_000.nii.gz";
-const std::string SegmentationSuffix = "_seg_000.nii.gz";
-const std::string RegisteredSuffix = "_cbq_reg.nii.gz";
-
 int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
             std::vector<int> iterations, double sigma)
 {

@@ -401,8 +401,8 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     char i_str[10], root_str[10];
     sprintf(i_str, "%03d", i);
     sprintf(root_str, "%03d", root);
-    std::string deformedImageFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_cbq_reg.nii.gz";
-    std::string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
+    std::string deformedImageFileName = std::string(i_str) + "_to_" + std::string(root_str) + RegisteredSuffix;
+    std::string      deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + DeformationSuffix;
 
     deformedImageFileName  = outputFolder + deformedImageFileName;
     deformationFieldFileName = outputFolder + deformationFieldFileName;
@@ -439,12 +439,12 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
 
     dfoperator->InverseDeformationField3D(deformationField, inversedDeformationField);
 
-    std::string invDeformedImageFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_cbq_reg.nii.gz";
-    std::string      invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + "_deform_000.nii.gz";
+    std::string invDeformedImageFileName = std::string(root_str) + "_to_" + std::string(i_str) + RegisteredSuffix;
+    std::string invDeformationFileName = std::string(root_str) + "_to_" + std::string(i_str) + DeformationSuffix;
     invDeformedImageFileName = outputFolder + invDeformedImageFileName;
     invDeformationFileName = outputFolder + invDeformationFileName;
 
-    std::string invDeformedSegmentFileName = std::string(root_str) + "_to_" + std::string(i_str) + "seg_000.nii.gz";
+    std::string invDeformedSegmentFileName = std::string(root_str) + "_to_" + std::string(i_str) + SegmentationSuffix;
     invDeformedSegmentFileName = outputFolder + invDeformedSegmentFileName;
 
     dfoperator->WriteDeformationField(invDeformationFileName, inversedDeformationField);
@@ -505,7 +505,7 @@ int BuildStatisticalDeformationModel(int root,  std::vector<std::string> imageFi
     sprintf(i_str, "%03d", i);
     sprintf(root_str, "%03d", root);
 
-    std::string deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + "_deform_000.nii.gz";
+    std::string deformationFieldFileName = std::string(i_str) + "_to_" + std::string(root_str) + DeformationSuffix;
     deformationFieldFileName = outputFolder + deformationFieldFileName;
     allDeformationFieldFileNames.push_back(deformationFieldFileName);
     }
