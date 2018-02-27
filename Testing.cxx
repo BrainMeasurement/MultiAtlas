@@ -22,11 +22,11 @@ GetDefaultSegmentationFilename(itk::MABMISImageData* imageData, size_t imageInde
 
   if (imageData->m_SegmentationFileNames.size() >= imageIndex && !imageData->m_SegmentationFileNames[imageIndex].empty())
     {
-    return imageData->m_DataDirectory + prefix + imageData->m_SegmentationFileNames[imageIndex];
+    return imageData->m_OutputDirectory + prefix + imageData->m_SegmentationFileNames[imageIndex];
     }
   else
     {
-    std::string imageFileName = imageData->m_DataDirectory + prefix + imageData->m_ImageFileNames[imageIndex];
+    std::string imageFileName = imageData->m_OutputDirectory + prefix + imageData->m_ImageFileNames[imageIndex];
     return GetRootName(imageFileName) + "-label" + GetExtension(imageFileName);
     }
 }
@@ -116,7 +116,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
   if( isDebug )
     {
-    treeoperator->SaveTreeWithInfo(itree, itree_size, imageData->m_DataDirectory + "itree.txt");
+    treeoperator->SaveTreeWithInfo(itree, itree_size, imageData->m_OutputDirectory + "itree.txt");
     }
 
   // build the incremental tree
@@ -153,7 +153,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   if( isDebug )
     {
     basicoperator->SaveMatrix2File(cross_dist, imageData->m_NumberImageData, totalNumFiles,
-                                   imageData->m_DataDirectory + "sample2atlas_dist.txt");
+                                   imageData->m_OutputDirectory + "sample2atlas_dist.txt");
     }
 
   // indices to for atlas files and image files to be segmented.
@@ -199,7 +199,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   // save new tree
   if( isDebug )
     {
-    treeoperator->SaveTreeWithInfo(itree, itree_size, imageData->m_DataDirectory + "itree.txt");
+    treeoperator->SaveTreeWithInfo(itree, itree_size, imageData->m_OutputDirectory + "itree.txt");
     // std::cout << "Tree is built up!" << std::endl;
     }
   std::cout << "Done! " << std::endl;
@@ -254,8 +254,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
 
         std::string imHdr = std::string(m_str) + "_to_" + "testImage" + n_str + ImageSuffix;
         std::string dfMha = std::string(m_str) + "_to_" + "testImage" + n_str + DeformationSuffix;
-        imHdr = imageData->m_DataDirectory + imHdr;
-        dfMha = imageData->m_DataDirectory + dfMha;
+        imHdr = imageData->m_OutputDirectory + imHdr;
+        dfMha = imageData->m_OutputDirectory + dfMha;
         basicoperator->RemoveFile(imHdr.c_str() );
         basicoperator->RemoveFile(dfMha.c_str() );
 
@@ -263,8 +263,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
           {
           imHdr = std::string("testImage") + n_str + "_to_" + m_str + RegisteredSuffix;
           dfMha = std::string("testImage") + n_str + "_to_" + m_str + DeformationSuffix;
-          imHdr = imageData->m_DataDirectory + imHdr;
-          dfMha = imageData->m_DataDirectory + dfMha;
+          imHdr = imageData->m_OutputDirectory + imHdr;
+          dfMha = imageData->m_OutputDirectory + dfMha;
           basicoperator->RemoveFile(imHdr.c_str() );
           basicoperator->RemoveFile(dfMha.c_str() );
           }
@@ -278,8 +278,8 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
         sprintf(m_str, "%03d", m);
         std::string imHdr = std::string("testImage") + n_str + "_to_testImage" + m_str + ImageSuffix;
         std::string dfMha = std::string("testImage") + n_str + "_to_testImage" + m_str + DeformationSuffix;
-        imHdr = imageData->m_DataDirectory + imHdr;
-        dfMha = imageData->m_DataDirectory + dfMha;
+        imHdr = imageData->m_OutputDirectory + imHdr;
+        dfMha = imageData->m_OutputDirectory + dfMha;
         basicoperator->RemoveFile(imHdr.c_str() );
         basicoperator->RemoveFile(dfMha.c_str() );
         }
@@ -288,7 +288,7 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
   // remove segmentation results in iterations.
   for( unsigned n = 0; n < imageData->m_NumberImageData; ++n )
     {
-    const std::string imageFileName = imageData->m_DataDirectory + imageData->m_ImageFileNames[n];
+    const std::string imageFileName = imageData->m_OutputDirectory + imageData->m_ImageFileNames[n];
     char i_str[10];
     bool copied = false;
     for( int i = numIter - 1; i >= 0; i-- )
@@ -716,8 +716,8 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       dfFileName = std::string("testImage") + n_str + "_to_" + root_str + DeformationSuffix;
       df_ImageFileName = std::string("testImage") + n_str + "_to_" + root_str + RegisteredSuffix;
 
-      dfFileName = imageData->m_DataDirectory + dfFileName;
-      df_ImageFileName = imageData->m_DataDirectory + df_ImageFileName;
+      dfFileName = imageData->m_OutputDirectory + dfFileName;
+      df_ImageFileName = imageData->m_OutputDirectory + df_ImageFileName;
 
       isRegistered = false;
       }
@@ -733,7 +733,7 @@ void TreeBasedRegistrationFastOniTree(vnl_vector<int> itree,          // the inc
       int  n = parentnode - atlas_total_size;
       char n_str[10]; sprintf(n_str, "%03d", n);
       df_ParentFileName = std::string("testImage") + n_str + "_to_" + root_str + DeformationSuffix;
-      df_ParentFileName = imageData->m_DataDirectory + df_ParentFileName;
+      df_ParentFileName = imageData->m_OutputDirectory + df_ParentFileName;
       }
 
     // do registration
@@ -912,13 +912,13 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       sprintf(i_str, "%03d", i - atlas_image_size);
       fixedImageTag = std::string("testImage") + i_str;
 
-      deformedImageFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
-      deformedImageFileNameImg = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      deformedImageFileName = imageData->m_OutputDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
+      deformedImageFileNameImg = imageData->m_OutputDirectory + rootImageTag + "_to_" + fixedImageTag + ImageSuffix;
 
-      deformedSegmentFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + SegmentationSuffix;
+      deformedSegmentFileName = imageData->m_OutputDirectory + rootImageTag + "_to_" + fixedImageTag + SegmentationSuffix;
 
-      deformationFileName = imageData->m_DataDirectory + fixedImageTag + "_to_" + rootImageTag + DeformationSuffix;
-      invDeformationFileName = imageData->m_DataDirectory + rootImageTag + "_to_" + fixedImageTag + DeformationSuffix;
+      deformationFileName = imageData->m_OutputDirectory + fixedImageTag + "_to_" + rootImageTag + DeformationSuffix;
+      invDeformationFileName = imageData->m_OutputDirectory + rootImageTag + "_to_" + fixedImageTag + DeformationSuffix;
       }
 
     // if exist??
@@ -1051,12 +1051,12 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
       std::string deformedSegmentFileNameImg = movingImageTag + "_to_" + "testImage" + s_str + SegmentationSuffix;
       std::string dfFileName = movingImageTag + "_to_" + fixedImageTag + DeformationSuffix;
 
-      deformedImageFileName = imageData->m_DataDirectory + deformedImageFileName;
-      deformedImageFileNameImg = imageData->m_DataDirectory + deformedImageFileNameImg;
-      dfFileName = imageData->m_DataDirectory + dfFileName;
+      deformedImageFileName = imageData->m_OutputDirectory + deformedImageFileName;
+      deformedImageFileNameImg = imageData->m_OutputDirectory + deformedImageFileNameImg;
+      dfFileName = imageData->m_OutputDirectory + dfFileName;
 
-      deformedSegmentFileName = imageData->m_DataDirectory + deformedSegmentFileName;
-      deformedSegmentFileNameImg = imageData->m_DataDirectory + deformedSegmentFileNameImg;
+      deformedSegmentFileName = imageData->m_OutputDirectory + deformedSegmentFileName;
+      deformedSegmentFileNameImg = imageData->m_OutputDirectory + deformedSegmentFileNameImg;
 
       // std::string fixedImgImageFileName = sub_ids[sample_index] + ImageSuffix;
       // std::string movingImgImageFileName = sub_ids[all_index] + ImageSuffix;
@@ -1098,9 +1098,9 @@ void PairwiseRegistrationOnTreeViaRoot(int root,
         }
       else
         {
-        inputDeformationFieldFileName  = imageData->m_DataDirectory + movingImageTag + "_to_" + root_str + DeformationSuffix;
+        inputDeformationFieldFileName  = imageData->m_OutputDirectory + movingImageTag + "_to_" + root_str + DeformationSuffix;
         }
-      std::string secondDeformationFieldFileName = imageData->m_DataDirectory + root_str + "_to_" + fixedImageTag + DeformationSuffix;
+      std::string secondDeformationFieldFileName = imageData->m_OutputDirectory + root_str + "_to_" + fixedImageTag + DeformationSuffix;
       // output composed deformation field
       dfoperator->ComposeDeformationFieldsAndSave(inputDeformationFieldFileName,
                                                   secondDeformationFieldFileName,
@@ -1212,8 +1212,8 @@ int MultiAtlasBasedSegmentation(itk::MABMISImageData* imageData,
         std::string warpedImageFileName = movingImageTag + "_to_" + testImageTag + ImageSuffix;
         std::string dfFileName = movingImageTag + "_to_" + testImageTag + DeformationSuffix;
 
-        warpedImageFileName = imageData->m_DataDirectory + warpedImageFileName;
-        dfFileName = imageData->m_DataDirectory + dfFileName;
+        warpedImageFileName = imageData->m_OutputDirectory + warpedImageFileName;
+        dfFileName = imageData->m_OutputDirectory + dfFileName;
 
         std::string atlasSegName;
         if( i < atlas_image_size )

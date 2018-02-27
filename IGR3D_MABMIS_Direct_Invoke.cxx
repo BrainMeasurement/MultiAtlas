@@ -8,6 +8,7 @@
 #include "itkResampleImageFilter.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLabelImageGaussianInterpolateImageFunction.h"
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkPluginUtilities.h"
@@ -19,10 +20,11 @@ typedef itk::Transform<double, Dimension, Dimension> TransformType;
 AffineType::Pointer identity = AffineType::New();
 
 // interpolationQuality:
-// 0 = LabelImageGaussianInterpolate (alternative to nearest neighbor)
-// 1 = linear (default and fall-back)
-// 3 = cubic BSpline
-// 5 = WindowedSinc
+// -1 = linear (default and fall-back)
+//  0 = nearest neighbor
+//  1 = LabelImageGaussianInterpolate (smoother alternative to nearest neighbor)
+//  3 = cubic BSpline
+//  5 = WindowedSinc with radius of 5 voxels
 template<typename PixelType>
 void resampleAndWrite(const std::string & inFile, const std::string & outFile,
     ShortImageType::RegionType region,
@@ -49,15 +51,18 @@ void resampleAndWrite(const std::string & inFile, const std::string & outFile,
   switch (interpolationQuality)
     {
     case 0:
+      resampleFilter->SetInterpolator(itk::NearestNeighborInterpolateImageFunction<ImageType>::New());
+      break;
+    case 1:
       resampleFilter->SetInterpolator(itk::LabelImageGaussianInterpolateImageFunction<ImageType>::New());
       break;
     case 3:
-      resampleFilter->SetInterpolator(itk::BSplineInterpolateImageFunction<ImageType>::New()); //cubic by default
+      resampleFilter->SetInterpolator(itk::BSplineInterpolateImageFunction<ImageType>::New()); //order 3 (=cubic) by default
       break;
     case 5:
       resampleFilter->SetInterpolator(itk::WindowedSincInterpolateImageFunction<ImageType, 5>::New());
       break;
-    case 1:
+    case -1:
     default:
       // ResampleImageFilter uses linear by default
       break;
@@ -134,57 +139,73 @@ switch (componentType)
   }
 }
 
-void resampleOrCopy(const std::string & rootFilename, const std::string & outDir,
+// resample inFile into outFile so it matches the image grid of refFile
+// uses the pixel type of the inFile
+void resampleOrCopy(const std::string & inFile,
+    const std::string & outFile,
+    const std::string & refFile,
+    TransformType::Pointer transform,
+    int interpolationQuality)
+{
+  typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
+  ShortReaderType::Pointer shortReader = ShortReaderType::New();
+  shortReader->SetFileName(refFile);
+  shortReader->UpdateOutputInformation();
+  ShortImageType::Pointer image = shortReader->GetOutput();
+
+  //reference image metadata
+  ShortImageType::RegionType region = image->GetLargestPossibleRegion();
+  ShortImageType::PointType origin = image->GetOrigin();
+  ShortImageType::SpacingType spacing = image->GetSpacing();
+  ShortImageType::DirectionType direction = image->GetDirection();
+
+  //inImage componenet type
+  itk::ImageIOBase::IOPixelType pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+  itk::GetImageType(inFile, pixelType, componentType);
+
+  shortReader->SetFileName(inFile);
+  shortReader->UpdateOutputInformation();
+  image = shortReader->GetOutput();
+
+  bool transformIsIdentity = false;
+  AffineType * aTransform = dynamic_cast<AffineType *>(transform.GetPointer());
+  if (aTransform && aTransform->Metric(identity) == 0.0)
+    {
+    transformIsIdentity = true;
+    }
+
+  if (region != image->GetLargestPossibleRegion()
+      || origin != image->GetOrigin()
+      || spacing != image->GetSpacing()
+      || direction != image->GetDirection()
+      || transformIsIdentity != true
+      || GetExtension(inFile) != GetExtension(outFile))
+    {
+    std::cout << "Resampling " << inFile << std::endl;
+    std::cout << "      into " << outFile << std::endl;
+    resampleAndWrite(inFile, outFile,
+        region, origin, spacing, direction, transform,
+        interpolationQuality, componentType);
+    }
+  else
+    {
+    std::cout << "Copying " << inFile << std::endl;
+    std::cout << "     to " << outFile << std::endl;
+    itksys::SystemTools::CopyFileAlways(inFile, outFile);
+    }
+}
+
+//transform the images to match the atlas root and write them
+void resampleOrCopyN(const std::string & rootFilename, const std::string & outDir,
     const std::vector<std::string> & inFiles,
     const std::vector<std::string> & outFiles,
     std::vector<TransformType::Pointer > & transforms,
     int interpolationQuality)
 {
-  typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
-  ShortReaderType::Pointer shortReader = ShortReaderType::New();
-  shortReader->SetFileName(rootFilename);
-  shortReader->UpdateOutputInformation();
-
-  //atlas root metadata
-  ShortImageType::RegionType region = shortReader->GetOutput()->GetLargestPossibleRegion();
-  ShortImageType::PointType origin = shortReader->GetOutput()->GetOrigin();
-  ShortImageType::SpacingType spacing = shortReader->GetOutput()->GetSpacing();
-  ShortImageType::DirectionType direction = shortReader->GetOutput()->GetDirection();
-
-  //transform the images to match the atlas root and write them
   for (unsigned i = 0; i < inFiles.size(); i++)
     {
-    itk::ImageIOBase::IOPixelType pixelType;
-    itk::ImageIOBase::IOComponentType componentType;
-    itk::GetImageType(inFiles[i], pixelType, componentType);
-
-    shortReader->SetFileName(inFiles[i]);
-    shortReader->UpdateOutputInformation();
-
-    bool transformIsIdentity = false;
-    AffineType * aTransform = dynamic_cast<AffineType *>(transforms[i].GetPointer());
-    if (aTransform && aTransform->Metric(identity) == 0.0)
-      {
-      transformIsIdentity = true;
-      }
-
-    if (region != shortReader->GetOutput()->GetLargestPossibleRegion()
-        || origin != shortReader->GetOutput()->GetOrigin()
-        || spacing != shortReader->GetOutput()->GetSpacing()
-        || direction != shortReader->GetOutput()->GetDirection()
-        || transformIsIdentity != true
-        || GetExtension(inFiles[i]) != GetExtension(outFiles[i]))
-      {
-      std::cout << "Resampling " << inFiles[i] << std::endl;
-      resampleAndWrite(inFiles[i], outDir + outFiles[i],
-          region, origin, spacing, direction, transforms[i],
-          interpolationQuality, componentType);
-      }
-    else
-      {
-      std::cout << "Copying " << inFiles[i] << std::endl;
-      itksys::SystemTools::CopyFileAlways(inFiles[i], outDir + outFiles[i]);
-      }
+    resampleOrCopy(inFiles[i], outDir + outFiles[i], rootFilename, transforms[i], interpolationQuality);
     }
 }
 
@@ -216,6 +237,22 @@ void resampleOrCopy(const std::string & rootFilename, const std::string & outDir
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+
+  int segmentationInterpolationQuality = 1;
+  if (segmentationInterpolationArg.isSet() && segmentationInterpolation == "Nearest")
+    {
+    segmentationInterpolationQuality = 0;
+    }
+
+  int imageInterpolationQuality = 3;
+  if (imageInterpolationArg.isSet() && imageInterpolation == "Linear")
+    {
+    imageInterpolationQuality = -1;
+    }
+  if (imageInterpolationArg.isSet() && imageInterpolation == "WindowedSinc")
+    {
+    imageInterpolationQuality = 5;
+    }
 
   imageListXML = ReplacePathSepForOS(imageListXML);
   atlasTreeXML = ReplacePathSepForOS(atlasTreeXML);
@@ -297,6 +334,8 @@ int main( int argc, char *argv[] )
         }
       }
     unsigned numberOfPreExistingImages = miData.m_ImageFileNames.size();
+    std::cout << "Using " << imageDir << " as a temporary folder." << std::endl;
+    itksys::SystemTools::MakeDirectory(imageDir);
 
     //check which parameters are present
     std::vector<std::string> transformFileNames;
@@ -361,7 +400,7 @@ int main( int argc, char *argv[] )
         }
       }
 
-    resampleOrCopy(rootFilename, imageDir, imageFileNames, miData.m_ImageFileNames, transforms, 3);
+    resampleOrCopyN(rootFilename, imageDir, imageFileNames, miData.m_ImageFileNames, transforms, imageInterpolationQuality);
     if (mode == "Create imageXML" || imageListXMLArg.isSet())
       {
       itk::MABMISImageDataXMLFileWriter::Pointer miWriter =
@@ -388,27 +427,18 @@ int main( int argc, char *argv[] )
         if (!invT) //not possible to invert
           {
           invT = identity;
-          std::cerr << "It was not possible to invert tranform " << transformFileNames[i] << std::endl;
+          std::cerr << "Error: it was not possible to invert tranform " << transformFileNames[i] << std::endl;
           std::cerr << "Resampling segmentation back using identity transform" << std::endl;
           }
 
-        typedef itk::Image<short, 3> ShortImageType;
-        itk::ImageFileReader<ShortImageType>::Pointer imageReader =
-            itk::ImageFileReader<ShortImageType>::New();
-        imageReader->SetFileName(imageFileNames[i]);
-        imageReader->UpdateOutputInformation();
-        ShortImageType::Pointer inImage = imageReader->GetOutput();
-
-        resampleAndWrite(imageDir + miData.m_SegmentationFileNames[i], segmentationFileNames[i],
-            inImage->GetLargestPossibleRegion(), inImage->GetOrigin(),
-            inImage->GetSpacing(), inImage->GetDirection(), invT,
-            0, itk::ImageIOBase::SHORT);
+        resampleOrCopy(imageDir + miData.m_SegmentationFileNames[i], segmentationFileNames[i],
+            imageFileNames[i], invT, segmentationInterpolationQuality);
         }
       }
     if (mode == "(re)train atlas")
       {
       //segmentations are now inputs which accompany the images, and need to be transformed the same way
-      resampleOrCopy(rootFilename, imageDir, segmentationFileNames, miData.m_SegmentationFileNames, transforms, 0);
+      resampleOrCopyN(rootFilename, imageDir, segmentationFileNames, miData.m_SegmentationFileNames, transforms, segmentationInterpolationQuality);
       Training(&miData, atlasTreeXML, iterations, sigma);
       }
     }

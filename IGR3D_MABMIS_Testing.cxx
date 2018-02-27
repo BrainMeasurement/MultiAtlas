@@ -70,6 +70,7 @@ int main( int argc, char *argv[] )
       }
     inputImageData->m_OutputDirectory = OutputFolder;
     }
+  itksys::SystemTools::MakeDirectory(inputImageData->m_OutputDirectory);
 
   // load the tree-structured atlases that is generated in the training step
   itk::MABMISAtlasXMLFileReader::Pointer treeAtlasXMLReader = itk::MABMISAtlasXMLFileReader::New();

@@ -8,7 +8,7 @@
   <license></license>
   <contributor>Dženan Zukić (Kitware Inc.)</contributor>
   <acknowledgements></acknowledgements>
- 
+
   <parameters>
     <label>General</label>
     <description>Image list and atlas XMLs</description>
@@ -75,7 +75,31 @@
       <default>1.5</default>
     </double>
   </parameters>
- 
+
+  <parameters advanced="true">
+    <label>Interpolation</label>
+    <description>Interpolation used for re-sampling</description>
+
+	<string-enumeration>
+      <longflag>imageInterpolation</longflag>
+      <description>Which interpolation to use for image resampling</description>
+      <label>Image interpolation</label>
+      <default>CubicSpline</default>
+      <element>Linear</element>
+      <element>CubicSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
+
+	<string-enumeration>
+      <longflag>segmentationInterpolation</longflag>
+      <description>Which interpolation to use for segmentation resampling</description>
+      <label>Segmentation interpolation</label>
+      <default>Smooth</default>
+      <element>Nearest</element>
+      <element>Smooth</element>
+    </string-enumeration>
+  </parameters>
+
   <parameters>
     <label>I/O</label>
     <description>Inputs and outputs</description>
