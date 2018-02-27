@@ -3,27 +3,6 @@ set(TEMP ${CMAKE_CURRENT_BINARY_DIR}/../Testing/Temporary)
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
 
-message (STATUS "MABMIS tests CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-message (STATUS "MABMIS tests CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-
-
-macro(copy_files_recursively srcDir destDir)
-    message(STATUS "Configuring directory ${destDir}")
-    make_directory(${destDir})
-
-    file(GLOB templateFiles RELATIVE ${srcDir} ${srcDir}/*)
-    foreach(templateFile ${templateFiles})
-        set(srcTemplatePath ${srcDir}/${templateFile})
-        if(NOT IS_DIRECTORY ${srcTemplatePath})
-            message(STATUS "Configuring file ${templateFile}")
-            configure_file(
-                    ${srcTemplatePath}
-                    ${destDir}/${templateFile}
-                    COPYONLY)
-        endif(NOT IS_DIRECTORY ${srcTemplatePath})
-    endforeach(templateFile)
-endmacro(copy_files_recursively)
-
 
 #-----------------------------------------------------------------------------
 # Training module
@@ -82,7 +61,7 @@ target_link_libraries(${Testing_CLP}Test ${Testing_CLP}Lib ${SlicerExecutionMode
 set(testname ${Testing_CLP}TrainingTest)
 ExternalData_add_test(${Testing_CLP}Data NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${Testing_CLP}Test>
   ModuleEntryPoint
-   -i 5,3,2 -s 1.5 --mode "(re)train atlas" --imageDir ${TEMP}/TrainingTemp
+   -i 5,3,2 -s 1.5 --mode "Train atlas" --imageDir ${TEMP}/TrainingTemp
    --atlasTreeXML ${TEMP}/Atlas.xml
    --image0 ${INPUT}/TrainingData/AA_cbq_000.nii.gz --segmentation0 ${INPUT}/TrainingData/AA_seg_000.nii.gz
    --image1 ${INPUT}/TrainingData/AB_cbq_000.nii.gz --segmentation1 ${INPUT}/TrainingData/AB_seg_000.nii.gz

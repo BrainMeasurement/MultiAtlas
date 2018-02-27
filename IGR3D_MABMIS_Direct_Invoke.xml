@@ -2,7 +2,7 @@
 <executable>
   <category>Segmentation</category>
   <title>MABMIS Direct Invoke</title>
-  <description>Allows invoking MABMIS without pre-created XML files, as well as atlas creationg and re-training. Does image resampling if needed.</description>
+  <description>Allows invoking MABMIS without pre-created XML files, as well as atlas creation and re-training. Does image resampling if needed.</description>
   <version></version>
   <documentation-url></documentation-url>
   <license></license>
@@ -12,47 +12,50 @@
   <parameters>
     <label>General</label>
     <description>Image list and atlas XMLs</description>
-	
-	<string-enumeration>
+
+    <string-enumeration>
       <flag>m</flag>
       <longflag>mode</longflag>
       <description>Processing mode.\n\
 \
-	  Direct invoke: provide atlas and test images, get segmentations for test images.\n\
+      Direct invoke: provide atlas and test images, get segmentations for test images.\n\
 \
-	  Create imageXML: provide test images, get ImageXML ready for invoking Testing or Training. If atlasTreeXML is provided, test images are resampled to match its root image. Otherwise, test images are resampled to match the first provided test image.\n\
+      Create imageXML: provide test images, get ImageXML ready for invoking Testing or Training. If atlasTreeXML is provided, test images are resampled to match its root image. Otherwise, test images are resampled to match the first provided test image.\n\
 \
-	  Atlas creation or re-training: if atlasTreeXML is provided, atlas is re-trained with additional images. Otherwise atlas is created based on the provided images (and their segmentations).\n</description>
+      Train atlas: atlas is created using the provided images and their segmentations.\n\
+\
+      Retrain atlas: atlas is expanded with additional images and their segmentations.\n</description>
       <label>Mode</label>
       <default>Direct invoke</default>
       <element>Direct invoke</element>
       <element>Create imageXML</element>
-      <element>(re)train atlas</element>
+      <element>Train atlas</element>
+      <element>Retrain atlas</element>
     </string-enumeration>
 
     <file fileExtensions=".xml">
-     <longflag>atlasTreeXML</longflag>
-	 <flag>a</flag>
-     <description>xml file of the multi-atlases after training</description>
-     <label>Multi-Atlas XML</label>
-     <channel>input</channel>
+      <longflag>atlasTreeXML</longflag>
+      <flag>a</flag>
+      <description>xml file of the multi-atlases after training</description>
+      <label>Multi-Atlas XML</label>
+      <channel>input</channel>
    </file>
 
-    <file fileExtensions=".xml">
+   <file fileExtensions=".xml">
       <longflag>imageListXML</longflag>
-	  <flag>l</flag>
+      <flag>l</flag>
       <description>xml file that will contain a list of images to be segmented</description>
       <label>Image list XML</label>
       <channel>output</channel>
-    </file>
+   </file>
 
-	<directory>
+   <directory>
       <longflag>imageDir</longflag>
-	  <flag>d</flag>
+      <flag>d</flag>
       <description>A directory where to write transformed, resampled and cropped images. Default: imageListXML's location.</description>
       <label>Image directory</label>
       <channel>input</channel>
-    </directory>
+   </directory>
   </parameters>
 
   <parameters advanced="true">
@@ -80,7 +83,7 @@
     <label>Interpolation</label>
     <description>Interpolation used for re-sampling</description>
 
-	<string-enumeration>
+    <string-enumeration>
       <longflag>imageInterpolation</longflag>
       <description>Which interpolation to use for image resampling</description>
       <label>Image interpolation</label>
@@ -90,7 +93,7 @@
       <element>WindowedSinc</element>
     </string-enumeration>
 
-	<string-enumeration>
+    <string-enumeration>
       <longflag>segmentationInterpolation</longflag>
       <description>Which interpolation to use for segmentation resampling</description>
       <label>Segmentation interpolation</label>

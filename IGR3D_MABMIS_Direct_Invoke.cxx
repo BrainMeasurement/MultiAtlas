@@ -254,6 +254,12 @@ int main( int argc, char *argv[] )
     imageInterpolationQuality = 5;
     }
 
+  if (mode == "Create imageXML" && !imageListXMLArg.isSet())
+    {
+    std::cerr << "Create imageXML mode requires imageListXML argument to be set!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   imageListXML = ReplacePathSepForOS(imageListXML);
   atlasTreeXML = ReplacePathSepForOS(atlasTreeXML);
   imageDir = ReplacePathSepForOS(imageDir);
@@ -308,7 +314,7 @@ int main( int argc, char *argv[] )
       atlas->m_AtlasDirectory = listDir;
       rootFilename = listDir + rootFilename;
 
-      if (mode == "(re)train atlas")
+      if (mode == "Retrain atlas")
         {
         std::cout << "Re-training the atlas: " << atlasTreeXML << std::endl;
         imageDir = listDir; //new images should be put into the old atlas directory too
@@ -324,11 +330,11 @@ int main( int argc, char *argv[] )
       }
     else
       {
-      if (mode == "Direct invoke")
+      if (mode == "Direct invoke" || mode == "Retrain atlas")
         {
         itkGenericExceptionMacro("Atlas XML file is missing " << atlasTreeXML);
         }
-      else if (mode == "(re)train atlas")
+      else if (mode == "Train atlas")
         {
         std::cout << "Initial creation of the atlas: " << atlasTreeXML << std::endl;
         }
@@ -388,7 +394,7 @@ int main( int argc, char *argv[] )
       rootFilename = imageFileNames[0];
       }
 
-    if (mode == "(re)train atlas")
+    if (mode == "Train atlas" || mode == "Retrain atlas")
       {
       //check if all images have segmentations
       for (unsigned i = 0; i < miData.m_SegmentationFileNames.size(); i++)
@@ -435,7 +441,7 @@ int main( int argc, char *argv[] )
             imageFileNames[i], invT, segmentationInterpolationQuality);
         }
       }
-    if (mode == "(re)train atlas")
+    if (mode == "Train atlas" || mode == "Retrain atlas")
       {
       //segmentations are now inputs which accompany the images, and need to be transformed the same way
       resampleOrCopyN(rootFilename, imageDir, segmentationFileNames, miData.m_SegmentationFileNames, transforms, segmentationInterpolationQuality);
