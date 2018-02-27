@@ -81,7 +81,7 @@ public:
   itkNewMacro(Self);
 public:
   /** Determine if a file can be read */
-  virtual int CanReadFile(const char *name);
+  int CanReadFile(const char *name) ITK_OVERRIDE;
 
 protected:
   MABMISImageDataXMLFileReader()
@@ -94,11 +94,11 @@ protected:
   {
   }
 
-  virtual void StartElement(const char *name, const char * *atts);
+  void StartElement(const char *name, const char * *atts) ITK_OVERRIDE;
 
-  virtual void EndElement(const char *name);
+  void EndElement(const char *name) ITK_OVERRIDE;
 
-  virtual void CharacterDataHandler(const char *inData, int inLength);
+  void CharacterDataHandler(const char *inData, int inLength) ITK_OVERRIDE;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageDataXMLFileReader);
@@ -125,7 +125,7 @@ public:
   itkTypeMacro(MABMISImageDataXMLFileWriter,  XMLWriterBase<MABMISImageData> );
 
   /** Test whether a file is writable. */
-  virtual int CanWriteFile(const char *name);
+  int CanWriteFile(const char *name) ITK_OVERRIDE;
 
   /** Actually write out the file in question */
   int WriteFile() ITK_OVERRIDE;
@@ -158,11 +158,11 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  virtual void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
 public:
   /** Determine if a file can be read */
-  virtual int CanReadFile(const char *name);
+  int CanReadFile(const char *name) ITK_OVERRIDE;
 
 protected:
   MABMISAtlasXMLFileReader()
@@ -174,11 +174,11 @@ protected:
   {
   }
 
-  virtual void StartElement(const char *name, const char * *atts);
+  void StartElement(const char *name, const char * *atts) ITK_OVERRIDE;
 
-  virtual void EndElement(const char *name);
+  void EndElement(const char *name) ITK_OVERRIDE;
 
-  virtual void CharacterDataHandler(const char *inData, int inLength);
+  void CharacterDataHandler(const char *inData, int inLength) ITK_OVERRIDE;
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(MABMISAtlasXMLFileReader);
@@ -203,7 +203,7 @@ public:
   itkTypeMacro(MABMISAtlasXMLFileWriter,  XMLWriterBase<MABMISAtlas> );
 
   /** Test whether a file is writable. */
-  virtual int CanWriteFile(const char *name);
+  int CanWriteFile(const char *name) ITK_OVERRIDE;
 
   /** Actually write out the file in question */
   int WriteFile() ITK_OVERRIDE;

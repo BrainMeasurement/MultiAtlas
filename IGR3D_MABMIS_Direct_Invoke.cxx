@@ -8,7 +8,7 @@
 #include "itkResampleImageFilter.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
-#include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkLabelImageGaussianInterpolateImageFunction.h"
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkPluginUtilities.h"
 
@@ -16,9 +16,10 @@ const unsigned int Dimension = 3;
 typedef itk::Image<short, Dimension> ShortImageType;
 typedef itk::AffineTransform<double, Dimension> AffineType;
 typedef itk::Transform<double, Dimension, Dimension> TransformType;
+AffineType::Pointer identity = AffineType::New();
 
 // interpolationQuality:
-// 0 = nearest neighbor
+// 0 = LabelImageGaussianInterpolate (alternative to nearest neighbor)
 // 1 = linear (default and fall-back)
 // 3 = cubic BSpline
 // 5 = WindowedSinc
@@ -48,7 +49,7 @@ void resampleAndWrite(const std::string & inFile, const std::string & outFile,
   switch (interpolationQuality)
     {
     case 0:
-      resampleFilter->SetInterpolator(itk::NearestNeighborInterpolateImageFunction<ImageType>::New());
+      resampleFilter->SetInterpolator(itk::LabelImageGaussianInterpolateImageFunction<ImageType>::New());
       break;
     case 3:
       resampleFilter->SetInterpolator(itk::BSplineInterpolateImageFunction<ImageType>::New()); //cubic by default
@@ -160,22 +161,29 @@ void resampleOrCopy(const std::string & rootFilename, const std::string & outDir
     shortReader->SetFileName(inFiles[i]);
     shortReader->UpdateOutputInformation();
 
+    bool transformIsIdentity = false;
+    AffineType * aTransform = dynamic_cast<AffineType *>(transforms[i].GetPointer());
+    if (aTransform && aTransform->Metric(identity) == 0.0)
+      {
+      transformIsIdentity = true;
+      }
+
     if (region != shortReader->GetOutput()->GetLargestPossibleRegion()
         || origin != shortReader->GetOutput()->GetOrigin()
         || spacing != shortReader->GetOutput()->GetSpacing()
         || direction != shortReader->GetOutput()->GetDirection()
-        // check that transforms[i] is identity?
+        || transformIsIdentity != true
         || GetExtension(inFiles[i]) != GetExtension(outFiles[i]))
       {
       std::cout << "Resampling " << inFiles[i] << std::endl;
-      resampleAndWrite(inFiles[i], outDir + '/' + outFiles[i],
+      resampleAndWrite(inFiles[i], outDir + outFiles[i],
           region, origin, spacing, direction, transforms[i],
           interpolationQuality, componentType);
       }
     else
       {
       std::cout << "Copying " << inFiles[i] << std::endl;
-      itksys::SystemTools::CopyFileAlways(inFiles[i], outDir + '/' + outFiles[i]);
+      itksys::SystemTools::CopyFileAlways(inFiles[i], outDir + outFiles[i]);
       }
     }
 }
@@ -217,10 +225,6 @@ int main( int argc, char *argv[] )
     {
     itk::MABMISImageData miData;
     const std::string extension = ".nrrd";
-    if (!imageListXMLArg.isSet())
-      {
-      imageListXML = ".";
-      }
     std::string listDir = itksys::SystemTools::GetParentDirectory(imageListXML);
     listDir = itksys::SystemTools::GetRealPath(listDir);
     imageDir = itksys::SystemTools::GetRealPath(imageDir);
@@ -231,7 +235,6 @@ int main( int argc, char *argv[] )
     imageDir += '/';
 
     std::vector<TransformType::Pointer > transforms;
-    AffineType::Pointer identity = AffineType::New();
     std::vector<std::string> imageFileNames;
     std::vector<std::string> segmentationFileNames;
     itk::MABMISAtlas* atlas = nullptr;
@@ -255,21 +258,24 @@ int main( int argc, char *argv[] )
           }
         }
 
-      if (atlas->m_AtlasDirectory[0] == '.') //relative path
+      const std::string& atlDir = atlas->m_AtlasDirectory;
+      if (atlDir.size() > 2 && atlDir[0] == '.' && (atlDir[1] == '\\' || atlDir[1] == '/'))
         {
-        imageDir = itksys::SystemTools::GetParentDirectory(atlasTreeXML)
+        listDir = itksys::SystemTools::GetParentDirectory(atlasTreeXML)
               + atlas->m_AtlasDirectory.substr(1) + '/';
         }
       else
         {
-        imageDir = atlas->m_AtlasDirectory + '/';
+        listDir = atlas->m_AtlasDirectory + '/';
         }
-      rootFilename = imageDir + rootFilename;
+      atlas->m_AtlasDirectory = listDir;
+      rootFilename = listDir + rootFilename;
 
       if (mode == "(re)train atlas")
         {
         std::cout << "Re-training the atlas: " << atlasTreeXML << std::endl;
-        for (unsigned i = 0; i < atlas->m_NumberAllAtlases; i++)
+        imageDir = listDir; //new images should be put into the old atlas directory too
+        for (unsigned i = 0; i < atlas->m_NumberAllAtlases - atlas->m_NumberSimulatedAtlases; i++)
           {
           miData.m_ImageFileNames.push_back(atlas->m_AtlasFilenames[i]);
           imageFileNames.push_back(imageDir + atlas->m_AtlasFilenames[i]);
@@ -290,7 +296,7 @@ int main( int argc, char *argv[] )
         std::cout << "Initial creation of the atlas: " << atlasTreeXML << std::endl;
         }
       }
-    miData.m_NumberImageData = miData.m_ImageFileNames.size();
+    unsigned numberOfPreExistingImages = miData.m_ImageFileNames.size();
 
     //check which parameters are present
     std::vector<std::string> transformFileNames;
@@ -307,17 +313,17 @@ int main( int argc, char *argv[] )
 
     //fill miData and read array of transforms
     itk::TransformFileReader::Pointer transformReader = itk::TransformFileReader::New();
-    for (unsigned i = miData.m_NumberImageData; i < imageFileNames.size(); i++)
+    for (unsigned i = numberOfPreExistingImages; i < imageFileNames.size(); i++)
       {
       miData.m_ImageFileNames.push_back("image" + std::to_string(i) + extension);
       miData.m_SegmentationFileNames.push_back("image" + std::to_string(i) + std::string("-label") + extension);
-      if (transformFileNames[i].empty())
+      if (transformFileNames[i - numberOfPreExistingImages].empty())
         {
         transforms.push_back(identity.GetPointer());
         }
       else
         {
-        transformReader->SetFileName(transformFileNames[i]);
+        transformReader->SetFileName(transformFileNames[i - numberOfPreExistingImages]);
         transformReader->Update();
         if (transformReader->GetTransformList()->size() > 1)
           {
@@ -334,7 +340,7 @@ int main( int argc, char *argv[] )
         }
       }
     miData.m_NumberImageData = miData.m_ImageFileNames.size();
-    if (miData.m_NumberImageData == 0 || atlas && atlas->m_AtlasFilenames.size() == miData.m_NumberImageData)
+    if (miData.m_NumberImageData == 0 || (atlas && atlas->m_AtlasFilenames.size() == miData.m_NumberImageData))
       {
       itkGenericExceptionMacro("Some images have to be provided");
       }
@@ -356,7 +362,6 @@ int main( int argc, char *argv[] )
       }
 
     resampleOrCopy(rootFilename, imageDir, imageFileNames, miData.m_ImageFileNames, transforms, 3);
-    //execute the requested operation
     if (mode == "Create imageXML" || imageListXMLArg.isSet())
       {
       itk::MABMISImageDataXMLFileWriter::Pointer miWriter =
@@ -365,17 +370,45 @@ int main( int argc, char *argv[] )
       miWriter->SetFilename(imageListXML);
       miWriter->WriteFile();
       }
+    //set path after the xml file is written, so xml uses relative paths
+    miData.m_DataDirectory = imageDir;
+    miData.m_OutputDirectory = imageDir;
+
     if (mode == "Direct invoke")
       {
       Testing(&miData, atlas, iterations, sigma);
+
+      //inverse the transforms and resample the segmentations back into original image grids
+      for (unsigned i = numberOfPreExistingImages; i < segmentationFileNames.size(); i++)
+        {
+        std::string segDir = itksys::SystemTools::GetParentDirectory(segmentationFileNames[i]);
+        itksys::SystemTools::MakeDirectory(segDir);
+
+        TransformType::Pointer invT = transforms[i]->GetInverseTransform();
+        if (!invT) //not possible to invert
+          {
+          invT = identity;
+          std::cerr << "It was not possible to invert tranform " << transformFileNames[i] << std::endl;
+          std::cerr << "Resampling segmentation back using identity transform" << std::endl;
+          }
+
+        typedef itk::Image<short, 3> ShortImageType;
+        itk::ImageFileReader<ShortImageType>::Pointer imageReader =
+            itk::ImageFileReader<ShortImageType>::New();
+        imageReader->SetFileName(imageFileNames[i]);
+        imageReader->UpdateOutputInformation();
+        ShortImageType::Pointer inImage = imageReader->GetOutput();
+
+        resampleAndWrite(imageDir + miData.m_SegmentationFileNames[i], segmentationFileNames[i],
+            inImage->GetLargestPossibleRegion(), inImage->GetOrigin(),
+            inImage->GetSpacing(), inImage->GetDirection(), invT,
+            0, itk::ImageIOBase::SHORT);
+        }
       }
     if (mode == "(re)train atlas")
       {
       //segmentations are now inputs which accompany the images, and need to be transformed the same way
       resampleOrCopy(rootFilename, imageDir, segmentationFileNames, miData.m_SegmentationFileNames, transforms, 0);
-
-      miData.m_DataDirectory = imageDir;
-      miData.m_OutputDirectory = imageDir;
       Training(&miData, atlasTreeXML, iterations, sigma);
       }
     }

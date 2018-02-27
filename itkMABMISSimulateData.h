@@ -89,7 +89,7 @@ private:
 protected:
   MABMISSimulateData();
   ~MABMISSimulateData();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

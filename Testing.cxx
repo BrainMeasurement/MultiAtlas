@@ -300,17 +300,6 @@ int Testing(itk::MABMISImageData* imageData, itk::MABMISAtlas* atlasTree,
         if( !copied )
           {
           std::string segHdr_save = GetDefaultSegmentationFilename(imageData, n, "");
-
-          const size_t dir_sep = segHdr_save.find_last_of(FILESEP);
-          if( dir_sep != std::string::npos )
-            {
-            segHdr_save = imageData->m_OutputDirectory + segHdr_save.substr(dir_sep + 1, std::string::npos);
-            }
-          else
-            {
-            segHdr_save = imageData->m_OutputDirectory + segHdr_save;
-            }
-
           itksys::SystemTools::CopyFileAlways(segHdr.c_str(), segHdr_save.c_str());
           std::cout << "Segmentation " << i_str << ": " + segHdr_save << std::endl;
           copied = true;

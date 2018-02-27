@@ -36,18 +36,7 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
   int retVal;
   if( itksys::SystemTools::FileExists(filename.c_str(), true) )
     {
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    std::ostringstream oss(std::ostringstream::out);
-    oss << "del /F " << filename << std::endl;
-    // std::cerr << oss.str().c_str();
-    retVal = system(oss.str().c_str());
-#else
-    std::ostringstream oss(std::ostringstream::out);
-    oss << "rm -f " << filename << std::endl;
-    // std::cerr << oss.str().c_str();
-    retVal = system(oss.str().c_str());
-#endif
-    if (retVal)
+    if (!itksys::SystemTools::RemoveFile(filename))
       {
       std::cout << " Error deleting " << filename << std::endl;
       }
