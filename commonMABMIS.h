@@ -2,7 +2,6 @@
 #define __commonMABMIS_h
 
 // for math
-#include <vcl_iostream.h>
 #include <vnl/vnl_random.h>
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
