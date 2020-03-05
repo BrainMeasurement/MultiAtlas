@@ -427,7 +427,7 @@ int RegistrationBetweenRootandAtlases(int root, std::vector<std::string> imageFi
     // ---------------------------------------------------------------------
     // ------------- Generate the inverse deformation field
 
-    DeformationFieldType::Pointer deformationField = 0;
+    DeformationFieldType::Pointer deformationField = nullptr;
     dfoperator->ReadDeformationField(deformationFieldFileName, deformationField);
 
     DeformationFieldType::Pointer inversedDeformationField = DeformationFieldType::New();
@@ -547,7 +547,7 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     simulateTemplateFileNames.push_back(simulateTemplateFileName);
 
     // load simulated deformation field
-    DeformationFieldType::Pointer df = 0;
+    DeformationFieldType::Pointer df = nullptr;
     dfoperator->ReadDeformationField(simulateDeformationFieldFileNames[i], df);
 
     DeformationFieldType::Pointer invdf = DeformationFieldType::New();
@@ -558,10 +558,10 @@ std::vector<std::string> GenerateSimulatedData(int root, std::vector<std::string
     invdf->Allocate();
 
     dfoperator->InverseDeformationField3D(df, invdf);
-    InternalImageType::Pointer rootImg = 0;
+    InternalImageType::Pointer rootImg = nullptr;
     imgoperator->ReadImage(imageFiles[root], rootImg);
     const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(imageFiles[root]);
-    InternalImageType::Pointer simImg = 0;
+    InternalImageType::Pointer simImg = nullptr;
     dfoperator->ApplyDeformationField(rootImg, invdf, simImg, true);
     imgoperator->WriteImage(simulateTemplateFileNames[i], simImg, ioType);
     }

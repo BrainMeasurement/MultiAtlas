@@ -320,13 +320,13 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
   // warpedImg(after histogram matching), warpedSeg (after warping)
 
   // cur sample image pointer
-  InternalImageType::Pointer curSampleImgPtr = 0;
+  InternalImageType::Pointer curSampleImgPtr = nullptr;
 
   imgoperator->ReadImage(curSampleImgName, curSampleImgPtr);
   const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(curSampleImgName);
 
   // output sample label image pointer
-  InternalImageType::Pointer outSampleSegPtr = 0;
+  InternalImageType::Pointer outSampleSegPtr = nullptr;
   imgoperator->ReadImage(curSampleImgName, outSampleSegPtr);
 
   // atlas related images pointers
@@ -338,16 +338,16 @@ void LabelFusion(std::string curSampleImgName, std::string outSampleSegName, std
     {
     // histogram match each warped atlas to the current sample
     warpedImgPtrs[i] = 0;
-    InternalImageType::Pointer curWarpedAtlasPtr = 0;
+    InternalImageType::Pointer curWarpedAtlasPtr = nullptr;
     imgoperator->ReadImage(allWarpedAtlasImgNames[i], curWarpedAtlasPtr);
     HistogramMatching(curWarpedAtlasPtr, curSampleImgPtr, warpedImgPtrs[i]);
 
     // load each deformation field
-    DeformationFieldType::Pointer deformFieldPtr = 0;
+    DeformationFieldType::Pointer deformFieldPtr = nullptr;
     dfoperator->ReadDeformationField(allDeformationFieldNames[i], deformFieldPtr);
 
     // warp each atlas label image to the current sample space
-    InternalImageType::Pointer curAtlasSegPtr = 0;
+    InternalImageType::Pointer curAtlasSegPtr = nullptr;
     imgoperator->ReadImage(allAtlasSegNames[i], curAtlasSegPtr);
     dfoperator->ApplyDeformationField(curAtlasSegPtr, deformFieldPtr, warpedSegPtrs[i], false);
     }
@@ -941,7 +941,7 @@ void RegistrationOntoTreeRoot(vnl_vector<int> itree,          // the incremental
       }
 
     // reverse deformation field
-    DeformationFieldType::Pointer deformationField = 0;
+    DeformationFieldType::Pointer deformationField = nullptr;
     dfoperator->ReadDeformationField(deformationFileName, deformationField);
 
     DeformationFieldType::Pointer inversedDeformationField = DeformationFieldType::New();

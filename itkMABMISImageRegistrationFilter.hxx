@@ -188,7 +188,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 {
   int res = iterInResolutions.size();
   // read initial deformation field file
-  DeformationFieldType::Pointer initDeformationField = 0;
+  DeformationFieldType::Pointer initDeformationField = nullptr;
 
   dfoperator->ReadDeformationField(initDeformationFieldFileName, initDeformationField);
 

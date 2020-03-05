@@ -70,7 +70,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   ///////////////////////////////////////
   // initialize
 
-  DeformationFieldType::Pointer curDeformationField = 0;
+  DeformationFieldType::Pointer curDeformationField = nullptr;
 
   dfoperator->ReadDeformationField(deformationFieldFileNames[0], curDeformationField);
 
@@ -194,7 +194,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
     const int numAllCombinations = (int)pow( (float)numSampleEachDirection, numEigenVector);
 
     // template image: the root of the tree
-    InternalImageType::Pointer templateImage = 0;
+    InternalImageType::Pointer templateImage = nullptr;
     if( imgoperator->ReadImage(allImgFileName[root], templateImage) != 0 )
       {
       std::cerr << " Cannot read image: " << allImgFileName[root] << std::endl;
@@ -275,7 +275,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       intermediateReversedDeformationFieldFileName = tempFolder + FILESEP
         + intermediateReversedDeformationFieldFileName;
 
-      DeformationFieldType::Pointer deformationField = 0;
+      DeformationFieldType::Pointer deformationField = nullptr;
       if( dfoperator->ReadDeformationField(intermediateDeformationFieldFileName, deformationField) != 0 )
         {
         std::cerr << " Cannot read deformation field: " << intermediateDeformationFieldFileName << std::endl;
@@ -293,7 +293,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       dfoperator->WriteDeformationField(intermediateReversedDeformationFieldFileName, reversedDeformationField);
 
       // apply intermediate deformation field to get intermediate template
-      InternalImageType::Pointer intermediateTemplateImage = 0;
+      InternalImageType::Pointer intermediateTemplateImage = nullptr;
       dfoperator->ApplyDeformationField(templateImage, reversedDeformationField, intermediateTemplateImage, true);
       // write image
       imgoperator->WriteImage(intermediateTemplateFileName, intermediateTemplateImage, ioType);
