@@ -223,7 +223,7 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   /////////////////////////////////////////////
   // rebuild the distance matrix based on connectivity on MST
   vnl_matrix<double> curDistanceTemp(nnode, nnode);
-  static const double       big_number = vcl_sqrt(itk::NumericTraits< double >::max());
+  static const double       big_number = std::sqrt(itk::NumericTraits< double >::max());
   for( int i = 0; i < nnode; ++i )
     {
     for( int j = 0; j < nnode; ++j )
