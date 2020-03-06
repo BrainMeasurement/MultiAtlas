@@ -36,6 +36,7 @@ constexpr unsigned int ImageDimension = 3;
 // interpolator
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkNearestNeighborExtrapolateImageFunction.h"
 
 // filter
 #include "itkResampleImageFilter.h"

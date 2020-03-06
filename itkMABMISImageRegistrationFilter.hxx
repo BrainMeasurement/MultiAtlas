@@ -112,12 +112,14 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
       InternalImageType, InternalImageType, DeformationFieldType, InternalPixelType>   MultiResRegistrationFilterType;
   MultiResRegistrationFilterType::Pointer multires = MultiResRegistrationFilterType::New();
 
-  typedef itk::VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<DeformationFieldType,
-                                                                              double> FieldInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationFieldType, double> FieldInterpolatorType;
+  typedef itk::NearestNeighborExtrapolateImageFunction<DeformationFieldType, double> FieldExtrapolatorType;
 
   FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
+  FieldExtrapolatorType::Pointer VectorExtrapolator = FieldExtrapolatorType::New();
 
   multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
+  multires->GetFieldExpander()->SetExtrapolator(VectorExtrapolator);
   std::vector<unsigned int> curNumIterations;
   for( int i = 0; i < res; ++i )
     {
@@ -260,14 +262,14 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
       InternalImageType, InternalImageType, DeformationFieldType, InternalPixelType>   MultiResRegistrationFilterType;
   MultiResRegistrationFilterType::Pointer multires = MultiResRegistrationFilterType::New();
 
-  typedef itk::VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<DeformationFieldType,
-                                                                              double> FieldInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationFieldType, double> FieldInterpolatorType;
+  typedef itk::NearestNeighborExtrapolateImageFunction<DeformationFieldType, double> FieldExtrapolatorType;
 
   FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
+  FieldExtrapolatorType::Pointer VectorExtrapolator = FieldExtrapolatorType::New();
 
-#if ( ITK_VERSION_MAJOR > 3 ) || ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8 )
   multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-#endif
+  multires->GetFieldExpander()->SetExtrapolator(VectorExtrapolator);
   std::vector<unsigned int> curNumIterations;
   // unsigned int curNumOfIterations[] = {15,10,5};
   for( int i = 0; i < res; ++i )
