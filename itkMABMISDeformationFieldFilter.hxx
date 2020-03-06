@@ -213,7 +213,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   ry = sampleRate;
   rz = sampleRate;
 
-  DeformationFieldType::Pointer originImage = 0;
+  DeformationFieldType::Pointer originImage = nullptr;
 
   ReadDeformationField(deformationFieldFileName, originImage);
 
@@ -378,7 +378,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   ry = sampleRate;
   rz = sampleRate;
 
-  DeformationFieldType::Pointer originImage = 0;
+  DeformationFieldType::Pointer originImage = nullptr;
 
   ReadDeformationField(deformationFieldFileName, originImage);
 

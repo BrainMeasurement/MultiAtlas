@@ -463,7 +463,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 ::LoadIntoArray(const std::string& resampledDeformationFieldFileName, float* df_vector)
 {
   // read deformation field and load it into array
-  DeformationFieldType::Pointer dfImage = 0;
+  DeformationFieldType::Pointer dfImage = nullptr;
 
   dfoperator->ReadDeformationField(resampledDeformationFieldFileName, dfImage);
 
