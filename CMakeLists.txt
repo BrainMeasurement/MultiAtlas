@@ -19,6 +19,8 @@ set(MABMIS_ITK_COMPONENTS
   ITKIOXML
   ITKImageGrid
   ITKImageFunction
+  ITKPDEDeformableRegistration
+  ITKSmoothing
   )
 find_package(ITK 4.6 COMPONENTS ${MABMIS_ITK_COMPONENTS} REQUIRED)
 set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
