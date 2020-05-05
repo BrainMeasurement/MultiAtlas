@@ -4,10 +4,10 @@
 <DataPath></DataPath>
 <NumberOfImageData>4</NumberOfImageData>
 <ImageDataSets>
-<Dataset ImageFile="UA_cbq_000.nii.gz"/>
-<Dataset ImageFile="UB_cbq_000.nii.gz"/>
-<Dataset ImageFile="VA_cbq_000.nii.gz"/>
-<Dataset ImageFile="VB_cbq_000.nii.gz"/>
+<Dataset ImageFile="UA_cbq_000.nii.gz" SegmentationFile="UA_cbq_000_seg.nii.gz"/>
+<Dataset ImageFile="UB_cbq_000.nii.gz" SegmentationFile="UB_cbq_000_seg.nii.gz"/>
+<Dataset ImageFile="VA_cbq_000.nii.gz" SegmentationFile="VA_cbq_000_seg.nii.gz"/>
+<Dataset ImageFile="VB_cbq_000.nii.gz" SegmentationFile="VB_cbq_000_seg.nii.gz"/>
 </ImageDataSets>
 
 </MABMISImageData>

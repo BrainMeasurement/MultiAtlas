@@ -85,12 +85,12 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
   // float sigmaDef = 1.5;
   if( sigmaDef > 0.1 )
     {
-    filter->SmoothDeformationFieldOn();
+    filter->SmoothDisplacementFieldOn();
     filter->SetStandardDeviations( sigmaDef );
     }
   else
     {
-    filter->SmoothDeformationFieldOff();
+    filter->SmoothDisplacementFieldOff();
     }
 
   // set up smoothing kernel for update field
@@ -112,16 +112,15 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
       InternalImageType, InternalImageType, DeformationFieldType, InternalPixelType>   MultiResRegistrationFilterType;
   MultiResRegistrationFilterType::Pointer multires = MultiResRegistrationFilterType::New();
 
-  typedef itk::VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<DeformationFieldType,
-                                                                              double> FieldInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationFieldType, double> FieldInterpolatorType;
+  typedef itk::NearestNeighborExtrapolateImageFunction<DeformationFieldType, double> FieldExtrapolatorType;
 
   FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
+  FieldExtrapolatorType::Pointer VectorExtrapolator = FieldExtrapolatorType::New();
 
-#if ( ITK_VERSION_MAJOR > 3 ) || ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8 )
   multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-#endif
+  multires->GetFieldExpander()->SetExtrapolator(VectorExtrapolator);
   std::vector<unsigned int> curNumIterations;
-  // unsigned int curNumOfIterations[] = {15,10,5};
   for( int i = 0; i < res; ++i )
     {
     curNumIterations.push_back(iterInResolutions[i]);
@@ -191,7 +190,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
 {
   int res = iterInResolutions.size();
   // read initial deformation field file
-  DeformationFieldType::Pointer initDeformationField = 0;
+  DeformationFieldType::Pointer initDeformationField = nullptr;
 
   dfoperator->ReadDeformationField(initDeformationFieldFileName, initDeformationField);
 
@@ -236,12 +235,12 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
   // float sigmaDef = 1.5;
   if( sigmaDef > 0.1 )
     {
-    filter->SmoothDeformationFieldOn();
+    filter->SmoothDisplacementFieldOn();
     filter->SetStandardDeviations( sigmaDef );
     }
   else
     {
-    filter->SmoothDeformationFieldOff();
+    filter->SmoothDisplacementFieldOff();
     }
 
   // set up smoothing kernel for update field
@@ -263,14 +262,14 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
       InternalImageType, InternalImageType, DeformationFieldType, InternalPixelType>   MultiResRegistrationFilterType;
   MultiResRegistrationFilterType::Pointer multires = MultiResRegistrationFilterType::New();
 
-  typedef itk::VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<DeformationFieldType,
-                                                                              double> FieldInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction<DeformationFieldType, double> FieldInterpolatorType;
+  typedef itk::NearestNeighborExtrapolateImageFunction<DeformationFieldType, double> FieldExtrapolatorType;
 
   FieldInterpolatorType::Pointer VectorInterpolator = FieldInterpolatorType::New();
+  FieldExtrapolatorType::Pointer VectorExtrapolator = FieldExtrapolatorType::New();
 
-#if ( ITK_VERSION_MAJOR > 3 ) || ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8 )
   multires->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-#endif
+  multires->GetFieldExpander()->SetExtrapolator(VectorExtrapolator);
   std::vector<unsigned int> curNumIterations;
   // unsigned int curNumOfIterations[] = {15,10,5};
   for( int i = 0; i < res; ++i )
@@ -292,7 +291,7 @@ MABMISImageRegistrationFilter<TInputImage, TOutputImage>
     }
 
   // set initial
-  multires->SetArbitraryInitialDeformationField( initDeformationField );
+  multires->SetArbitraryInitialDisplacementField( initDeformationField );
 
   // Compute the deformation field
   try

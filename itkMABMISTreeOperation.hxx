@@ -2,6 +2,7 @@
 #define __itkMABMISTreeOperation_hxx
 
 #include "itkMABMISTreeOperation.h"
+#include <iomanip>
 
 namespace itk
 {
@@ -222,7 +223,7 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   /////////////////////////////////////////////
   // rebuild the distance matrix based on connectivity on MST
   vnl_matrix<double> curDistanceTemp(nnode, nnode);
-  static const double       big_number = vcl_sqrt(itk::NumericTraits< double >::max());
+  static const double       big_number = std::sqrt(itk::NumericTraits< double >::max());
   for( int i = 0; i < nnode; ++i )
     {
     for( int j = 0; j < nnode; ++j )
@@ -382,7 +383,7 @@ MABMISTreeOperation<TInputImage, TOutputImage>
   // rebuild the distance matrix based on connectivity on MST
 
   double* *    curDistanceTemp = new double *[nnode];
-  static const double big_number = vcl_sqrt(itk::NumericTraits< double >::max());
+  static const double big_number = std::sqrt(itk::NumericTraits< double >::max());
   for( int i = 0; i < nnode; ++i )
     {
     curDistanceTemp[i] = new double[nnode];

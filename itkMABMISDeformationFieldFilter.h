@@ -1,14 +1,8 @@
 #ifndef __itkMABMISDeformationFieldFilter_h
 #define __itkMABMISDeformationFieldFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
+#include "commonMABMIS.h"
 
-#include <itkImageFileReader.h>
-#include <itkImageFileWriter.h>
-#include <itkImageRegionIterator.h>
-
-#include "itkImage.h"
 #include "itkWarpImageFilter.h"
 #include "itkAddImageFilter.h"
 #include "itkDivideImageFilter.h"
@@ -20,8 +14,6 @@
 
 #include "itkMABMISImageOperationFilter.h"
 #include "itkWarpVectorImageFilter.h"
-
-#define ImageDimension 3
 
 namespace itk
 {
@@ -107,9 +99,6 @@ public:
   void ApplyDeformationField(InternalImageType::Pointer movingImage, DeformationFieldType::Pointer deformationField,
                              InternalImageType::Pointer & deformedImage, bool isLinearInterpolator);
 
-  void ApplyDeformationFieldAndWriteWithFileNames(std::string movingImageName, std::string deformationFieldFileName,
-                                                  std::string deformedImageName, bool isLinearInterpolator);
-
   void ApplyDeformationFieldAndWriteWithTypeWithFileNames(std::string  movingImageFileName,
                                                           std::string deformationFieldFileName,
                                                           std::string deformedImageFileName, bool isLinear);
@@ -124,8 +113,7 @@ public:
   itkSetMacro(Imy, int);
   itkSetMacro(Imz, int);
 private:
-  MABMISDeformationFieldFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);               // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISDeformationFieldFilter);
 
   int m_Imx;
   int m_Imy;
@@ -133,7 +121,7 @@ private:
 protected:
   MABMISDeformationFieldFilter();
   ~MABMISDeformationFieldFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

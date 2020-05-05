@@ -1,20 +1,13 @@
 #ifndef __itkMABMISTreeOperation_h
 #define __itkMABMISTreeOperation_h
 
-#include <itkImage.h>
 #include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
 
-#include <itkImage.h>
-
+#include "commonMABMIS.h"
 #include "itkMABMISDeformationFieldFilter.h"
 #include "itkMABMISImageOperationFilter.h"
 #include "itkMABMISBasicOperationFilter.h"
-
-#define ImageDimension 3
 
 namespace itk
 {
@@ -100,8 +93,7 @@ public:
   itkSetMacro(SimulateSize, int);
   itkSetMacro(AllAtlasNumber, int);
 private:
-  MABMISTreeOperation(const Self &); // purposely not implemented
-  void operator=(const Self &);      // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISTreeOperation);
 
   int m_Root;
 
@@ -117,7 +109,7 @@ private:
 protected:
   MABMISTreeOperation();
   ~MABMISTreeOperation();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

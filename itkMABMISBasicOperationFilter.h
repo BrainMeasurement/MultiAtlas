@@ -1,14 +1,7 @@
 #ifndef __itkMABMISBasicOperationFilter_h
 #define __itkMABMISBasicOperationFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
-
-#define ImageDimension 3
+#include "commonMABMIS.h"
 
 namespace itk
 {
@@ -37,18 +30,18 @@ public:
 
   void bubbleSort(double* arr, int* index, int n);
 
-  void myitoa(int num, std::string& str, int digit);
+  //convert integer into string, enforcing a minimum of number of digits by adding leading zeroes
+  std::string myitoa(int number, int digits);
 
   void SaveMatrix2File(vnl_matrix<double> matrix, int iSize, int jSize, std::string martixFileName);
 
 private:
-  MABMISBasicOperationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISBasicOperationFilter);
 
 protected:
   MABMISBasicOperationFilter();
   ~MABMISBasicOperationFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

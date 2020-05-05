@@ -5,12 +5,6 @@
 #include <string>
 #include <vector>
 
-#ifdef _WIN32
-static const char FILESEP = '\\';
-#else
-static const char FILESEP = '/';
-#endif
-
 namespace itk
 {
 class MABMISImageData
@@ -18,7 +12,7 @@ class MABMISImageData
 public:
   std::string              m_DataDirectory;
   std::string              m_OutputDirectory;
-  int                      m_NumberImageData;
+  unsigned                 m_NumberImageData;
   std::vector<std::string> m_ImageFileNames;
   std::vector<std::string> m_SegmentationFileNames;
 
@@ -32,7 +26,7 @@ public:
   }
   ~MABMISImageData()
   {
-  };
+  }
 };
 
 class MABMISAtlas
@@ -40,8 +34,8 @@ class MABMISAtlas
 public:
   std::string m_AtlasDirectory;
 
-  int                      m_NumberAllAtlases;
-  int                      m_NumberSimulatedAtlases;
+  unsigned                 m_NumberAllAtlases;
+  unsigned                 m_NumberSimulatedAtlases;
   std::vector<std::string> m_AtlasFilenames;
   std::vector<std::string> m_AtlasSegmentationFilenames;
 
@@ -51,7 +45,7 @@ public:
   std::vector<int> m_SimulatedImageIDs;
 
   std::vector<int> m_Tree;
-  int              m_TreeSize;
+  unsigned int     m_TreeSize;
   int              m_TreeRoot;
   int              m_TreeHeight;
 
@@ -65,14 +59,14 @@ public:
     m_TreeSize = 0;
     m_TreeRoot = -1;
     m_TreeHeight = 0;
-  };
+  }
   ~MABMISAtlas()
   {
-  };
+  }
 };
 
 class MABMISImageDataXMLFileReader :
-  public         XMLReader<MABMISImageData>
+  public XMLReader<MABMISImageData>
 {
 public:
   /** Standard typedefs */
@@ -87,7 +81,7 @@ public:
   itkNewMacro(Self);
 public:
   /** Determine if a file can be read */
-  virtual int CanReadFile(const char *name);
+  int CanReadFile(const char *name) ITK_OVERRIDE;
 
 protected:
   MABMISImageDataXMLFileReader()
@@ -95,32 +89,62 @@ protected:
     m_OutputObject = new itk::MABMISImageData;
     m_ImageCount = 0;
     m_ImageData = 0;
-  };
+  }
   virtual ~MABMISImageDataXMLFileReader()
   {
-  };
+  }
 
-  virtual void StartElement(const char *name, const char * *atts);
+  void StartElement(const char *name, const char * *atts) ITK_OVERRIDE;
 
-  virtual void EndElement(const char *name);
+  void EndElement(const char *name) ITK_OVERRIDE;
 
-  virtual void CharacterDataHandler(const char *inData, int inLength);
+  void CharacterDataHandler(const char *inData, int inLength) ITK_OVERRIDE;
 
 private:
-  MABMISImageDataXMLFileReader(const Self &);       // purposely not
-  // implemented
-  void operator=(const Self &);                         // purposely not
-
-  // implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageDataXMLFileReader);
 
   MABMISImageData* m_ImageData;
   std::string      m_CurCharacterData;
 
-  int m_ImageCount;
+  unsigned m_ImageCount;
+};
+
+class MABMISImageDataXMLFileWriter :
+  public XMLWriterBase<MABMISImageData>
+{
+public:
+  /** standard typedefs */
+  typedef XMLWriterBase<MABMISImageData> Superclass;
+  typedef MABMISImageDataXMLFileWriter   Self;
+  typedef SmartPointer<Self>             Pointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(MABMISImageDataXMLFileWriter,  XMLWriterBase<MABMISImageData> );
+
+  /** Test whether a file is writable. */
+  int CanWriteFile(const char *name) ITK_OVERRIDE;
+
+  /** Actually write out the file in question */
+  int WriteFile() ITK_OVERRIDE;
+
+protected:
+  MABMISImageDataXMLFileWriter()
+  {
+  }
+
+  virtual ~MABMISImageDataXMLFileWriter()
+  {
+  }
+
+private:
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageDataXMLFileWriter);
 };
 
 class MABMISAtlasXMLFileReader :
-  public         XMLReader<MABMISAtlas>
+  public XMLReader<MABMISAtlas>
 {
 public:
   /** Standard typedefs */
@@ -134,41 +158,37 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  virtual void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
 public:
   /** Determine if a file can be read */
-  virtual int CanReadFile(const char *name);
+  int CanReadFile(const char *name) ITK_OVERRIDE;
 
 protected:
   MABMISAtlasXMLFileReader()
   {
     m_OutputObject = new itk::MABMISAtlas;
     m_Atlas = 0;
-  };
+  }
   virtual ~MABMISAtlasXMLFileReader()
   {
-  };
+  }
 
-  virtual void StartElement(const char *name, const char * *atts);
+  void StartElement(const char *name, const char * *atts) ITK_OVERRIDE;
 
-  virtual void EndElement(const char *name);
+  void EndElement(const char *name) ITK_OVERRIDE;
 
-  virtual void CharacterDataHandler(const char *inData, int inLength);
+  void CharacterDataHandler(const char *inData, int inLength) ITK_OVERRIDE;
 
 private:
-  MABMISAtlasXMLFileReader(const Self &);       // purposely not
-  // implemented
-  void operator=(const Self &);                         // purposely not
-
-  // implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISAtlasXMLFileReader);
 
   MABMISAtlas* m_Atlas;
   std::string  m_CurCharacterData;
 };
 
 class MABMISAtlasXMLFileWriter :
-  public         XMLWriterBase<MABMISAtlas>
+  public XMLWriterBase<MABMISAtlas>
 {
 public:
   /** standard typedefs */
@@ -183,10 +203,10 @@ public:
   itkTypeMacro(MABMISAtlasXMLFileWriter,  XMLWriterBase<MABMISAtlas> );
 
   /** Test whether a file is writable. */
-  virtual int CanWriteFile(const char *name);
+  int CanWriteFile(const char *name) ITK_OVERRIDE;
 
   /** Actually write out the file in question */
-  virtual int WriteFile();
+  int WriteFile() ITK_OVERRIDE;
 
 protected:
   MABMISAtlasXMLFileWriter()
@@ -198,11 +218,7 @@ protected:
   }
 
 private:
-  MABMISAtlasXMLFileWriter(const Self &); // purposely not
-                                          // implemented
-  void operator=(const Self &);           // purposely not
-
-  // implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISAtlasXMLFileWriter);
 };
 }
 

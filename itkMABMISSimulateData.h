@@ -1,20 +1,11 @@
 #ifndef __itkMABMISSimulateData_h
 #define __itkMABMISSimulateData_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
-
-#include "itkImage.h"
+#include "commonMABMIS.h"
 
 #include "itkMABMISDeformationFieldFilter.h"
 #include "itkMABMISImageOperationFilter.h"
 #include "itkMABMISBasicOperationFilter.h"
-
-#define ImageDimension 3
 
 namespace itk
 {
@@ -71,12 +62,12 @@ public:
   typename ImageOperationType::Pointer imgoperator;
   typename BasicOperationType::Pointer basicoperator;
 
-  int  DoPCATraining(std::vector<std::string> deformationFieldFileNames, int numFiles,
-                     std::vector<std::string> allImgFileName, int root);
+  int DoPCATraining(const std::vector<std::string>& deformationFieldFileNames, int numFiles,
+                    const std::vector<std::string>& allImgFileName, int root);
 
-  void LoadIntoArray(std::string resampledDeformationFieldFileName, float* df_vector);
+  void LoadIntoArray(const std::string& resampledDeformationFieldFileName, float* df_vector);
 
-  void SaveFromArray(std::string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
+  void SaveFromArray(const std::string& deformationFieldFileName, float* df_vector, int sx, int sy, int sz);
 
   itkSetMacro(Root, int);
   itkSetMacro(Imx, int);
@@ -85,8 +76,7 @@ public:
   itkSetMacro(AtlasSize, int);
   itkSetMacro(SimulateSize, int);
 private:
-  MABMISSimulateData(const Self &); // purposely not implemented
-  void operator=(const Self &);     // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISSimulateData);
 
   int m_Root;
 
@@ -99,7 +89,7 @@ private:
 protected:
   MABMISSimulateData();
   ~MABMISSimulateData();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

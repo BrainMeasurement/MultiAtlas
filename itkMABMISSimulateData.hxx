@@ -3,11 +3,7 @@
 
 #include "itkMABMISSimulateData.h"
 
-//For definition of FILESEP
-#include "itkMABMISAtlasXMLFile.h"
-
-int numEigenVector = 4;         // t
-int numSampleEachDirection = 4; // n  n^t total number of intermediate templates
+constexpr int numSampleEachDirection = 4; // n  n^numEigenVector total number of intermediate templates
 
 namespace itk
 {
@@ -39,8 +35,8 @@ MABMISSimulateData<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 int
 MABMISSimulateData<TInputImage, TOutputImage>
-::DoPCATraining(std::vector<std::string> deformationFieldFileNames, int numFiles,
-                std::vector<std::string> allImgFileName, int root)
+::DoPCATraining(const std::vector<std::string>& deformationFieldFileNames, int numFiles,
+                const std::vector<std::string>& allImgFileName, int root)
 {
   bool doPCATraining = true;
   int  sampleRate = 2;
@@ -48,8 +44,9 @@ MABMISSimulateData<TInputImage, TOutputImage>
   int  size_x = 0; int size_y = 0; int size_z = 0;
   int  size_xn = 0; int size_yn = 0; int size_zn = 0;
   int  size_dfn = 0; // size of sub-sampled deformation field
+  int numEigenVector = 4;
 
-  float c4[] = {-0.8416, -0.2533, 0.2533, 0.8416};
+  float c4[] = {-0.8416f, -0.2533f, 0.2533f, 0.8416f};
 
   float* c = NULL;
 
@@ -73,7 +70,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   ///////////////////////////////////////
   // initialize
 
-  DeformationFieldType::Pointer curDeformationField = 0;
+  DeformationFieldType::Pointer curDeformationField = nullptr;
 
   dfoperator->ReadDeformationField(deformationFieldFileNames[0], curDeformationField);
 
@@ -92,7 +89,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
   // do PCA training
   ////////////////////////////////////////
   // std::cerr << "Resample deformation fields ..." << std::endl;
-  if (numEigenVector > numFiles) numEigenVector = numFiles; 
+  if (numEigenVector > numFiles) numEigenVector = numFiles;
   vnl_matrix<float> df_eigenvector(size_dfn, numEigenVector);
   vnl_vector<float> df_eigenvalues(numEigenVector);
   ////////////////////////////////////////
@@ -171,13 +168,13 @@ MABMISSimulateData<TInputImage, TOutputImage>
 
   // for debugging
   // cerr << "Pass: PCA" << std::endl;
-  
+
 
   // make a temporary folder to store the intermediate files
   std::string tempFolder = "temp_PCATraining";
   char        numStr[10];
   int         num = rand() % 10000;
-  num = rand() % 10000; 
+  num = rand() % 10000;
   sprintf(numStr, "%04d", num);
   tempFolder = tempFolder + numStr;
 
@@ -191,19 +188,20 @@ MABMISSimulateData<TInputImage, TOutputImage>
     outputFolder = allImgFileName[0].substr(0, sep);
     }
 
-  if( 1 ) // if (0) // if (1)
+  if( 1 ) // if (0)
     {
     std::vector<int> coeff(numEigenVector,0);
     const int numAllCombinations = (int)pow( (float)numSampleEachDirection, numEigenVector);
 
     // template image: the root of the tree
-    InternalImageType::Pointer templateImage = 0;
+    InternalImageType::Pointer templateImage = nullptr;
     if( imgoperator->ReadImage(allImgFileName[root], templateImage) != 0 )
       {
       std::cerr << " Cannot read image: " << allImgFileName[root] << std::endl;
       std::cerr << "Please verify the file exists. " << std::endl;
       return -1;
       }
+    const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(allImgFileName[root]);
 
     std::cout << "Generate intermediate deformations from PCA results... " << std::endl;
     for( int i = 0; i < numAllCombinations; ++i )
@@ -232,7 +230,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
         df_intermediate_sub += c[coeff[j]] * df_eigenvector.get_column(j);
         }
 
-      std::string index_string;    basicoperator->myitoa( i, index_string, 3 );
+      std::string index_string = basicoperator->myitoa(i, 3);
       std::string intermediateSubDeformationFieldFileName = "inter_deform_sub_000.nii.gz";
       intermediateSubDeformationFieldFileName.erase(
         intermediateSubDeformationFieldFileName.end() - 7, intermediateSubDeformationFieldFileName.end() );
@@ -277,7 +275,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
       intermediateReversedDeformationFieldFileName = tempFolder + FILESEP
         + intermediateReversedDeformationFieldFileName;
 
-      DeformationFieldType::Pointer deformationField = 0;
+      DeformationFieldType::Pointer deformationField = nullptr;
       if( dfoperator->ReadDeformationField(intermediateDeformationFieldFileName, deformationField) != 0 )
         {
         std::cerr << " Cannot read deformation field: " << intermediateDeformationFieldFileName << std::endl;
@@ -295,10 +293,10 @@ MABMISSimulateData<TInputImage, TOutputImage>
       dfoperator->WriteDeformationField(intermediateReversedDeformationFieldFileName, reversedDeformationField);
 
       // apply intermediate deformation field to get intermediate template
-      InternalImageType::Pointer intermediateTemplateImage = 0;
+      InternalImageType::Pointer intermediateTemplateImage = nullptr;
       dfoperator->ApplyDeformationField(templateImage, reversedDeformationField, intermediateTemplateImage, true);
       // write image
-      imgoperator->WriteImage(intermediateTemplateFileName, intermediateTemplateImage);
+      imgoperator->WriteImage(intermediateTemplateFileName, intermediateTemplateImage, ioType);
 
       // intermediateFileNamesFile << intermediateTemplateFileName << std::endl;
       } // end for numOfAllCombinations
@@ -322,7 +320,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
         {
         for( int j = 0; j < numAllCombinations; ++j )
           {
-          std::string index_string;     basicoperator->myitoa( j, index_string, 3 );
+          std::string index_string = basicoperator->myitoa( j, 3 );
           std::string curInterTempFileName = "inter_template_000.nii.gz";
           curInterTempFileName.erase(curInterTempFileName.end() - 7, curInterTempFileName.end() );
           curInterTempFileName.append(index_string);
@@ -359,14 +357,14 @@ MABMISSimulateData<TInputImage, TOutputImage>
         {
         int index_inter = index[i + (numAllCombinations - m_SimulateSize)];
 
-        std::string index_string2;      basicoperator->myitoa( index_inter, index_string2, 3 );
+        std::string index_string2 = basicoperator->myitoa( index_inter, 3 );
         std::string curInterTempFileName = "inter_deform_000.nii.gz";
         curInterTempFileName.erase(curInterTempFileName.end() - 7, curInterTempFileName.end() );
         curInterTempFileName.append(index_string2);
         curInterTempFileName.append(".nii.gz");
         curInterTempFileName = tempFolder + FILESEP + curInterTempFileName;
 
-        std::string index_string3;    basicoperator->myitoa( i, index_string3, 3 );
+        std::string index_string3 = basicoperator->myitoa( i, 3 );
         std::string outDFName = "simulated_deform_" + index_string3 + ".nii.gz";
         outDFName = outputFolder + FILESEP + outDFName;
 
@@ -384,7 +382,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
         // remove irrelevant files
     for( int i = 0; i < numAllCombinations; ++i )
       {
-      std::string index_string;     basicoperator->myitoa( i, index_string, 3 );
+      std::string index_string = basicoperator->myitoa( i, 3 );
 
       std::string curInterTempFileName = "inter_template_" + index_string + ".nii.gz";
       std::string curInterTempDeformFileName = "inter_deform_" + index_string + ".nii.gz";
@@ -416,7 +414,7 @@ MABMISSimulateData<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISSimulateData<TInputImage, TOutputImage>
-::SaveFromArray(std::string  deformationFieldFileName, float* df_vector, int sx, int sy, int sz)
+::SaveFromArray(const std::string& deformationFieldFileName, float* df_vector, int sx, int sy, int sz)
 {
   std::cerr << "deformationFieldFileName: " << deformationFieldFileName << std::endl;
 
@@ -462,14 +460,12 @@ MABMISSimulateData<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 MABMISSimulateData<TInputImage, TOutputImage>
-::LoadIntoArray(std::string resampledDeformationFieldFileName, float* df_vector)
+::LoadIntoArray(const std::string& resampledDeformationFieldFileName, float* df_vector)
 {
   // read deformation field and load it into array
-  DeformationFieldType::Pointer dfImage = 0;
+  DeformationFieldType::Pointer dfImage = nullptr;
 
   dfoperator->ReadDeformationField(resampledDeformationFieldFileName, dfImage);
-
-  DeformationFieldType::SizeType im_size = dfImage->GetLargestPossibleRegion().GetSize();
 
   // load original image
   DeformationFieldIteratorType itOrigin(dfImage, dfImage->GetLargestPossibleRegion() );

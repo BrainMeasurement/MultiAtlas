@@ -2,6 +2,7 @@
 #define __itkMABMISBasicOperationFilter_hxx
 
 #include "itkMABMISBasicOperationFilter.h"
+#include <iomanip>
 
 namespace itk
 {
@@ -32,20 +33,13 @@ void
 MABMISBasicOperationFilter<TInputImage, TOutputImage>
 ::RemoveFile(std::string filename)
 {
+  int retVal;
   if( itksys::SystemTools::FileExists(filename.c_str(), true) )
     {
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    std::ostringstream oss(std::ostringstream::out);
-    oss << "del /F " << filename << std::endl;
-    // std::cerr << oss.str().c_str();
-    system(oss.str().c_str() );
-
-#else
-    std::ostringstream oss(std::ostringstream::out);
-    oss << "rm -f " << filename << std::endl;
-    // std::cerr << oss.str().c_str();
-    system(oss.str().c_str() );
-#endif
+    if (!itksys::SystemTools::RemoveFile(filename))
+      {
+      std::cout << " Error deleting " << filename << std::endl;
+      }
     }
   return;
 }
@@ -84,26 +78,13 @@ MABMISBasicOperationFilter<TInputImage, TOutputImage>
 }
 
 template <class TInputImage, class TOutputImage>
-void
+std::string
 MABMISBasicOperationFilter<TInputImage, TOutputImage>
-::myitoa(int num, std::string& str, int digit)
+::myitoa(int number, int digits)
 {
-  str = "";
-
-  if( num < 10 )
-    {
-    str.append("00");
-    }
-  else if( num < 100 )
-    {
-    str.append("0");
-    }
-
-  std::stringstream st;
-  st << num;
-  str.append(st.str() );
-
-  return;
+  std::stringstream ss;
+  ss << std::setw(digits) << std::setfill('0') << number;
+  return ss.str();
 }
 
 template <class TInputImage, class TOutputImage>

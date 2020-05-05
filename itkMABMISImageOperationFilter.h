@@ -1,17 +1,10 @@
 #ifndef __itkMABMISImageOperationFilter_h
 #define __itkMABMISImageOperationFilter_h
 
-#include <itkImage.h>
-#include <itkImageToImageFilter.h>
+#include "commonMABMIS.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegionIterator.h"
 #include "itkCastImageFilter.h"
-
-#include "itkImage.h"
-
-#define ImageDimension 3
+#include "itkWarpImageFilter.h"
 
 namespace itk
 {
@@ -42,32 +35,18 @@ public:
   typedef itk::Vector<InternalPixelType, ImageDimension> VectorPixelType;
 
   // basic image type
-  typedef itk::Image<CharPixelType, ImageDimension>     CharImageType;
-  typedef itk::Image<IntPixelType, ImageDimension>      IntImageType;
-  typedef itk::Image<ShortPixelType, ImageDimension>    ShortImageType;
-  typedef itk::Image<FloatPixelType, ImageDimension>    FloatImageType;
   typedef itk::Image<InternalPixelType, ImageDimension> InternalImageType;
   typedef itk::Image<VectorPixelType, ImageDimension>   DeformationFieldType;
 
   // basic iterator type
   typedef itk::ImageRegionIterator<DeformationFieldType> DeformationFieldIteratorType;
   typedef itk::ImageRegionIterator<InternalImageType>    InternalImageIteratorType;
-  typedef itk::ImageRegionIterator<CharImageType>        CharImageIteratorType;
 
   // basic image reader/writer related type
-  typedef itk::ImageFileReader<CharImageType>                     CharImageReaderType;
   typedef itk::ImageFileReader<InternalImageType>                 InternalImageReaderType;
   typedef itk::ImageFileWriter<InternalImageType>                 InternalImageWriterType;
-  typedef itk::CastImageFilter<InternalImageType, CharImageType>  Internal2CharCastFilterType;
-  typedef itk::CastImageFilter<InternalImageType, FloatImageType> Internal2FloatCastFilterType;
-  typedef itk::CastImageFilter<InternalImageType, IntImageType>   Internal2IntCastFilterType;
-  typedef itk::CastImageFilter<InternalImageType, ShortImageType> Internal2ShortCastFilterType;
 
   typedef itk::WarpImageFilter<InternalImageType, InternalImageType, DeformationFieldType> InternalWarpFilterType;
-  typedef itk::ImageFileWriter<CharImageType>                                              CharImageWriterType;
-  typedef itk::ImageFileWriter<IntImageType>                                               IntImageWriterType;
-  typedef itk::ImageFileWriter<FloatImageType>                                             FloatImageWriterType;
-  typedef itk::ImageFileWriter<ShortImageType>                                             ShortImageWriterType;
 
   typedef itk::ImageFileReader<DeformationFieldType> DeformationFieldReaderType;
   typedef itk::ImageFileWriter<DeformationFieldType> DeformationFieldWriterType;
@@ -78,34 +57,31 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(MABMISImageOperationFilter, ImageToImageFilter);
 
-  void PairwiseDistanceAmongImages(std::vector<std::string> imageFileNames, int totalNumber,
+  void PairwiseDistanceAmongImages(const std::vector<std::string>& imageFileNames, int totalNumber,
                                    vnl_matrix<double>& distanceMatrix);
 
-  double calculateDistanceMSD(std::string& filename1, std::string& filename2);
+  double calculateDistanceMSD(const std::string& filename1, const std::string& filename2);
 
-  int ReadImage(std::string filename, InternalImageType::Pointer& image);
+  int ReadImage(const std::string filename, InternalImageType::Pointer& image);
 
-  void WriteImageUCHAR(std::string filename, InternalImageType::Pointer image);
+  itk::ImageIOBase::IOComponentType GetIOPixelType(const std::string& filename);
 
-  void WriteImageINT(std::string filename, InternalImageType::Pointer image);
+  /** Write the image to disk, after casting it the the provided pixel type. */
+  template <class PixelType>
+  int WriteImage(const std::string filename, InternalImageType::Pointer image);
 
-  void WriteImageSHORT(std::string filename, InternalImageType::Pointer image);
+  int WriteImage(const std::string filename, InternalImageType::Pointer image, itk::ImageIOBase::IOComponentType ioType);
 
-  void WriteImageFLOAT(std::string filename, InternalImageType::Pointer image);
-
-  void WriteImage(std::string filename, InternalImageType::Pointer image);
-
-  void WriteImage(std::string filename, InternalImageType::Pointer image, char* outputType);
+  void WriteImage(const std::string filename, InternalImageType::Pointer image, char* outputType);
 
 private:
-  MABMISImageOperationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ITK_DISALLOW_COPY_AND_ASSIGN(MABMISImageOperationFilter);
 
   int m_Root;
 protected:
   MABMISImageOperationFilter();
   ~MABMISImageOperationFilter();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 };
 } // namespace itk
 } // namespace Statistics

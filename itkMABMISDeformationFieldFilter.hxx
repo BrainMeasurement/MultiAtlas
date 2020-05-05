@@ -81,7 +81,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   WarpVectorFilterType::Pointer vectorWarper = WarpVectorFilterType::New();
 
   vectorWarper->SetInput( input );
-  vectorWarper->SetDeformationField( deformationField );
+  vectorWarper->SetDisplacementField( deformationField );
   vectorWarper->SetOutputOrigin(deformationField->GetOrigin() );
   vectorWarper->SetOutputSpacing(deformationField->GetSpacing() );
   vectorWarper->SetOutputDirection(deformationField->GetDirection() );
@@ -119,7 +119,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     warper->SetOutputSpacing( movingImage->GetSpacing() );
     warper->SetOutputOrigin( movingImage->GetOrigin() );
     warper->SetOutputDirection( movingImage->GetDirection() );
-    warper->SetDeformationField( deformationField );
+    warper->SetDisplacementField( deformationField );
     try
       {
       warper->Update();
@@ -142,7 +142,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     warper->SetOutputSpacing( movingImage->GetSpacing() );
     warper->SetOutputOrigin( movingImage->GetOrigin() );
     warper->SetOutputDirection( movingImage->GetDirection() );
-    warper->SetDeformationField( deformationField );
+    warper->SetDisplacementField( deformationField );
     try
       {
       warper->Update();
@@ -157,28 +157,6 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
     }
 }
 
-// apply deformation field on image and write deformed image
-template <class TInputImage, class TOutputImage>
-void
-MABMISDeformationFieldFilter<TInputImage, TOutputImage>
-::ApplyDeformationFieldAndWriteWithFileNames(std::string movingImageName, std::string deformationFieldFileName,
-                                             std::string deformedImageName, bool isLinearInterpolator)
-{
-  typename ImageOperationType::Pointer imageoperator = ImageOperationType::New();
-
-  DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
-  ReadDeformationField(deformationFieldFileName, deformationField);
-
-  InternalImageType::Pointer movingImage = InternalImageType::New();
-  imageoperator->ReadImage(movingImageName, movingImage);
-
-  InternalImageType::Pointer deformedImage = InternalImageType::New();
-
-  ApplyDeformationField(movingImage, deformationField, deformedImage, isLinearInterpolator);
-
-  imageoperator->WriteImage(deformedImageName, deformedImage);
-}
-
 template <class TInputImage, class TOutputImage>
 void
 MABMISDeformationFieldFilter<TInputImage, TOutputImage>
@@ -186,33 +164,8 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
                                                      std::string deformationFieldFileName,
                                                      std::string deformedImageFileName, bool isLinear)
 {
-  itk::ImageIOBase::Pointer imageIO;
+  const itk::ImageIOBase::IOComponentType ioType = imgoperator->GetIOPixelType(movingImageFileName);
 
-  try
-    {
-    imageIO = itk::ImageIOFactory::CreateImageIO(movingImageFileName.c_str(), itk::ImageIOFactory::ReadMode);
-    if( imageIO )
-      {
-      imageIO->SetFileName(movingImageFileName);
-      imageIO->ReadImageInformation();
-      }
-    else
-      {
-      std::cout << "Could not read the image information of " << movingImageFileName << "." << std::endl;
-      exit( EXIT_FAILURE );
-      }
-    }
-  catch( itk::ExceptionObject& err )
-    {
-    std::cout << "Could not read the image information of " << movingImageFileName << "." << std::endl;
-    std::cout << err << std::endl;
-    exit( EXIT_FAILURE );
-    }
-  // {UNKNOWNCOMPONENTTYPE,UCHAR,CHAR,USHORT,SHORT,UINT,INT,ULONG,LONG,FLOAT,DOUBLE} IOComponentType;
-  //                    0     1    2      3     4    5   6     7    8     9     10
-  const int input_type = imageIO->GetComponentType(); // 9:float, 10:double
-
-  //
   DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
   ReadDeformationField(deformationFieldFileName, deformationField);
 
@@ -223,30 +176,8 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
 
   ApplyDeformationField(movingImage, deformationField, deformedImage, isLinear);
 
-  if( input_type == 1 ) // UCHAR
-    {
-    imgoperator->WriteImageUCHAR(deformedImageFileName, deformedImage);
-    }
-  else if( input_type == 4 ) // SHORT
-    {
-    imgoperator->WriteImageSHORT(deformedImageFileName, deformedImage);
-    }
-  else if( input_type == 6 ) // INT
-    {
-    imgoperator->WriteImageINT(deformedImageFileName, deformedImage);
-    }
-  else if( input_type == 9  || input_type == 10 ) // FLOAT || DOUBLE
-    {
-    imgoperator->WriteImageFLOAT(deformedImageFileName, deformedImage);
-    }
-  else
-    {
-    std::cerr << "input_type type not supported " << input_type << std::endl;
-    }
+  imgoperator->WriteImage(deformedImageFileName, deformedImage, ioType);
 }
-
-// end
-//
 
 template <class TInputImage, class TOutputImage>
 void
@@ -282,7 +213,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   ry = sampleRate;
   rz = sampleRate;
 
-  DeformationFieldType::Pointer originImage = 0;
+  DeformationFieldType::Pointer originImage = nullptr;
 
   ReadDeformationField(deformationFieldFileName, originImage);
 
@@ -447,7 +378,7 @@ MABMISDeformationFieldFilter<TInputImage, TOutputImage>
   ry = sampleRate;
   rz = sampleRate;
 
-  DeformationFieldType::Pointer originImage = 0;
+  DeformationFieldType::Pointer originImage = nullptr;
 
   ReadDeformationField(deformationFieldFileName, originImage);
 
